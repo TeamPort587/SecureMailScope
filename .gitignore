@@ -127,6 +127,7 @@ data/processed/*
 !data/labels/
 data/labels/*
 !data/labels/.gitkeep
+!data/labels/README.md
 *.parquet
 *.arrow
 *.feather
