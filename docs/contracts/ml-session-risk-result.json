@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "description": "ML session risk prediction result returned by the inference module.",
+
+  "example": {
+    "session_id": "smtp-002",
+    "risk": {
+      "level": "HIGH",
+      "confidence": 0.87,
+      "model_version": "rf-v1",
+      "prediction_quality": "SUFFICIENT_EVIDENCE"
+    },
+    "risk_signals": [
+      { "feature": "auth_before_tls", "value": 1 },
+      { "feature": "tls_upgrade_failed", "value": 1 }
+    ],
+    "warnings": [],
+    "features_used": {
+      "encryption_plaintext": 0,
+      "encryption_starttls": 1,
+      "encryption_implicit": 0,
+      "deprecated_tls": 0,
+      "weak_cipher": 0,
+      "expired_cert": 0,
+      "not_yet_valid_cert": 0,
+      "weak_key": 0,
+      "auth_before_tls": 1,
+      "tls_upgrade_failed": 1,
+      "pfs_missing": 0,
+      "self_signed": 0,
+      "protocol_smtp": 1,
+      "protocol_imap": 0,
+      "protocol_pop3": 0,
+      "critical_count": 1,
+      "high_count": 1,
+      "medium_count": 0,
+      "low_count": 0
+    }
+  },
+
+  "batch_example": {
+    "model_version": "rf-v1",
+    "feature_schema_version": "1.0",
+    "session_predictions": [
+      {
+        "session_id": "smtp-001",
+        "risk": {
+          "level": "LOW",
+          "confidence": 0.92,
+          "model_version": "rf-v1",
+          "prediction_quality": "SUFFICIENT_EVIDENCE"
+        },
+        "risk_signals": [],
+        "warnings": []
+      },
+      {
+        "session_id": "smtp-002",
+        "risk": {
+          "level": "CRITICAL",
+          "confidence": 0.91,
+          "model_version": "rf-v1",
+          "prediction_quality": "SUFFICIENT_EVIDENCE"
+        },
+        "risk_signals": [
+          { "feature": "auth_before_tls", "value": 1 },
+          { "feature": "tls_upgrade_failed", "value": 1 }
+        ],
+        "warnings": []
+      }
+    ],
+    "pcap_aggregation": {
+      "overall_risk_level": "CRITICAL",
+      "overall_confidence": 0.91,
+      "note": "MVP deterministic aggregation. Does not replace rule engine."
+    }
+  },
+
+  "field_definitions": {
+    "risk.level": "Predicted risk label: LOW, MEDIUM, HIGH, or CRITICAL",
+    "risk.confidence": "Maximum class probability from predict_proba (0.0 - 1.0)",
+    "risk.model_version": "Version identifier of the trained model",
+    "risk.prediction_quality": "SUFFICIENT_EVIDENCE or LOW_EVIDENCE based on data completeness",
+    "risk_signals": "List of features that are active risk indicators (value == 1)",
+    "warnings": "Human-readable warnings about missing data or low evidence",
+    "features_used": "The 19 canonical features used for prediction (null = NaN/unknown)"
+  }
+}
