@@ -1,0 +1,4 @@
+version: "1.0"
+datasets: []
+description: "Manifest describing benchmark datasets, sample captures, and test payloads for SecureMailScope."
+last_updated: "2026-09-09"

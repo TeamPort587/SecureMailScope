@@ -1,0 +1,123 @@
+# ==============================================================================
+# SecureMailScope - .gitignore
+# ==============================================================================
+
+# --- Operating System & Editor Files ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Environment Variables & Secrets ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
+secrets.json
+
+# --- Python & Django ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Django specific
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Testing & Coverage
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+htmlcov/
+
+# --- Node.js & React / Frontend ---
+node_modules/
+jspm_packages/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Frontend build outputs
+.next/
+out/
+.nuxt/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.parcel-cache/
+
+# --- Network Captures & PCAP Files ---
+*.pcap
+*.pcapng
+*.cap
+*.dmp
+
+# --- Raw & Generated Datasets ---
+# Ignore dataset files while keeping data/ directory tracked via .gitkeep
+data/*
+!data/.gitkeep
+*.parquet
+*.arrow
+*.feather
+*.h5
+*.hdf5
+*.pkl
+*.pickle
