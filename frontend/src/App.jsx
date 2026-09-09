@@ -8,6 +8,7 @@ import History from './pages/History';
 import NotFound from './pages/NotFound';
 import AuthModal from './components/AuthModal';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { useAnalysis } from './hooks/useAnalysis';
 
 function AppContent() {
@@ -45,8 +46,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
