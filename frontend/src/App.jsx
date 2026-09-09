@@ -6,9 +6,11 @@ import Dashboard from './pages/Dashboard';
 import Analysis from './pages/Analysis';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
+import AuthModal from './components/AuthModal';
+import { AuthProvider } from './context/AuthContext';
 import { useAnalysis } from './hooks/useAnalysis';
 
-export default function App() {
+function AppContent() {
   const analysisHook = useAnalysis();
   const navigate = useNavigate();
 
@@ -34,6 +36,17 @@ export default function App() {
 
       {/* Shell Footer */}
       <Footer />
+
+      {/* Central Auth Modal */}
+      <AuthModal />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }

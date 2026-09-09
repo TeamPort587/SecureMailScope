@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, LayoutDashboard, History, Sparkles, Server, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Shield, LayoutDashboard, History, Sparkles, Server, CheckCircle2, AlertCircle, LogIn, LogOut, User } from 'lucide-react';
 import { DEMO_PRESETS } from '../mock/demoCaptures';
 import { analysisApi } from '../api/analysisApi';
+import { useAuth } from '../context/AuthContext';
 
 export default function Navbar({ onSelectPreset = null }) {
   const location = useLocation();
+  const { userEmail, isAuthenticated, logout, openAuthModal } = useAuth();
   const [gatewayStatus, setGatewayStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
   const [showPresetMenu, setShowPresetMenu] = useState(false);
 
@@ -73,7 +75,7 @@ export default function Navbar({ onSelectPreset = null }) {
           </nav>
         </div>
 
-        {/* Right Controls: Demo Selector & Gateway Badge */}
+        {/* Right Controls: Demo Selector & Gateway Badge & Auth */}
         <div className="flex items-center gap-3">
           {/* Quick Demo Scenarios Dropdown */}
           <div className="relative">
@@ -144,6 +146,36 @@ export default function Navbar({ onSelectPreset = null }) {
               <span className="text-slate-500">Checking...</span>
             )}
           </div>
+
+          {/* User Account / Auth Section */}
+          {isAuthenticated && userEmail ? (
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              <div 
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs text-slate-200"
+                title={`Signed in as ${userEmail}`}
+              >
+                <div className="w-4 h-4 rounded-full bg-brand-500/20 text-brand-400 flex items-center justify-center font-bold text-[10px]">
+                  {userEmail[0].toUpperCase()}
+                </div>
+                <span className="max-w-[120px] truncate hidden sm:inline">{userEmail}</span>
+              </div>
+              <button
+                onClick={logout}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-300 hover:bg-rose-500/10 transition-colors"
+                title="Sign out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={openAuthModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-brand-600 hover:bg-brand-500 text-white shadow-md shadow-brand-500/20 transition-colors"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In</span>
+            </button>
+          )}
         </div>
       </div>
     </header>

@@ -37,8 +37,8 @@ export const analysisApi = {
         body: formData,
       });
     } catch (err) {
-      if (err.isNetworkError || err.status === 401) {
-        console.warn('Backend unavailable or unauthenticated, serving mock analysis for development.');
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
+        console.warn('Mock mode active, serving mock analysis.');
         const fallback = {
           ...mockAnalysis,
           analysis_id: 'mock-' + Date.now(),
@@ -81,7 +81,7 @@ export const analysisApi = {
     try {
       return await apiClient(`/api/analyses?page=${page}&limit=${limit}`);
     } catch (err) {
-      if (err.isNetworkError || err.status === 401) {
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
         return {
           items: localMockAnalyses.map((a) => ({
             analysis_id: a.analysis_id,
@@ -118,7 +118,7 @@ export const analysisApi = {
     try {
       return await apiClient(`/api/analyses/${analysisId}`);
     } catch (err) {
-      if (err.isNetworkError || err.status === 401) {
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
         const match = localMockAnalyses.find((a) => a.analysis_id === analysisId) || mockAnalysis;
         return match;
       }
@@ -137,7 +137,7 @@ export const analysisApi = {
       });
       return blob;
     } catch (err) {
-      if (err.isNetworkError || err.status === 401 || USE_MOCK_ENV) {
+      if (USE_MOCK_ENV) {
         // Generate export blob from local data
         const match = localMockAnalyses.find((a) => a.analysis_id === analysisId) || mockAnalysis;
         const jsonString = JSON.stringify(match, null, 2);

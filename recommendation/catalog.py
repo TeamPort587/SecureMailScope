@@ -88,6 +88,66 @@ RECOMMENDATIONS = {
         ),
     },
 
+    "SELF_SIGNED": {
+        "recommendation_id": "REC-CERT-001",
+        "priority": "MEDIUM",
+        "title": "Use a trusted TLS certificate",
+        "description": (
+            "Replace self-signed certificates with certificates issued "
+            "by a trusted certificate authority where appropriate, and "
+            "ensure clients can validate the certificate chain."
+        ),
+    },
+
+    "DEPRECATED_TLS": {
+        "recommendation_id": "REC-DEPRECATED-TLS-001",
+        "priority": "HIGH",
+        "title": "Upgrade deprecated TLS versions",
+        "description": (
+            "Disable TLS 1.0, TLS 1.1, and SSLv3 across all mail servers. "
+            "Enforce TLS 1.2 or TLS 1.3."
+        ),
+    },
+
+    "WEAK_CIPHER": {
+        "recommendation_id": "REC-WEAK-CIPHER-001",
+        "priority": "CRITICAL",
+        "title": "Disable legacy and weak cipher suites",
+        "description": (
+            "Remove RC4, DES, 3DES, and export-grade ciphers from the server "
+            "cipher suite configuration."
+        ),
+    },
+
+    "EXPIRED_CERTIFICATE": {
+        "recommendation_id": "REC-CERT-EXPIRED-001",
+        "priority": "HIGH",
+        "title": "Renew expired certificates",
+        "description": (
+            "Renew expired X.509 certificates and configure automated certificate "
+            "renewal."
+        ),
+    },
+
+    "NOT_YET_VALID_CERTIFICATE": {
+        "recommendation_id": "REC-CERT-NYV-001",
+        "priority": "HIGH",
+        "title": "Correct certificate validity window",
+        "description": (
+            "Inspect system clock synchronization and certificate start times to "
+            "ensure certificates are valid at current time."
+        ),
+    },
+
+    "WEAK_KEY": {
+        "recommendation_id": "REC-CERT-KEY-001",
+        "priority": "MEDIUM",
+        "title": "Upgrade certificate key size",
+        "description": (
+            "Reissue certificates using at least 2048-bit RSA keys or 256-bit ECDSA keys."
+        ),
+    },
+
     "INFO": {
         "recommendation_id": "REC-INFO-001",
         "priority": "INFO",
