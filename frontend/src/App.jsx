@@ -1,9 +1,12 @@
 import React from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+
 import Dashboard from './pages/Dashboard';
 import Analysis from './pages/Analysis';
+import AnalysisOverview from './pages/AnalysisOverview';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
 import AuthModal from './components/AuthModal';
@@ -17,6 +20,10 @@ function AppContent() {
 
   const handleSelectPreset = (presetData) => {
     analysisHook.loadPreset(presetData);
+    if (presetData?.analysis_id) {
+      navigate(`/analysis/${presetData.analysis_id}`);
+      return;
+    }
     navigate('/');
   };
 
@@ -41,6 +48,7 @@ function AppContent() {
       {/* Central Auth Modal */}
       <AuthModal />
     </div>
+
   );
 }
 

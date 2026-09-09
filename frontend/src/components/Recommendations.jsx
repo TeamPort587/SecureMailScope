@@ -1,23 +1,24 @@
 import React from 'react';
 import RiskBadge from './RiskBadge';
 import EmptyState from './EmptyState';
-import { Lightbulb, CheckCircle2, ArrowRight } from 'lucide-react';
-import { getSeverityConfig } from '../utils/severity';
+import { Lightbulb, CheckCircle2 } from 'lucide-react';
 
-export default function Recommendations({ recommendations = [] }) {
+export default function Recommendations({
+  recommendations = [],
+}) {
   if (!recommendations || recommendations.length === 0) {
     return (
-      <div className="w-full space-y-3">
-        <h3 className="text-base font-bold text-white flex items-center gap-2">
-          <Lightbulb className="w-4 h-4 text-emerald-400" />
-          <span>Remediation & Hardening Recommendations</span>
-        </h3>
-        <EmptyState
-          title="No Immediate Remediation Needed"
-          message="The analyzed email traffic conforms to standard cryptographic and transport requirements."
-          icon="secure"
-        />
-      </div>
+      <section className="w-full">
+        <SectionHeader />
+
+        <div className="mt-4">
+          <EmptyState
+            title="No Immediate Remediation Needed"
+            message="The analyzed email traffic conforms to the expected cryptographic and transport security requirements."
+            icon="secure"
+          />
+        </div>
+      </section>
     );
   }
 
@@ -35,6 +36,49 @@ export default function Recommendations({ recommendations = [] }) {
           Actionable configuration guidance derived directly from observed protocol weaknesses.
         </p>
       </div>
+    </div>
+  );
+}
+
+/* ---------------------------------------------------------
+   Recommendation Card
+--------------------------------------------------------- */
+
+function RecommendationCard({ recommendation }) {
+  const priority = (
+    recommendation?.priority || 'INFO'
+  ).toUpperCase();
+
+  const styles = {
+    CRITICAL: {
+      accent: 'bg-red-500',
+      tint: 'from-red-50/35 via-white to-white',
+
+      actionBg: 'bg-red-50/55',
+      actionBorder: 'border-red-200',
+      actionIcon: 'border-red-200 bg-white text-red-600',
+      actionLabel: 'text-red-700',
+    },
+
+    HIGH: {
+      accent: 'bg-orange-500',
+      tint: 'from-orange-50/30 via-white to-white',
+
+      actionBg: 'bg-orange-50/50',
+      actionBorder: 'border-orange-200',
+      actionIcon: 'border-orange-200 bg-white text-orange-600',
+      actionLabel: 'text-orange-700',
+    },
+
+    MEDIUM: {
+      accent: 'bg-amber-500',
+      tint: 'from-amber-50/25 via-white to-white',
+
+      actionBg: 'bg-amber-50/45',
+      actionBorder: 'border-amber-200',
+      actionIcon: 'border-amber-200 bg-white text-amber-600',
+      actionLabel: 'text-amber-700',
+    },
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {recommendations.map((rec) => {

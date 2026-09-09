@@ -23,8 +23,6 @@ export default function UploadForm({ onUpload, uploading = false }) {
       setSelectedFile(null);
       return;
     }
-    setValidationError(null);
-    setSelectedFile(file);
   };
 
   const handleDrop = (e) => {
@@ -41,14 +39,18 @@ export default function UploadForm({ onUpload, uploading = false }) {
     }
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    if (!uploading) setIsDragOver(true);
+  const handleDragOver = (event) => {
+    event.preventDefault();
+
+    if (!loading) {
+      setIsDragging(true);
+    }
   };
 
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragOver(false);
+  const handleDragLeave = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setIsDragging(false);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -61,12 +63,9 @@ export default function UploadForm({ onUpload, uploading = false }) {
     onUpload(selectedFile);
   };
 
-  const handleClear = (e) => {
-    e.stopPropagation();
-    setSelectedFile(null);
-    setValidationError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
+  const handleUpload = () => {
+    if (file && onUpload) {
+      onUpload(file);
     }
   };
 
@@ -128,22 +127,36 @@ export default function UploadForm({ onUpload, uploading = false }) {
                 {formatBytes(selectedFile.size)} • Valid PCAP ready for inspection
               </p>
             </div>
-            <div className="flex items-center gap-2 mt-2">
-              <button
-                type="submit"
-                disabled={uploading}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold shadow-lg shadow-brand-500/25 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
-              >
-                <span>Launch Analysis</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
+
+            {/* Actions */}
+            <div className="flex w-full shrink-0 flex-col gap-2 sm:flex-row lg:w-auto">
               <button
                 type="button"
                 onClick={handleClear}
-                className="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
+                disabled={loading}
+                className="ui-button ui-button-secondary w-full sm:w-auto"
               >
-                Change File
+                <X className="h-3.5 w-3.5" />
+                Change file
+              </button>
+
+              <button
+                type="button"
+                onClick={handleUpload}
+                disabled={loading}
+                className="ui-button ui-button-primary w-full sm:w-auto"
+              >
+                {loading ? (
+                  <>
+                    <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    Launch analysis
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -186,15 +199,31 @@ export default function UploadForm({ onUpload, uploading = false }) {
               </p>
             </div>
           </div>
-        )}
-      </div>
 
-      {validationError && (
-        <div className="mt-3 p-3 rounded-xl bg-red-950/40 border border-red-500/30 flex items-center gap-2.5 text-xs text-red-300">
-          <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-          <span>{validationError}</span>
+          <div className="min-w-0">
+            <p className="text-xs font-semibold text-red-800">
+              Upload validation failed
+            </p>
+
+            <p className="mt-0.5 text-xs leading-5 text-red-700">
+              {error}
+            </p>
+          </div>
         </div>
       )}
-    </form>
+    </div>
+  );
+}
+
+/* ===============================================================
+   FORMAT BADGE
+=============================================================== */
+
+function FormatBadge({ label }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-semibold text-slate-600 shadow-sm">
+      <FileCode2 className="h-3 w-3 text-brand-500" />
+      {label}
+    </span>
   );
 }

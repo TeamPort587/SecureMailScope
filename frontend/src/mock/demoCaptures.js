@@ -5,7 +5,7 @@ export const DEMO_PRESETS = [
     id: 'demo-vulnerable',
     name: 'Demo 2: Vulnerable Capture (High Risk)',
     badge: 'HIGH RISK',
-    badgeClass: 'bg-red-500/20 text-red-400 border-red-500/30',
+    badgeClass: 'bg-red-500/25 text-red-200 border-red-500/30',
     description: 'Contains plain-text IMAP and SMTP authentication occurring before STARTTLS.',
     data: baseMock,
   },
@@ -13,7 +13,7 @@ export const DEMO_PRESETS = [
     id: 'demo-secure',
     name: 'Demo 1: Clean & Modern TLS (Low Risk)',
     badge: 'LOW RISK',
-    badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+    badgeClass: 'bg-yellow-500/25 text-yellow-200 border-yellow-500/30',
     description: 'Fully negotiated TLS 1.3 session with Forward Secrecy and valid certificates.',
     data: {
       analysis_id: "sec-7788-99aa-bbcc-445566778899",
@@ -146,7 +146,7 @@ export const DEMO_PRESETS = [
     id: 'demo-multisession',
     name: 'Demo 3: Multi-Session Mixed Protocols',
     badge: 'CRITICAL',
-    badgeClass: 'bg-rose-500/20 text-rose-400 border-rose-500/30',
+    badgeClass: 'bg-rose-500/25 text-rose-200 border-rose-500/30',
     description: 'Enterprise capture with 6 concurrent email sessions across SMTP, IMAP & POP3.',
     data: {
       analysis_id: "multi-9900-aabb-ccdd-112233445566",

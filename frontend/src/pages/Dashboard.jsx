@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import UploadForm from '../components/UploadForm';
 import UploadProgress from '../components/UploadProgress';
 import RiskSummary from '../components/RiskSummary';
@@ -6,12 +7,44 @@ import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
 import Recommendations from '../components/Recommendations';
 import ErrorState from '../components/ErrorState';
-import { Download, RefreshCw, Layers, Bug, Lightbulb, Sparkles } from 'lucide-react';
+
+import {
+  Download,
+  Layers,
+  Bug,
+  Lightbulb,
+  Sparkles,
+  ArrowUpRight,
+  ShieldCheck,
+  FileSearch,
+  Activity,
+  Upload,
+  CheckCircle2,
+} from 'lucide-react';
+
 import { DEMO_PRESETS } from '../mock/demoCaptures';
 
 export default function Dashboard({ analysisHook }) {
-  const { analysis, uploading, error, uploadPcap, exportJson, loadPreset, setError } = analysisHook;
-  const [activeTab, setActiveTab] = useState('all'); // 'all' | 'sessions' | 'findings' | 'recommendations'
+  const {
+    analysis,
+    uploading,
+    error,
+    uploadPcap,
+    exportJson,
+    loadPreset,
+    setError,
+  } = analysisHook;
+
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const sessionCount =
+    analysis?.sessions?.length || 0;
+
+  const findingCount =
+    analysis?.findings?.length || 0;
+
+  const recommendationCount =
+    analysis?.recommendations?.length || 0;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -55,6 +88,17 @@ export default function Dashboard({ analysisHook }) {
                       <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-brand-600 dark:group-hover:text-brand-300 transition-colors">
                         {demo.name.split(':')[1] || demo.name}
                       </span>
+
+                      <span className="h-1 w-1 rounded-full bg-slate-300" />
+
+                      <span className="flex items-center gap-1.5 text-[10px] font-semibold text-yellow-600">
+
+                        <CheckCircle2 className="h-3 w-3" />
+
+                        Analysis complete
+
+                      </span>
+
                     </div>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">{demo.description}</p>
                   </div>
@@ -64,21 +108,192 @@ export default function Dashboard({ analysisHook }) {
                     </span>
                     <span className="text-[10px] text-brand-600 dark:text-brand-400 font-semibold">Load capture →</span>
                   </div>
+
+                </div>
+
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    exportJson(analysis.analysis_id)
+                  }
+                  className="ui-button ui-button-primary w-full sm:w-auto"
+                  title="Download authoritative analysis report JSON"
+                >
+
+                  <Download className="h-3.5 w-3.5" />
+
+                  Export report
+
                 </button>
-              ))}
-            </div>
+
+              </div>
+
+
+              {/* =================================================
+                  SECTION NAVIGATION
+              ================================================== */}
+
+              <div className="border-t border-slate-100 bg-slate-50/50 px-2 sm:px-3">
+
+                <div className="flex overflow-x-auto">
+
+                  <AnalysisTab
+                    active={
+                      activeTab === 'overview'
+                    }
+                    onClick={() =>
+                      setActiveTab('overview')
+                    }
+                    icon={ShieldCheck}
+                    label="Overview"
+                  />
+
+                  <AnalysisTab
+                    active={
+                      activeTab === 'sessions'
+                    }
+                    onClick={() =>
+                      setActiveTab('sessions')
+                    }
+                    icon={Layers}
+                    label="Sessions"
+                    count={sessionCount}
+                  />
+
+                  <AnalysisTab
+                    active={
+                      activeTab === 'findings'
+                    }
+                    onClick={() =>
+                      setActiveTab('findings')
+                    }
+                    icon={Bug}
+                    label="Findings"
+                    count={findingCount}
+                    countClass="text-amber-700 bg-amber-50 border-amber-200"
+                  />
+
+                  <AnalysisTab
+                    active={
+                      activeTab === 'recommendations'
+                    }
+                    onClick={() =>
+                      setActiveTab('recommendations')
+                    }
+                    icon={Lightbulb}
+                    label="Recommendations"
+                    count={recommendationCount}
+                    countClass="text-yellow-700 bg-yellow-50 border-yellow-200"
+                  />
+
+                </div>
+
+              </div>
+
+            </section>
+
+
+            {/* =================================================
+                OVERVIEW
+            ================================================== */}
+
+            {activeTab === 'overview' && (
+              <section>
+
+                <div className="mb-5">
+
+                  <div className="flex items-center gap-2">
+
+                    <ShieldCheck className="h-4 w-4 text-brand-600" />
+
+                    <h2 className="text-sm font-semibold text-slate-900">
+                      Security overview
+                    </h2>
+
+                  </div>
+
+                  <p className="mt-1 text-xs text-slate-500">
+                    Overall risk posture and key observations from this capture.
+                  </p>
+
+                </div>
+
+
+                <RiskSummary
+                  risk={analysis.risk}
+                  summary={analysis.summary}
+                  filename={analysis.filename}
+                  uploadedAt={analysis.uploaded_at}
+                />
+
+              </section>
+            )}
+
+
+            {/* =================================================
+                SESSIONS
+
+                IMPORTANT:
+                No duplicate SectionIntro here.
+                SessionTable owns its own heading.
+            ================================================== */}
+
+            {activeTab === 'sessions' && (
+              <section>
+
+                <SessionTable
+                  sessions={analysis.sessions}
+                  findings={analysis.findings}
+                />
+
+              </section>
+            )}
+
+
+            {/* =================================================
+                FINDINGS
+
+                FindingsList owns its own heading.
+            ================================================== */}
+
+            {activeTab === 'findings' && (
+              <section>
+
+                <FindingsList
+                  findings={analysis.findings}
+                />
+
+              </section>
+            )}
+
+
+            {/* =================================================
+                RECOMMENDATIONS
+
+                Recommendations owns its own heading.
+            ================================================== */}
+
+            {activeTab === 'recommendations' && (
+              <section>
+
+                <Recommendations
+                  recommendations={
+                    analysis.recommendations
+                  }
+                />
+
+              </section>
+            )}
+
           </div>
         )}
+
       </div>
 
-      {/* Global Error Banner */}
-      {error && (
-        <ErrorState
-          title="Analysis Request Failed"
-          message={error}
-          onRetry={() => setError(null)}
-        />
-      )}
+    </main>
+  );
+}
 
       {/* Active Analysis Dashboard */}
       {analysis && (
@@ -160,29 +375,51 @@ export default function Dashboard({ analysisHook }) {
             </button>
           </div>
 
-          {/* Conditional Tab Rendering */}
-          {(activeTab === 'all' || activeTab === 'sessions') && (
-            <section aria-labelledby="sessions-heading">
-              <SessionTable
-                sessions={analysis.sessions}
-                findings={analysis.findings}
-              />
-            </section>
-          )}
+function AnalysisTab({
+  active,
+  onClick,
+  icon: Icon,
+  label,
+  count,
+  countClass = 'text-slate-600 bg-white border-slate-200',
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`relative flex shrink-0 items-center gap-2.5 px-5 py-3.5 text-xs font-semibold transition-all duration-200 ${
+        active
+          ? 'text-slate-900'
+          : 'text-slate-500 hover:text-slate-800'
+      }`}
+    >
 
-          {(activeTab === 'all' || activeTab === 'findings') && (
-            <section aria-labelledby="findings-heading">
-              <FindingsList findings={analysis.findings} />
-            </section>
-          )}
+      {/* Active indicator */}
 
-          {(activeTab === 'all' || activeTab === 'recommendations') && (
-            <section aria-labelledby="recommendations-heading">
-              <Recommendations recommendations={analysis.recommendations} />
-            </section>
-          )}
-        </div>
+      {active && (
+        <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-brand-500" />
       )}
-    </div>
+
+      <Icon
+        className={`h-4 w-4 ${
+          active
+            ? 'text-brand-600'
+            : 'text-slate-400'
+        }`}
+      />
+
+      <span>
+        {label}
+      </span>
+
+      {typeof count === 'number' && (
+        <span
+          className={`min-w-[22px] rounded-md border px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none ${countClass}`}
+        >
+          {count}
+        </span>
+      )}
+
+    </button>
   );
 }
