@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Shield, LayoutDashboard, History, Sparkles, Server, CheckCircle2, AlertCircle } from 'lucide-react';
 import { DEMO_PRESETS } from '../mock/demoCaptures';
 import { analysisApi } from '../api/analysisApi';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar({ onSelectPreset = null }) {
   const location = useLocation();
@@ -73,8 +74,9 @@ export default function Navbar({ onSelectPreset = null }) {
           </nav>
         </div>
 
-        {/* Right Controls: Demo Selector & Gateway Badge */}
+        {/* Right Controls: Theme Toggle, Demo Selector & Gateway Badge */}
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           {/* Quick Demo Scenarios Dropdown */}
           <div className="relative">
             <button
