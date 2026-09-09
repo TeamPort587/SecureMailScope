@@ -1,0 +1,5 @@
+analysis_id,session_id,risk_label
+demo-001,smtp-001,LOW
+demo-001,smtp-002,CRITICAL
+demo-001,imap-001,CRITICAL
+demo-001,pop3-001,LOW

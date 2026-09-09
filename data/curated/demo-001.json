@@ -1,0 +1,123 @@
+{
+  "analysis_version": "1.0.0",
+  "file": {
+    "analysis_id": "demo-001",
+    "filename": "demo_capture.pcap",
+    "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "size_bytes": 102400
+  },
+  "sessions": [
+    {
+      "session_id": "smtp-001",
+      "protocol": "SMTP",
+      "service": "submission",
+      "security": {
+        "encryption_mode": "STARTTLS",
+        "upgrade_advertised": "YES",
+        "upgrade_requested": "YES",
+        "upgrade_succeeded": "YES",
+        "authentication_before_tls": "NO",
+        "capture_completeness": "COMPLETE"
+      },
+      "tls": {
+        "version": "TLS 1.2",
+        "cipher_suite": "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+        "pfs": "YES"
+      },
+      "certificate": {
+        "subject": "CN=mail.example.com",
+        "issuer": "Example CA",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2027-01-01T00:00:00Z",
+        "key_type": "RSA",
+        "key_size": 2048,
+        "self_signed": false
+      }
+    },
+    {
+      "session_id": "smtp-002",
+      "protocol": "SMTP",
+      "service": "submission",
+      "security": {
+        "encryption_mode": "STARTTLS",
+        "upgrade_advertised": "YES",
+        "upgrade_requested": "NO",
+        "upgrade_succeeded": "NO",
+        "authentication_before_tls": "YES",
+        "capture_completeness": "COMPLETE"
+      },
+      "tls": null,
+      "certificate": null
+    },
+    {
+      "session_id": "imap-001",
+      "protocol": "IMAP",
+      "service": "mail-access",
+      "security": {
+        "encryption_mode": "PLAINTEXT",
+        "upgrade_advertised": "NO",
+        "upgrade_requested": "NO",
+        "upgrade_succeeded": "NO",
+        "authentication_before_tls": "YES",
+        "capture_completeness": "COMPLETE"
+      },
+      "tls": null,
+      "certificate": null
+    },
+    {
+      "session_id": "pop3-001",
+      "protocol": "POP3",
+      "service": "mail-access",
+      "security": {
+        "encryption_mode": "IMPLICIT_TLS",
+        "upgrade_advertised": "UNKNOWN",
+        "upgrade_requested": "UNKNOWN",
+        "upgrade_succeeded": "YES",
+        "authentication_before_tls": "NO",
+        "capture_completeness": "PARTIAL"
+      },
+      "tls": {
+        "version": "TLS 1.3",
+        "cipher_suite": "TLS_AES_256_GCM_SHA384",
+        "pfs": "YES"
+      },
+      "certificate": {
+        "visibility": "NOT_OBSERVABLE"
+      }
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "finding-001",
+      "session_id": "smtp-002",
+      "finding_type": "AUTH_BEFORE_TLS",
+      "severity": "CRITICAL",
+      "title": "Authentication occurred before TLS",
+      "confidence": "OBSERVED"
+    },
+    {
+      "finding_id": "finding-002",
+      "session_id": "imap-001",
+      "finding_type": "PLAINTEXT",
+      "severity": "CRITICAL",
+      "title": "IMAP session in plaintext",
+      "confidence": "OBSERVED"
+    },
+    {
+      "finding_id": "finding-003",
+      "session_id": "smtp-002",
+      "finding_type": "FAILED_STARTTLS",
+      "severity": "HIGH",
+      "title": "STARTTLS upgrade failed",
+      "confidence": "OBSERVED"
+    },
+    {
+      "finding_id": "finding-004",
+      "session_id": "imap-001",
+      "finding_type": "AUTH_BEFORE_TLS",
+      "severity": "CRITICAL",
+      "title": "Authentication before TLS on IMAP",
+      "confidence": "OBSERVED"
+    }
+  ]
+}
