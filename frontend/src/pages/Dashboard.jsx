@@ -47,7 +47,7 @@ export default function Dashboard({ analysisHook }) {
     analysis?.recommendations?.length || 0;
 
   return (
-    <main className="min-h-screen w-full bg-slate-50 md:ml-[248px] md:w-[calc(100%-248px)]">
+    <main className="min-h-screen w-full bg-slate-50">
       <div className="mx-auto w-full max-w-[1440px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
 
         {/* =====================================================
@@ -56,45 +56,114 @@ export default function Dashboard({ analysisHook }) {
 
         {!analysis && (
           <>
-            <section className="mb-6">
+                        <section className="mb-6">
 
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                           <div className="
+                relative overflow-hidden
+                rounded-2xl border border-slate-100
+                bg-gradient-to-br from-white via-slate-50/80 to-brand-50/40
+                px-6 py-2 sm:px-8 sm:py-3
+                shadow-sm
+                border-l-2 border-t-2 border-brand-200/60
+              ">
 
-                <div className="max-w-3xl">
+                {/* ── orb glows ── */}
+                <div className="pointer-events-none absolute inset-0">
+                  <div className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-400/[0.07] blur-[100px]" />
+                 <div className="absolute right-0 -top-8 h-72 w-72 rounded-full bg-sky-200/[0.12] blur-[90px]" />
+                  <div className="absolute -bottom-12 left-1/3 h-52 w-52 rounded-full bg-brand-300/[0.06] blur-[80px]" />
+                  <div className="absolute bottom-0 right-0 h-52 w-52 rounded-full bg-blue-100/[0.18] blur-[70px]" />
+                </div>
 
-                  <div className="mb-3 flex items-center gap-2">
+                {/* ── dot grid ── */}
+                <div
+                  className="pointer-events-none absolute inset-0 opacity-[0.018]"
+                  style={{
+                    backgroundImage: 'radial-gradient(circle, #334155 1px, transparent 1px)',
+                    backgroundSize: '26px 26px',
+                  }}
+                />
 
-                    <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-brand-200 bg-brand-50">
-                      <ShieldCheck className="h-3.5 w-3.5 text-brand-600" />
-                    </span>
+                {/* ── top hairline ── */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/30 to-transparent" />
 
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-brand-700">
-                      Security Analysis
-                    </span>
+                {/* ── content + illustration ── */}
+                <div className="relative flex items-center justify-between gap-8">
+
+                  {/* LEFT — text */}
+                  <div className="max-w-xl">
+
+                    <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50/80 px-3 py-1 backdrop-blur-sm">
+                      <ShieldCheck className="h-3 w-3 text-brand-500" />
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-600">
+                        Email Security Analysis
+                      </span>
+                    </div>
+
+                    <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+                      Email Protocol{' '}
+                      <span className="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">
+                        Security Inspector
+                      </span>
+                    </h1>
+
+                    <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
+                      Upload a PCAP capture to reconstruct email sessions,
+                      evaluate TLS protection, detect exposed credentials,
+                      and score protocol-level security risk.
+                    </p>
 
                   </div>
 
-                  <h1 className="text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
-                    Email Protocol Security Inspector
-                  </h1>
+                  {/* RIGHT — SVG illustration */}
+                  <div className="pointer-events-none hidden shrink-0 lg:block">
+                    <svg
+                      width="220" height="180"
+                      viewBox="0 0 220 180"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="opacity-[0.55]"
+                    >
+                      {/* ── outer glow ring ── */}
+                      <circle cx="110" cy="90" r="82" stroke="#3b82f6" strokeWidth="0.6" strokeDasharray="4 6" opacity="0.25" />
+                      <circle cx="110" cy="90" r="66" stroke="#3b82f6" strokeWidth="0.5" strokeDasharray="2 8" opacity="0.15" />
 
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-                    Analyze PCAP files to reconstruct email sessions,
-                    evaluate TLS protection, detect exposed credentials,
-                    and identify protocol-level security weaknesses.
-                  </p>
+                      {/* ── envelope body ── */}
+                      <rect x="42" y="62" width="96" height="68" rx="7" fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.2" />
 
-                </div>
+                      {/* ── envelope flap ── */}
+                      <path d="M42 69l48 36 48-36" stroke="#93c5fd" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
 
-                <div className="hidden items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 lg:flex">
+                     {/* ── lock body ── */}
+<rect x="62" y="92" width="44" height="32" rx="6" fill="#dbeafe" stroke="#3b82f6" strokeWidth="1.4" />
 
-                  <Activity className="h-3.5 w-3.5 text-emerald-600" />
+{/* ── lock shackle ── */}
+<path d="M71 92v-10a13 13 0 0 1 26 0v10" stroke="#3b82f6" strokeWidth="1.8" strokeLinecap="round" fill="none" />
 
-                  <span className="text-[11px] font-medium text-slate-600">
-                    Analysis engine ready
-                  </span>
+{/* ── lock keyhole ── */}
+<circle cx="84" cy="106" r="4" fill="#3b82f6" opacity="0.6" />
+<rect x="82.5" y="109" width="3" height="6" rx="1.5" fill="#3b82f6" opacity="0.6" />
 
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                      {/* ── TLS badge top-right ── */}
+                      <rect x="138" y="48" width="36" height="18" rx="5" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
+                      <text x="156" y="61" textAnchor="middle" fontSize="7.5" fontWeight="700" fill="#2563eb" fontFamily="monospace">TLS</text>
+
+                      {/* ── scan lines ── */}
+                      <line x1="56" y1="115" x2="86" y2="115" stroke="#bfdbfe" strokeWidth="1" strokeLinecap="round" />
+                      <line x1="56" y1="121" x2="78" y2="121" stroke="#bfdbfe" strokeWidth="1" strokeLinecap="round" />
+                      <line x1="124" y1="115" x2="138" y2="115" stroke="#bfdbfe" strokeWidth="1" strokeLinecap="round" />
+
+                      {/* ── floating dots ── */}
+                      <circle cx="34" cy="54" r="3" fill="#bfdbfe" opacity="0.5" />
+                      <circle cx="186" cy="126" r="2.5" fill="#93c5fd" opacity="0.4" />
+                      <circle cx="172" cy="58" r="2" fill="#60a5fa" opacity="0.35" />
+                      <circle cx="44" cy="138" r="2" fill="#bfdbfe" opacity="0.4" />
+
+                      {/* ── signal arcs top-left ── */}
+                      <path d="M26 80 a18 18 0 0 1 0-20" stroke="#93c5fd" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.4" />
+                      <path d="M20 84 a26 26 0 0 1 0-28" stroke="#bfdbfe" strokeWidth="0.9" strokeLinecap="round" fill="none" opacity="0.3" />
+                    </svg>
+                  </div>
 
                 </div>
 
@@ -334,7 +403,7 @@ export default function Dashboard({ analysisHook }) {
 
                       <span className="h-1 w-1 rounded-full bg-slate-300" />
 
-                      <span className="flex items-center gap-1.5 text-[10px] font-semibold text-emerald-600">
+                      <span className="flex items-center gap-1.5 text-[10px] font-semibold text-yellow-600">
 
                         <CheckCircle2 className="h-3 w-3" />
 
@@ -442,7 +511,7 @@ export default function Dashboard({ analysisHook }) {
                     icon={Lightbulb}
                     label="Recommendations"
                     count={recommendationCount}
-                    countClass="text-emerald-700 bg-emerald-50 border-emerald-200"
+                    countClass="text-yellow-700 bg-yellow-50 border-yellow-200"
                   />
 
                 </div>

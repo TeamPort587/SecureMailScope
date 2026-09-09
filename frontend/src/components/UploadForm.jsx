@@ -204,7 +204,7 @@ export default function UploadForm({ onUpload, loading = false }) {
 
           {/* Security hint */}
           <div className="relative mt-5 flex items-center gap-1.5 text-[10px] font-medium text-slate-400">
-            <ShieldCheck className="h-3 w-3 text-emerald-600" />
+            <ShieldCheck className="h-3 w-3 text-yellow-600" />
             Capture is processed by the analysis engine
           </div>
         </div>
@@ -230,7 +230,7 @@ export default function UploadForm({ onUpload, loading = false }) {
                     {file.name}
                   </p>
 
-                  <span className="rounded-md border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-semibold text-emerald-700">
+                  <span className="rounded-md border border-yellow-200 bg-yellow-50 px-2 py-1 text-[10px] font-semibold text-yellow-700">
                     VALID
                   </span>
                 </div>
@@ -256,7 +256,7 @@ export default function UploadForm({ onUpload, loading = false }) {
                     •
                   </span>
 
-                  <span className="inline-flex items-center gap-1 text-emerald-700">
+                  <span className="inline-flex items-center gap-1 text-yellow-700">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     Ready for analysis
                   </span>

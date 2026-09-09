@@ -511,7 +511,7 @@ function SessionRow({
             className={`h-2 w-2 shrink-0 rounded-full ${
               isVulnerable
                 ? 'bg-red-500'
-                : 'bg-emerald-500'
+                : 'bg-yellow-500'
             }`}
           />
 
@@ -617,9 +617,9 @@ function SessionRow({
 
         {session.tls?.pfs === 'YES' ? (
 
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-emerald-700">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-yellow-700">
 
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
 
             Yes
 
@@ -660,11 +660,11 @@ function SessionRow({
 
         ) : (
 
-          <span className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 px-2.5 py-1.5">
 
-            <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+            <ShieldCheck className="h-3.5 w-3.5 text-yellow-600" />
 
-            <span className="text-[10px] font-semibold text-emerald-700">
+            <span className="text-[10px] font-semibold text-yellow-700">
               Protected
             </span>
 
@@ -729,7 +729,7 @@ function EncryptionBadge({
     normalized.includes('TLS')
   ) {
     classes =
-      'border-emerald-200 bg-emerald-50 text-emerald-700';
+      'border-yellow-200 bg-yellow-50 text-yellow-700';
   }
 
   return (

@@ -38,8 +38,8 @@ const SEVERITY_STYLES = {
 
   LOW: {
     badge:
-      'border-emerald-200 bg-emerald-50 text-emerald-700',
-    icon: 'text-emerald-600',
+      'border-yellow-200 bg-yellow-50 text-yellow-700',
+    icon: 'text-yellow-600',
   },
 
   INFO: {

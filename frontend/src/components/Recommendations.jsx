@@ -53,11 +53,11 @@ function SectionHeader() {
           flex h-8 w-8 shrink-0
           items-center justify-center
           rounded-lg
-          border border-emerald-200
-          bg-emerald-50
+          border border-yellow-200
+          bg-yellow-50
         "
       >
-        <Lightbulb className="h-4 w-4 text-emerald-600" />
+        <Lightbulb className="h-4 w-4 text-yellow-600" />
       </div>
 
       <div>
@@ -113,14 +113,14 @@ function RecommendationCard({ recommendation }) {
       actionLabel: 'text-amber-700',
     },
 
-    LOW: {
-      accent: 'bg-emerald-500',
-      tint: 'from-emerald-50/25 via-white to-white',
+      LOW: {
+      accent: 'bg-yellow-500',
+      tint: 'from-yellow-50/25 via-white to-white',
 
-      actionBg: 'bg-emerald-50/45',
-      actionBorder: 'border-emerald-200',
-      actionIcon: 'border-emerald-200 bg-white text-emerald-600',
-      actionLabel: 'text-emerald-700',
+      actionBg: 'bg-yellow-50/45',
+      actionBorder: 'border-yellow-200',
+      actionIcon: 'border-yellow-200 bg-white text-yellow-600',
+      actionLabel: 'text-yellow-700',
     },
 
     INFO: {

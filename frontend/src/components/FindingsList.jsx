@@ -127,7 +127,7 @@ export default function FindingsList({
 
 
         {findings.length === 0 && (
-          <span className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-medium text-emerald-700">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-700">
 
             <ShieldCheck className="h-3.5 w-3.5" />
 
@@ -344,7 +344,7 @@ function getFilterClasses(severity) {
       return 'border-amber-200 bg-amber-50 text-amber-700';
 
     case 'LOW':
-      return 'border-emerald-200 bg-emerald-50 text-emerald-700';
+      return 'border-yellow-200 bg-yellow-50 text-yellow-700';
 
     case 'INFO':
       return 'border-blue-200 bg-blue-50 text-blue-700';

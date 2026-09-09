@@ -36,11 +36,11 @@ export const SEVERITY_LEVELS = {
   LOW: {
     label: 'LOW',
     rank: 2,
-    bg: 'bg-emerald-500/15',
-    border: 'border-emerald-500/40',
-    text: 'text-emerald-400',
-    badge: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/40',
-    indicator: 'bg-emerald-500',
+    bg: 'bg-yellow-500/15',
+    border: 'border-yellow-500/40',
+    text: 'text-yellow-400',
+    badge: 'bg-yellow-500/25 text-yellow-200 border-yellow-500/40',
+    indicator: 'bg-yellow-500',
     description: 'Minor concern; connection meets standard baseline.',
   },
   INFO: {

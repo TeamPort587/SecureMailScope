@@ -43,7 +43,7 @@ export function formatTriState(value) {
   }
   const str = String(value).toUpperCase().trim();
   if (str === 'YES' || str === 'TRUE') {
-    return { text: 'YES', badgeClass: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/30' };
+    return { text: 'YES', badgeClass: 'bg-yellow-500/25 text-yellow-200 border-yellow-500/30' };
   }
   if (str === 'NO' || str === 'FALSE') {
     return { text: 'NO', badgeClass: 'bg-slate-800 text-slate-300 border-slate-700' };
@@ -66,7 +66,7 @@ export function formatEncryptionMode(mode) {
     case 'STARTTLS':
       return { label: 'STARTTLS', color: 'text-sky-400', badge: 'bg-sky-500/25 text-sky-200 border-sky-500/40' };
     case 'IMPLICIT_TLS':
-      return { label: 'IMPLICIT TLS', color: 'text-emerald-400', badge: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/40' };
+      return { label: 'IMPLICIT TLS', color: 'text-yellow-400', badge: 'bg-yellow-500/25 text-yellow-200 border-yellow-500/40' };
     case 'PLAINTEXT':
       return { label: 'PLAINTEXT', color: 'text-rose-400', badge: 'bg-rose-500/25 text-rose-200 border-rose-500/40' };
     default:

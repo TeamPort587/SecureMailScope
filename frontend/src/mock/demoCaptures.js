@@ -13,7 +13,7 @@ export const DEMO_PRESETS = [
     id: 'demo-secure',
     name: 'Demo 1: Clean & Modern TLS (Low Risk)',
     badge: 'LOW RISK',
-    badgeClass: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/30',
+    badgeClass: 'bg-yellow-500/25 text-yellow-200 border-yellow-500/30',
     description: 'Fully negotiated TLS 1.3 session with Forward Secrecy and valid certificates.',
     data: {
       analysis_id: "sec-7788-99aa-bbcc-445566778899",

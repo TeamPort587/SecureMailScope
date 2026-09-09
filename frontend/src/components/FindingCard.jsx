@@ -37,10 +37,10 @@ export default function FindingCard({ finding }) {
       border: "border-amber-200",
     },
     LOW: {
-      accent: "bg-emerald-500",
-      icon: "border-emerald-200 bg-emerald-50 text-emerald-600",
-      soft: "bg-emerald-50/50",
-      border: "border-emerald-200",
+      accent: "bg-yellow-500",
+      icon: "border-yellow-200 bg-yellow-50 text-yellow-600",
+      soft: "bg-yellow-50/50",
+      border: "border-yellow-200",
     },
     INFO: {
       accent: "bg-blue-500",
@@ -51,6 +51,10 @@ export default function FindingCard({ finding }) {
   };
 
   const style = severityStyles[severity] || severityStyles.INFO;
+
+  const evidenceCount = finding?.evidence
+  ? Object.keys(finding.evidence).length
+  : 0;
 
   return (
     <article
@@ -102,40 +106,72 @@ export default function FindingCard({ finding }) {
           {/* Evidence */}
           {finding?.evidence && (
             <button
-              type="button"
-              onClick={() => setShowEvidence(!showEvidence)}
-              aria-expanded={showEvidence}
-              className={`
-                hidden shrink-0
-                items-center gap-2
-                rounded-lg border
-                px-3 py-2
-                text-xs font-semibold
-                transition-all
-                sm:inline-flex
-                ${
-                  showEvidence
-                    ? `${style.border} ${style.soft} text-slate-800`
-                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
-                }
-              `}
-            >
-              <Terminal
-                className={`h-3.5 w-3.5 ${
-                  showEvidence ? "text-slate-700" : "text-slate-400"
-                }`}
-              />
+  type="button"
+  onClick={() => setShowEvidence(!showEvidence)}
+  aria-expanded={showEvidence}
+  className={`
+    hidden shrink-0
+    items-center gap-2.5
+    rounded-xl border
+    px-3.5 py-2.5
+    text-xs font-semibold
+    transition-all duration-200
+    sm:inline-flex
+    ${
+      showEvidence
+        ? 'border-blue-200 bg-blue-50 text-blue-700'
+        : `
+            border-slate-200
+            bg-white
+            text-slate-600
+            hover:border-blue-200
+            hover:bg-blue-50/50
+            hover:text-blue-700
+          `
+    }
+  `}
+>
+  <div
+    className={`
+      flex h-7 w-7 items-center justify-center
+      rounded-lg
+      ${
+        showEvidence
+          ? 'bg-blue-100'
+          : 'bg-slate-100'
+      }
+    `}
+  >
+    <Terminal
+      className={`
+        h-3.5 w-3.5
+        ${
+          showEvidence
+            ? 'text-blue-600'
+            : 'text-slate-500'
+        }
+      `}
+    />
+  </div>
 
-              <span>{showEvidence ? "Hide evidence" : "View evidence"}</span>
+  <div className="text-left">
+    <p className="leading-4">
+      {showEvidence ? 'Evidence visible' : 'View evidence'}
+    </p>
 
-              <span className="ml-0.5 flex h-5 w-5 items-center justify-center rounded-md bg-slate-50">
-                {showEvidence ? (
-                  <ChevronUp className="h-3 w-3 text-slate-500" />
-                ) : (
-                  <ChevronDown className="h-3 w-3 text-slate-500" />
-                )}
-              </span>
-            </button>
+    {!showEvidence && evidenceCount > 0 && (
+      <p className="mt-0.5 text-[10px] font-normal text-slate-400">
+        {evidenceCount} supporting attributes
+      </p>
+    )}
+  </div>
+
+  {showEvidence ? (
+    <ChevronUp className="ml-1 h-3.5 w-3.5 text-blue-500" />
+  ) : (
+    <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-400" />
+  )}
+</button>
           )}
         </div>
 
@@ -216,28 +252,34 @@ export default function FindingCard({ finding }) {
 
       {/* Evidence panel */}
       {showEvidence && (
-        <div className="border-t border-slate-100 bg-slate-50/40 p-5 sm:p-6">
-          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-            <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-3">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-50">
-                <Terminal className="h-3.5 w-3.5 text-slate-500" />
-              </div>
+  <div
+    className="
+      border-t border-slate-100
+      px-5 py-5
+      pl-6
+      sm:px-6
+      animate-in fade-in slide-in-from-top-1 duration-200
+    "
+  >
+    <div className="mb-3 flex items-center justify-between">
+      <div>
+        <p className="text-sm font-semibold text-slate-800">
+          Technical evidence
+        </p>
 
-              <div>
-                <p className="text-xs font-semibold text-slate-800">Evidence</p>
+        <p className="mt-0.5 text-[11px] text-slate-500">
+          Supporting attributes extracted during session inspection
+        </p>
+      </div>
 
-                <p className="mt-0.5 text-[10px] text-slate-500">
-                  Supporting traffic observed in the capture
-                </p>
-              </div>
-            </div>
+      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-medium text-slate-500">
+        {evidenceCount} attributes
+      </span>
+    </div>
 
-            <div className="p-4">
-              <EvidencePanel evidence={finding.evidence} />
-            </div>
-          </div>
-        </div>
-      )}
+    <EvidencePanel evidence={finding.evidence} />
+  </div>
+)}
     </article>
   );
 }

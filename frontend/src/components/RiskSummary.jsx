@@ -82,12 +82,12 @@ export default function RiskSummary({
       title: 'Strong security posture',
       description:
         'Strong transport protection was observed with modern TLS negotiation and appropriate cryptographic controls.',
-      accent: '#10b981',
-      soft: '#d1fae5',
-      border: '#a7f3d0',
-      text: '#047857',
+      accent: '#ca8a04',
+      soft: '#fef9c3',
+      border: '#fde047',
+      text: '#a16207',
       panel:
-        'border-emerald-200 bg-gradient-to-br from-emerald-50/70 via-white to-white',
+        'border-yellow-200 bg-gradient-to-br from-yellow-50/70 via-white to-white',
     },
 
     INFO: {
@@ -424,8 +424,8 @@ export default function RiskSummary({
 
               <div className="flex items-center gap-3">
 
-                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-emerald-100 bg-emerald-50">
-                  <LockKeyhole className="h-4 w-4 text-emerald-600" />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-yellow-100 bg-yellow-50">
+                  <LockKeyhole className="h-4 w-4 text-yellow-600" />
                 </div>
 
                 <div>
@@ -631,9 +631,9 @@ function EncryptionCard({
 
     green: {
       wrapper:
-        'border-emerald-200 bg-emerald-50/40',
-      dot: 'bg-emerald-500',
-      label: 'text-emerald-700',
+        'border-yellow-200 bg-yellow-50/40',
+      dot: 'bg-yellow-500',
+      label: 'text-yellow-700',
       value: 'text-slate-900',
     },
 
@@ -710,9 +710,8 @@ function MetadataItem({
       <span>{label}</span>
 
       <strong
-        className={`max-w-[200px] truncate font-medium text-slate-700 ${
-          mono ? 'font-mono' : ''
-        }`}
+        className={`max-w-[200px] truncate font-medium text-slate-700 ${mono ? 'font-mono' : ''
+          }`}
         title={value}
       >
         {value}
