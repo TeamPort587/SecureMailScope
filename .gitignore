@@ -111,9 +111,23 @@ out/
 *.dmp
 
 # --- Raw & Generated Datasets ---
-# Ignore dataset files while keeping data/ directory tracked via .gitkeep
+# Ignore dataset files while keeping data/ directory structure tracked
 data/*
 !data/.gitkeep
+!data/README.md
+!data/raw/
+data/raw/*
+!data/raw/.gitkeep
+!data/curated/
+data/curated/*
+!data/curated/.gitkeep
+!data/processed/
+data/processed/*
+!data/processed/.gitkeep
+!data/labels/
+data/labels/*
+!data/labels/.gitkeep
+!data/labels/README.md
 *.parquet
 *.arrow
 *.feather
