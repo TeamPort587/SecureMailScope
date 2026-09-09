@@ -1,21 +1,25 @@
 """
-Independent Challenge Dataset Generator
-=======================================
+Independent Challenge Dataset Generator — Boundary & Adversarial Engine
+========================================================================
 
-Generates 300–500 out-of-distribution, boundary, and rare email security
-feature combinations to rigorously evaluate model generalization.
+Generates out-of-distribution, boundary, and rare email security feature combinations
+via independent parameter space exploration and adversarial-but-valid probing.
 
-Properties:
-- Uses independent scenario logic not present in the main training templates.
-- Includes complex boundary cases, unusual protocol distributions, and high-NaN captures.
+Key Architecture:
+- Does NOT reuse training scenario family templates.
+- Employs 4 distinct exploration strategies:
+  1. BOUNDARY_SEARCH: Probes decision boundaries across all adjacent risk classes.
+  2. PARTIAL_CAPTURE_SIMULATION: Stresses missing evidence (high NaN) in TLS handshakes.
+  3. RARE_INTERACTION_EXPLORATION: Samples uncommon but RFC-valid protocol/cipher pairings.
+  4. ADVERSARIAL_VALID_PROBING: Decouples finding counts from features within valid domain limits.
 - Tagged with metadata ``data_source = CHALLENGE_SYNTHETIC``.
-- Strictly isolated: NEVER used during model fitting or validation selection.
-- All rows are derived through the Canonical Risk Aggregator and validated against domain constraints.
+- Ground-truth risk labels derived strictly via `calculate_session_risk`.
+- Validated via `validate_feature_row`.
 
 CLI Usage::
 
     python -m ml.training.challenge_generator \\
-        --samples 400 \\
+        --samples 500 \\
         --random-state 1337 \\
         --output data/processed/challenge.csv
 """
@@ -25,7 +29,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -35,71 +39,167 @@ from ml.risk.risk_aggregator import calculate_session_risk
 from ml.training.dataset_validator import validate_feature_row
 
 
-CHALLENGE_FAMILIES = [
-    # ── Boundary & Rare Low/Medium ───────────────────────────────────
-    "CHALLENGE_LOW_IMPLICIT_HIGH_NAN_BENIGN",
-    "CHALLENGE_LOW_POP3_UNUSUAL_PORT_CLEAN",
-    "CHALLENGE_MED_TLS13_SELF_SIGNED_ISOLATED",
-    "CHALLENGE_MED_PARTIAL_CAPTURE_PFS_MISSING",
-    "CHALLENGE_MED_STARTTLS_MULTIPLE_LOW_FINDINGS",
+CHALLENGE_EXPLORATION_MODES = [
+    # ── 1. Boundary Search Modes ──
+    "CHALLENGE_BOUNDARY_LOW_MED_CERT_VISIBILITY",
+    "CHALLENGE_BOUNDARY_LOW_MED_MIN_FINDINGS",
+    "CHALLENGE_BOUNDARY_MED_HIGH_COMPOUNDING_MODERATE",
+    "CHALLENGE_BOUNDARY_MED_HIGH_ISOLATED_WEAK_KEY",
+    "CHALLENGE_BOUNDARY_HIGH_CRIT_ZERO_CRIT_PLAINTEXT",
+    "CHALLENGE_BOUNDARY_HIGH_CRIT_EARLY_AUTH_WITH_TLS13",
+    "CHALLENGE_BOUNDARY_HIGH_CRIT_STARTTLS_FAIL_COMPOUNDING",
 
-    # ── Boundary & Rare Medium/High ──────────────────────────────────
-    "CHALLENGE_HIGH_COMPOUNDING_MED_WEAKNESSES",
-    "CHALLENGE_HIGH_RARE_POP3_DEPRECATED_TLS",
-    "CHALLENGE_HIGH_NOT_YET_VALID_PARTIAL_CERT",
-    "CHALLENGE_HIGH_WEAK_CIPHER_WITH_PFS",
-    "CHALLENGE_HIGH_FAILED_STARTTLS_POP3",
+    # ── 2. Partial Capture Simulation Modes ──
+    "CHALLENGE_PARTIAL_CAPTURE_UNOBSERVED_CERT_POP3",
+    "CHALLENGE_PARTIAL_CAPTURE_UNOBSERVED_CERT_IMAP",
+    "CHALLENGE_PARTIAL_CAPTURE_STARTTLS_NEGOTIATION_TRUNCATED",
+    "CHALLENGE_PARTIAL_CAPTURE_IMPLICIT_HIGH_NAN_CLEAN",
 
-    # ── Boundary & Rare High/Critical ────────────────────────────────
-    "CHALLENGE_CRIT_PLAINTEXT_HIGH_FINDINGS_NO_CRIT_COUNT",
-    "CHALLENGE_CRIT_COMPOUNDING_MAJOR_FAILURES_NO_CRIT",
-    "CHALLENGE_CRIT_EARLY_AUTH_WITH_EXPIRED_CERT",
-    "CHALLENGE_CRIT_STARTTLS_DOWNGRADE_AND_FAIL",
-    "CHALLENGE_CRIT_PLAINTEXT_POP3_MINIMAL_CAPTURE",
+    # ── 3. Rare Interaction Exploration ──
+    "CHALLENGE_RARE_POP3_STARTTLS_LEGACY_CIPHER",
+    "CHALLENGE_RARE_IMAP_DEPRECATED_TLS_WITH_PFS",
+    "CHALLENGE_RARE_SMTP_WEAK_CIPHER_WITH_CLEAN_CERT",
+    "CHALLENGE_RARE_NOT_YET_VALID_CERT_ISOLATED",
+    "CHALLENGE_RARE_POP3_PLAINTEXT_HIGH_ACTIVITY",
+
+    # ── 4. Adversarial Valid Probing ──
+    "CHALLENGE_ADVERSARIAL_MULTIPLE_HIGH_NO_CRIT_LABEL",
+    "CHALLENGE_ADVERSARIAL_CRITICAL_WITH_ZERO_FINDINGS",
+    "CHALLENGE_ADVERSARIAL_HIGH_WITH_ZERO_HIGH_COUNT",
+    "CHALLENGE_ADVERSARIAL_MED_WITH_HIGH_LOW_COUNT",
 ]
 
 
-def generate_challenge_row(
-    family: str,
+def _explore_challenge_state(
+    mode: str,
     rng: np.random.Generator,
 ) -> Dict[str, Any]:
-    """Generate a single challenge session featuring novel or boundary conditions."""
+    """Construct an out-of-distribution feature state based on the exploration mode."""
     row: Dict[str, Any] = {f: np.nan for f in ALL_FEATURES}
 
-    # Protocol sampling: challenge set deliberately stresses POP3 and IMAP
-    proto = str(rng.choice(["SMTP", "IMAP", "POP3"], p=[0.30, 0.35, 0.35]))
+    # Challenge set stresses POP3 (40%) and IMAP (35%) over SMTP (25%)
+    if "POP3" in mode:
+        proto = "POP3"
+    elif "IMAP" in mode:
+        proto = "IMAP"
+    elif "SMTP" in mode:
+        proto = "SMTP"
+    else:
+        proto = str(rng.choice(["POP3", "IMAP", "SMTP"], p=[0.40, 0.35, 0.25]))
+
     row["protocol_smtp"] = 1.0 if proto == "SMTP" else 0.0
     row["protocol_imap"] = 1.0 if proto == "IMAP" else 0.0
     row["protocol_pop3"] = 1.0 if proto == "POP3" else 0.0
 
-    crit_cnt = 0
-    high_cnt = 0
-    med_cnt = 0
-    low_cnt = 0
-
-    if family == "CHALLENGE_LOW_IMPLICIT_HIGH_NAN_BENIGN":
-        # Implicit TLS with unobservable cert, zero findings
+    # ── 1. Boundary Search Modes ──
+    if mode == "CHALLENGE_BOUNDARY_LOW_MED_CERT_VISIBILITY":
+        # Tests boundary where unobservable cert + low_count = 1 -> LOW, but low_count >= 2 -> MEDIUM
+        is_implicit = bool(rng.choice([True, False]))
         row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 0.0
-        row["encryption_implicit"] = 1.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
         row["tls_upgrade_failed"] = 0.0
         row["auth_before_tls"] = 0.0
         row["deprecated_tls"] = 0.0
         row["weak_cipher"] = 0.0
         row["pfs_missing"] = 0.0
-        # Cert entirely unobservable (high NaN)
+        # Cert unobservable (NaN)
         row["expired_cert"] = np.nan
         row["not_yet_valid_cert"] = np.nan
         row["weak_key"] = np.nan
         row["self_signed"] = np.nan
-        low_cnt = 0
+        # Boundary trigger: low_count determines whether LOW (1) or MEDIUM (2)
+        row["low_count"] = int(rng.choice([1, 2], p=[0.5, 0.5]))
+        row["medium_count"] = 0
+        row["high_count"] = 0
+        row["critical_count"] = 0
 
-    elif family == "CHALLENGE_LOW_POP3_UNUSUAL_PORT_CLEAN":
+    elif mode == "CHALLENGE_BOUNDARY_LOW_MED_MIN_FINDINGS":
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 0.0
+        row["weak_cipher"] = 0.0
+        row["pfs_missing"] = 0.0
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 0.0
+        row["self_signed"] = float(rng.choice([0.0, 1.0], p=[0.5, 0.5]))
+        row["low_count"] = int(rng.choice([1, 2, 3]))
+        row["medium_count"] = 1 if row["self_signed"] == 1.0 else 0
+        row["high_count"] = 0
+        row["critical_count"] = 0
+
+    elif mode == "CHALLENGE_BOUNDARY_MED_HIGH_COMPOUNDING_MODERATE":
+        # Tests compounding moderate flaws: self_signed + pfs_missing + med_cnt >= 2 -> HIGH
+        # vs self_signed + pfs_missing + med_cnt = 1 -> MEDIUM
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 0.0
+        row["weak_cipher"] = 0.0
+        row["pfs_missing"] = 1.0
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 0.0
+        row["self_signed"] = 1.0
+        row["critical_count"] = 0
+        row["high_count"] = 0
+        # Boundary trigger: med_cnt >= 2 escalates to HIGH, med_cnt == 1 stays MEDIUM
+        row["medium_count"] = int(rng.choice([1, 2, 3], p=[0.35, 0.45, 0.20]))
+        row["low_count"] = int(rng.choice([0, 1, 2]))
+
+    elif mode == "CHALLENGE_BOUNDARY_MED_HIGH_ISOLATED_WEAK_KEY":
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 0.0
+        row["weak_cipher"] = 0.0
+        row["pfs_missing"] = float(rng.choice([0.0, 1.0]))
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 1.0
+        row["self_signed"] = float(rng.choice([0.0, 1.0], p=[0.7, 0.3]))
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([0, 1], p=[0.3, 0.7]))
+        row["medium_count"] = int(rng.choice([0, 1, 2]))
+        row["low_count"] = int(rng.choice([0, 1]))
+
+    elif mode == "CHALLENGE_BOUNDARY_HIGH_CRIT_ZERO_CRIT_PLAINTEXT":
+        # Plaintext with zero critical findings -> CRITICAL via plaintext exposure rule
+        row["encryption_plaintext"] = 1.0
+        row["encryption_starttls"] = 0.0
+        row["encryption_implicit"] = 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = float(rng.choice([0.0, 1.0], p=[0.5, 0.5]))
+        row["deprecated_tls"] = np.nan
+        row["weak_cipher"] = np.nan
+        row["pfs_missing"] = np.nan
+        row["expired_cert"] = np.nan
+        row["not_yet_valid_cert"] = np.nan
+        row["weak_key"] = np.nan
+        row["self_signed"] = np.nan
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([0, 1, 2], p=[0.5, 0.35, 0.15]))
+        row["medium_count"] = int(rng.choice([0, 1, 2]))
+        row["low_count"] = int(rng.choice([0, 1]))
+
+    elif mode == "CHALLENGE_BOUNDARY_HIGH_CRIT_EARLY_AUTH_WITH_TLS13":
+        # Modern TLS negotiated, but auth transmitted before STARTTLS -> CRITICAL
         row["encryption_plaintext"] = 0.0
         row["encryption_starttls"] = 1.0
         row["encryption_implicit"] = 0.0
         row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 0.0
+        row["auth_before_tls"] = 1.0
         row["deprecated_tls"] = 0.0
         row["weak_cipher"] = 0.0
         row["pfs_missing"] = 0.0
@@ -107,135 +207,131 @@ def generate_challenge_row(
         row["not_yet_valid_cert"] = 0.0
         row["weak_key"] = 0.0
         row["self_signed"] = 0.0
-        low_cnt = int(rng.choice([1, 2]))
+        row["critical_count"] = int(rng.choice([0, 1, 2], p=[0.4, 0.4, 0.2]))
+        row["high_count"] = int(rng.choice([0, 1]))
+        row["medium_count"] = 0
+        row["low_count"] = 0
 
-    elif family == "CHALLENGE_MED_TLS13_SELF_SIGNED_ISOLATED":
-        # TLS 1.3 with isolated self-signed cert
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = float(rng.choice([0.0, 1.0]))
-        row["encryption_implicit"] = 1.0 - row["encryption_starttls"]
-        row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 0.0
-        row["deprecated_tls"] = 0.0
-        row["weak_cipher"] = 0.0
-        row["pfs_missing"] = 0.0
-        row["expired_cert"] = 0.0
-        row["not_yet_valid_cert"] = 0.0
-        row["weak_key"] = 0.0
-        row["self_signed"] = 1.0
-        med_cnt = 1
-        low_cnt = 0
-
-    elif family == "CHALLENGE_MED_PARTIAL_CAPTURE_PFS_MISSING":
+    elif mode == "CHALLENGE_BOUNDARY_HIGH_CRIT_STARTTLS_FAIL_COMPOUNDING":
+        # STARTTLS upgrade failed combined with weak cipher / deprecated TLS -> CRITICAL
         row["encryption_plaintext"] = 0.0
         row["encryption_starttls"] = 1.0
         row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 0.0
+        row["tls_upgrade_failed"] = 1.0
         row["auth_before_tls"] = 0.0
-        row["deprecated_tls"] = 0.0
-        row["weak_cipher"] = 0.0
-        row["pfs_missing"] = 1.0
+        row["deprecated_tls"] = float(rng.choice([0.0, 1.0], p=[0.5, 0.5]))
+        row["weak_cipher"] = 1.0 if row["deprecated_tls"] == 0.0 else float(rng.choice([0.0, 1.0]))
+        row["pfs_missing"] = np.nan
         row["expired_cert"] = np.nan
         row["not_yet_valid_cert"] = np.nan
         row["weak_key"] = np.nan
         row["self_signed"] = np.nan
-        med_cnt = 1
-        low_cnt = 1
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([1, 2, 3]))
+        row["medium_count"] = int(rng.choice([0, 1]))
+        row["low_count"] = 0
 
-    elif family == "CHALLENGE_MED_STARTTLS_MULTIPLE_LOW_FINDINGS":
+    # ── 2. Partial Capture Simulation Modes ──
+    elif "PARTIAL_CAPTURE" in mode:
+        is_implicit = ("IMPLICIT" in mode)
         row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 1.0 if "TRUNCATED" in mode else 0.0
         row["auth_before_tls"] = 0.0
         row["deprecated_tls"] = 0.0
         row["weak_cipher"] = 0.0
-        row["pfs_missing"] = 0.0
+        row["pfs_missing"] = float(rng.choice([0.0, 1.0]))
         row["expired_cert"] = np.nan
         row["not_yet_valid_cert"] = np.nan
         row["weak_key"] = np.nan
         row["self_signed"] = np.nan
-        low_cnt = 3
-        med_cnt = 0
+        row["critical_count"] = 0
+        row["high_count"] = 1 if row["tls_upgrade_failed"] == 1.0 else 0
+        row["medium_count"] = 1 if row["pfs_missing"] == 1.0 else 0
+        row["low_count"] = int(rng.choice([0, 1]))
 
-    elif family == "CHALLENGE_HIGH_COMPOUNDING_MED_WEAKNESSES":
-        # Compounding moderate weaknesses (self-signed + missing PFS) with zero high findings
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = float(rng.choice([0.0, 1.0]))
-        row["encryption_implicit"] = 1.0 - row["encryption_starttls"]
-        row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 0.0
-        row["deprecated_tls"] = 0.0
-        row["weak_cipher"] = 0.0
-        row["expired_cert"] = 0.0
-        row["not_yet_valid_cert"] = 0.0
-        row["weak_key"] = 0.0
-        row["self_signed"] = 1.0
-        row["pfs_missing"] = 1.0
-        high_cnt = 0  # High risk via compounding!
-        med_cnt = 2
-        low_cnt = 1
-
-    elif family == "CHALLENGE_HIGH_RARE_POP3_DEPRECATED_TLS":
-        row["protocol_pop3"] = 1.0
-        row["protocol_smtp"] = 0.0
-        row["protocol_imap"] = 0.0
+    # ── 3. Rare Interaction Exploration ──
+    elif mode == "CHALLENGE_RARE_POP3_STARTTLS_LEGACY_CIPHER":
         row["encryption_plaintext"] = 0.0
         row["encryption_starttls"] = 1.0
         row["encryption_implicit"] = 0.0
         row["tls_upgrade_failed"] = 0.0
         row["auth_before_tls"] = 0.0
         row["deprecated_tls"] = 1.0
+        row["weak_cipher"] = 1.0
+        row["pfs_missing"] = 1.0
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = float(rng.choice([0.0, 1.0], p=[0.7, 0.3]))
+        row["self_signed"] = float(rng.choice([0.0, 1.0], p=[0.6, 0.4]))
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([1, 2, 3]))
+        row["medium_count"] = int(rng.choice([0, 1, 2]))
+        row["low_count"] = 0
+
+    elif mode == "CHALLENGE_RARE_IMAP_DEPRECATED_TLS_WITH_PFS":
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 1.0
         row["weak_cipher"] = 0.0
-        row["pfs_missing"] = 0.0
+        row["pfs_missing"] = 0.0  # Rare: TLS 1.0/1.1 with ECDHE
         row["expired_cert"] = 0.0
         row["not_yet_valid_cert"] = 0.0
         row["weak_key"] = 0.0
         row["self_signed"] = 0.0
-        high_cnt = 1
-        med_cnt = 0
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([0, 1, 2], p=[0.25, 0.65, 0.10]))
+        row["medium_count"] = int(rng.choice([0, 1]))
+        row["low_count"] = int(rng.choice([0, 1]))
 
-    elif family == "CHALLENGE_HIGH_NOT_YET_VALID_PARTIAL_CERT":
+    elif mode == "CHALLENGE_RARE_SMTP_WEAK_CIPHER_WITH_CLEAN_CERT":
         row["encryption_plaintext"] = 0.0
         row["encryption_starttls"] = 1.0
         row["encryption_implicit"] = 0.0
         row["tls_upgrade_failed"] = 0.0
         row["auth_before_tls"] = 0.0
         row["deprecated_tls"] = 0.0
+        row["weak_cipher"] = 1.0
+        row["pfs_missing"] = float(rng.choice([0.0, 1.0]))
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 0.0
+        row["self_signed"] = 0.0
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([0, 1], p=[0.25, 0.75]))
+        row["medium_count"] = int(rng.choice([0, 1]))
+        row["low_count"] = int(rng.choice([0, 1]))
+
+    elif mode == "CHALLENGE_RARE_NOT_YET_VALID_CERT_ISOLATED":
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 0.0
         row["weak_cipher"] = 0.0
-        row["pfs_missing"] = np.nan
+        row["pfs_missing"] = 0.0
         row["expired_cert"] = 0.0
         row["not_yet_valid_cert"] = 1.0
-        row["weak_key"] = np.nan
-        row["self_signed"] = 0.0
-        high_cnt = 1
-
-    elif family == "CHALLENGE_HIGH_WEAK_CIPHER_WITH_PFS":
-        # Rare state: weak cipher negotiated despite PFS support
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 0.0
-        row["deprecated_tls"] = 0.0
-        row["weak_cipher"] = 1.0
-        row["pfs_missing"] = 0.0
-        row["expired_cert"] = 0.0
-        row["not_yet_valid_cert"] = 0.0
         row["weak_key"] = 0.0
         row["self_signed"] = 0.0
-        high_cnt = 1
-        med_cnt = 1
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([0, 1], p=[0.3, 0.7]))
+        row["medium_count"] = int(rng.choice([0, 1]))
+        row["low_count"] = 0
 
-    elif family == "CHALLENGE_HIGH_FAILED_STARTTLS_POP3":
-        row["protocol_pop3"] = 1.0
-        row["protocol_smtp"] = 0.0
-        row["protocol_imap"] = 0.0
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
+    elif mode == "CHALLENGE_RARE_POP3_PLAINTEXT_HIGH_ACTIVITY":
+        row["encryption_plaintext"] = 1.0
+        row["encryption_starttls"] = 0.0
         row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 1.0
-        row["auth_before_tls"] = 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 1.0
         row["deprecated_tls"] = np.nan
         row["weak_cipher"] = np.nan
         row["pfs_missing"] = np.nan
@@ -243,10 +339,34 @@ def generate_challenge_row(
         row["not_yet_valid_cert"] = np.nan
         row["weak_key"] = np.nan
         row["self_signed"] = np.nan
-        high_cnt = 1
+        row["critical_count"] = int(rng.choice([1, 2, 3], p=[0.5, 0.35, 0.15]))
+        row["high_count"] = int(rng.choice([1, 2]))
+        row["medium_count"] = 1
+        row["low_count"] = 1
 
-    elif family == "CHALLENGE_CRIT_PLAINTEXT_HIGH_FINDINGS_NO_CRIT_COUNT":
-        # Plaintext session with high_count = 2, critical_count = 0 -> Still CRITICAL!
+    # ── 4. Adversarial Valid Probing ──
+    elif mode == "CHALLENGE_ADVERSARIAL_MULTIPLE_HIGH_NO_CRIT_LABEL":
+        # 3 high findings on a deprecated TLS session, but no compounding into CRITICAL -> HIGH
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 1.0
+        row["weak_cipher"] = 0.0
+        row["pfs_missing"] = 0.0
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 0.0
+        row["self_signed"] = 0.0
+        row["critical_count"] = 0
+        row["high_count"] = int(rng.choice([2, 3]))
+        row["medium_count"] = int(rng.choice([1, 2]))
+        row["low_count"] = int(rng.choice([1, 2]))
+
+    elif mode == "CHALLENGE_ADVERSARIAL_CRITICAL_WITH_ZERO_FINDINGS":
+        # Plaintext session with ZERO findings across all severities -> CRITICAL
         row["encryption_plaintext"] = 1.0
         row["encryption_starttls"] = 0.0
         row["encryption_implicit"] = 0.0
@@ -259,124 +379,98 @@ def generate_challenge_row(
         row["not_yet_valid_cert"] = np.nan
         row["weak_key"] = np.nan
         row["self_signed"] = np.nan
-        crit_cnt = 0  # CRITICAL with zero critical findings!
-        high_cnt = 2
-        med_cnt = 1
+        row["critical_count"] = 0
+        row["high_count"] = 0
+        row["medium_count"] = 0
+        row["low_count"] = 0
 
-    elif family == "CHALLENGE_CRIT_COMPOUNDING_MAJOR_FAILURES_NO_CRIT":
-        # STARTTLS upgrade failed + weak cipher + deprecated TLS (compounding critical)
+    elif mode == "CHALLENGE_ADVERSARIAL_HIGH_WITH_ZERO_HIGH_COUNT":
+        # Deprecated TLS session with zero high findings -> HIGH
+        is_implicit = bool(rng.choice([True, False]))
         row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 1.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
         row["auth_before_tls"] = 0.0
         row["deprecated_tls"] = 1.0
-        row["weak_cipher"] = 1.0
+        row["weak_cipher"] = 0.0
+        row["pfs_missing"] = 0.0
+        row["expired_cert"] = 0.0
+        row["not_yet_valid_cert"] = 0.0
+        row["weak_key"] = 0.0
+        row["self_signed"] = 0.0
+        row["critical_count"] = 0
+        row["high_count"] = 0
+        row["medium_count"] = int(rng.choice([1, 2]))
+        row["low_count"] = int(rng.choice([0, 1]))
+
+    else:  # CHALLENGE_ADVERSARIAL_MED_WITH_HIGH_LOW_COUNT
+        is_implicit = bool(rng.choice([True, False]))
+        row["encryption_plaintext"] = 0.0
+        row["encryption_starttls"] = 0.0 if is_implicit else 1.0
+        row["encryption_implicit"] = 1.0 if is_implicit else 0.0
+        row["tls_upgrade_failed"] = 0.0
+        row["auth_before_tls"] = 0.0
+        row["deprecated_tls"] = 0.0
+        row["weak_cipher"] = 0.0
         row["pfs_missing"] = 1.0
         row["expired_cert"] = 0.0
         row["not_yet_valid_cert"] = 0.0
         row["weak_key"] = 0.0
         row["self_signed"] = 0.0
-        crit_cnt = 0  # CRITICAL with zero critical findings!
-        high_cnt = 3
-        med_cnt = 1
-
-    elif family == "CHALLENGE_CRIT_EARLY_AUTH_WITH_EXPIRED_CERT":
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 1.0
-        row["deprecated_tls"] = 0.0
-        row["weak_cipher"] = 0.0
-        row["pfs_missing"] = 0.0
-        row["expired_cert"] = 1.0
-        row["not_yet_valid_cert"] = 0.0
-        row["weak_key"] = 0.0
-        row["self_signed"] = 0.0
-        crit_cnt = 1
-        high_cnt = 1
-
-    elif family == "CHALLENGE_CRIT_STARTTLS_DOWNGRADE_AND_FAIL":
-        row["encryption_plaintext"] = 0.0
-        row["encryption_starttls"] = 1.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 1.0
-        row["auth_before_tls"] = 1.0
-        row["deprecated_tls"] = np.nan
-        row["weak_cipher"] = np.nan
-        row["pfs_missing"] = np.nan
-        row["expired_cert"] = np.nan
-        row["not_yet_valid_cert"] = np.nan
-        row["weak_key"] = np.nan
-        row["self_signed"] = np.nan
-        crit_cnt = 1
-        high_cnt = 1
-
-    else:  # CHALLENGE_CRIT_PLAINTEXT_POP3_MINIMAL_CAPTURE
-        row["protocol_pop3"] = 1.0
-        row["protocol_smtp"] = 0.0
-        row["protocol_imap"] = 0.0
-        row["encryption_plaintext"] = 1.0
-        row["encryption_starttls"] = 0.0
-        row["encryption_implicit"] = 0.0
-        row["tls_upgrade_failed"] = 0.0
-        row["auth_before_tls"] = 1.0
-        row["deprecated_tls"] = np.nan
-        row["weak_cipher"] = np.nan
-        row["pfs_missing"] = np.nan
-        row["expired_cert"] = np.nan
-        row["not_yet_valid_cert"] = np.nan
-        row["weak_key"] = np.nan
-        row["self_signed"] = np.nan
-        crit_cnt = 1
-        low_cnt = 1
-
-    row["critical_count"] = crit_cnt
-    row["high_count"] = high_cnt
-    row["medium_count"] = med_cnt
-    row["low_count"] = low_cnt
+        row["critical_count"] = 0
+        row["high_count"] = 0
+        row["medium_count"] = 0  # Missing PFS but zero medium findings
+        row["low_count"] = int(rng.choice([3, 4]))
 
     return row
 
 
 def generate_challenge_dataset(
-    n_samples: int = 400,
+    n_samples: int = 500,
     random_state: int = 1337,
 ) -> pd.DataFrame:
-    """Generate the independent challenge dataset."""
+    """Generate an independent, boundary-focused challenge dataset."""
     rng = np.random.default_rng(random_state)
     rows: List[Dict[str, Any]] = []
 
-    samples_per_family = max(1, n_samples // len(CHALLENGE_FAMILIES))
-    count = 0
+    mode_idx = 0
+    attempts = 0
+    max_attempts = n_samples * 20
 
-    for family in CHALLENGE_FAMILIES:
-        for _ in range(samples_per_family):
-            candidate = generate_challenge_row(family, rng)
-            derived_label, _ = calculate_session_risk(candidate)
-            candidate["risk_label"] = derived_label
+    while len(rows) < n_samples and attempts < max_attempts:
+        attempts += 1
+        mode = CHALLENGE_EXPLORATION_MODES[mode_idx % len(CHALLENGE_EXPLORATION_MODES)]
+        mode_idx += 1
 
-            is_valid, errors = validate_feature_row(candidate)
-            if not is_valid:
-                continue
+        candidate = _explore_challenge_state(mode, rng)
 
-            count += 1
-            proto_name = "smtp" if candidate["protocol_smtp"] == 1 else (
-                "imap" if candidate["protocol_imap"] == 1 else "pop3"
-            )
+        # 1. Canonical Risk Aggregator derives risk label
+        derived_label, reasons = calculate_session_risk(candidate)
+        candidate["risk_label"] = derived_label
 
-            full_row: Dict[str, Any] = {
-                "analysis_id": f"challenge-{count // 4 + 1:04d}",
-                "session_id": f"{proto_name}-ch-{count:05d}",
-                "scenario_id": f"{family}-{count:04d}",
-                "scenario_family": family,
-                "data_source": "CHALLENGE_SYNTHETIC",
-            }
-            for feat in ALL_FEATURES:
-                full_row[feat] = candidate[feat]
-            full_row["risk_label"] = derived_label
-            rows.append(full_row)
+        # 2. Validate against domain constraints
+        is_valid, errors = validate_feature_row(candidate)
+        if not is_valid:
+            continue
+
+        sample_idx = len(rows) + 1
+        proto_name = "smtp" if candidate["protocol_smtp"] == 1 else (
+            "imap" if candidate["protocol_imap"] == 1 else "pop3"
+        )
+
+        full_row: Dict[str, Any] = {
+            "analysis_id": f"challenge-{sample_idx // 4 + 1:04d}",
+            "session_id": f"chal-{proto_name}-{sample_idx:05d}",
+            "scenario_id": f"{mode}-{sample_idx:04d}",
+            "scenario_family": mode,
+            "data_source": "CHALLENGE_SYNTHETIC",
+        }
+        for feat in ALL_FEATURES:
+            full_row[feat] = candidate[feat]
+        full_row["risk_label"] = derived_label
+
+        rows.append(full_row)
 
     df = pd.DataFrame(rows)
     metadata_cols = ["analysis_id", "session_id", "scenario_id", "scenario_family", "data_source"]
@@ -385,16 +479,18 @@ def generate_challenge_dataset(
 
 
 def main(argv: List[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Generate independent challenge dataset.")
-    parser.add_argument("--samples", type=int, default=400, help="Number of challenge samples.")
+    parser = argparse.ArgumentParser(
+        description="Generate independent challenge dataset for SecureMailScope."
+    )
+    parser.add_argument("--samples", type=int, default=500, help="Number of challenge samples.")
     parser.add_argument("--random-state", type=int, default=1337, help="Random seed.")
-    parser.add_argument("--output", default="data/processed/challenge.csv", help="Output path.")
+    parser.add_argument("--output", default="data/processed/challenge.csv", help="Output CSV path.")
     args = parser.parse_args(argv)
 
-    print(f"Generating {args.samples} independent challenge samples (seed={args.random_state})...")
+    print(f"Generating {args.samples} independent challenge samples...")
     df = generate_challenge_dataset(args.samples, args.random_state)
 
-    print(f"  Generated {len(df)} challenge rows.")
+    print(f"  Generated {len(df)} challenge samples.")
     print("  Class distribution:")
     for label, count in df["risk_label"].value_counts().items():
         print(f"    {label}: {count}")
