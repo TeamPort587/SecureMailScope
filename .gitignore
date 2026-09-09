@@ -136,8 +136,10 @@ data/labels/*
 *.pkl
 *.pickle
 
-# --- ML Model Artifacts ---
-# Ignore trained models and evaluation outputs, keep directory structure
-ml/artifacts/*
-!ml/artifacts/.gitkeep
-*.joblib
+# VM1, VM2 & VM3 Traffic Generator deployment staging & local helper
+ssh_vm2.py
+vm1_deploy/
+vm2_deploy/
+vm3_deploy/
+captures/
+

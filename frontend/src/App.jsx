@@ -9,15 +9,20 @@ import Analysis from './pages/Analysis';
 import AnalysisOverview from './pages/AnalysisOverview';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
+<<<<<<< HEAD
 
 import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 
+=======
+import AuthModal from './components/AuthModal';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+>>>>>>> fa4deee23e3439463fa2e7a7defb47a88ada3fbd
 import { useAnalysis } from './hooks/useAnalysis';
 
-export default function App() {
-
+function AppContent() {
   const analysisHook = useAnalysis();
   const navigate = useNavigate();
     const { logout, user } = useAuth();
@@ -36,8 +41,19 @@ export default function App() {
   };
 
   return (
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-brand-500 selection:text-white">
+      {/* Shell Header */}
+      <Navbar onSelectPreset={handleSelectPreset} />
 
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Main Content Area */}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Dashboard analysisHook={analysisHook} />} />
+          <Route path="/analysis/:id" element={<Analysis />} />
+          <Route path="/history" element={<History />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
 
       {/* Sidebar */}
       <Navbar onLoadPreset={handleSelectPreset} onResetAnalysis={handleResetAnalysis} onLogout={logout} user={user} />
@@ -97,8 +113,19 @@ export default function App() {
 
       </div>
 
+      {/* Central Auth Modal */}
+      <AuthModal />
     </div>
 
   );
+}
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
+  );
 }
