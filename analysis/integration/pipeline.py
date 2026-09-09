@@ -33,107 +33,140 @@ def compute_sha256(file_path: str) -> str:
     return hasher.hexdigest()
 
 
-def generate_recommendations(findings: List[Finding]) -> List[Dict[str, str]]:
-    """Generate prioritized remediation recommendations based on observed findings."""
-    recommendations = []
-    seen_types = set()
-    rec_counter = 1
+import logging
+from pathlib import Path
+from ml.feature_engineering.extractor import extract_session_features
+from ml.inference.predictor import RiskPredictor, aggregate_pcap_risk
+from ml.risk.risk_aggregator import calculate_session_risk
+from recommendation.engine import generate_recommendations as rec_engine_generate
+from recommendation.priority import sort_recommendations
+from recommendation.risk_guard import calculate_final_risk
 
-    for f in findings:
-        ft = f.finding_type
-        if ft in seen_types:
-            continue
-        seen_types.add(ft)
+logger = logging.getLogger(__name__)
 
-        if ft == "AUTH_BEFORE_TLS":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "CRITICAL",
-                "title": "Require TLS before authentication",
-                "description": "Configure SMTP submission clients and servers so authentication occurs only after a successful TLS upgrade.",
-            })
-            rec_counter += 1
-        elif ft == "PLAINTEXT":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "CRITICAL",
-                "title": "Enforce TLS encryption for mail sessions",
-                "description": "Disable plaintext transmission for email access and submission protocols. Use IMAPS, POP3S, or require STARTTLS.",
-            })
-            rec_counter += 1
-        elif ft == "DEPRECATED_TLS":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "HIGH",
-                "title": "Upgrade deprecated TLS versions",
-                "description": "Disable TLS 1.0, TLS 1.1, and SSLv3 across all mail servers. Enforce TLS 1.2 or TLS 1.3.",
-            })
-            rec_counter += 1
-        elif ft == "WEAK_CIPHER":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "CRITICAL",
-                "title": "Disable legacy/weak cipher suites",
-                "description": "Remove RC4, DES, 3DES, and export-grade ciphers from the server cipher suite configuration.",
-            })
-            rec_counter += 1
-        elif ft == "EXPIRED_CERTIFICATE":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "HIGH",
-                "title": "Renew expired certificates",
-                "description": "Renew expired X.509 certificates and configure automated certificate renewal (e.g. ACME/Certbot).",
-            })
-            rec_counter += 1
-        elif ft == "WEAK_KEY":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "MEDIUM",
-                "title": "Upgrade public key size",
-                "description": "Reissue certificates using at least 2048-bit RSA keys or 256-bit ECDSA keys.",
-            })
-            rec_counter += 1
-        elif ft == "FAILED_STARTTLS":
-            recommendations.append({
-                "recommendation_id": f"rec-{rec_counter:03d}",
-                "priority": "HIGH",
-                "title": "Diagnose failed STARTTLS negotiations",
-                "description": "Inspect server configuration and client compatibility to ensure advertised STARTTLS commands negotiate properly.",
-            })
-            rec_counter += 1
-
-    return recommendations
+# Cached predictor singleton
+_PREDICTOR: Optional[RiskPredictor] = None
 
 
-def calculate_risk(findings: List[Finding]) -> Dict[str, Any]:
-    """Calculate preliminary posture risk score and level."""
-    score = 0
-    for f in findings:
-        if f.severity == "CRITICAL":
-            score += 35
-        elif f.severity == "HIGH":
-            score += 20
-        elif f.severity == "MEDIUM":
-            score += 10
-        elif f.severity == "LOW":
-            score += 5
+def get_risk_predictor() -> Optional[RiskPredictor]:
+    """Retrieve or initialize the singleton ML RiskPredictor."""
+    global _PREDICTOR
+    if _PREDICTOR is None:
+        model_dir = Path(__file__).resolve().parents[2] / "ml" / "artifacts"
+        try:
+            _PREDICTOR = RiskPredictor(model_dir=model_dir)
+            logger.info("Initialized ML RiskPredictor successfully.")
+        except Exception as exc:
+            logger.warning(f"Could not load ML RiskPredictor from {model_dir}: {exc}. Using Canonical Risk Aggregator fallback.")
+            _PREDICTOR = None
+    return _PREDICTOR
 
-    score = min(score, 100)
-    if score >= 70:
-        level = "HIGH" if score < 85 else "CRITICAL"
-    elif score >= 40:
-        level = "HIGH"
-    elif score >= 20:
-        level = "MEDIUM"
+
+def build_recommendations(findings: List[Finding]) -> List[Dict[str, Any]]:
+    """Generate prioritized recommendations via the recommendation engine."""
+    finding_dicts = [f.to_dict() for f in findings]
+    raw_recs = rec_engine_generate(finding_dicts)
+    sorted_recs = sort_recommendations(raw_recs)
+
+    # Format cleanly according to contract
+    formatted: List[Dict[str, Any]] = []
+    for r in sorted_recs:
+        formatted.append({
+            "recommendation_id": r.get("recommendation_id", "rec-001"),
+            "priority": r.get("priority", "HIGH"),
+            "title": r.get("title", "Security Recommendation"),
+            "description": r.get("description", ""),
+        })
+
+    # If no findings, provide positive guidance
+    if not formatted:
+        formatted.append({
+            "recommendation_id": "rec-001",
+            "priority": "LOW",
+            "title": "Maintain modern encryption hygiene",
+            "description": "All inspected email sessions utilized valid, modern TLS protection with no observed security weaknesses.",
+        })
+
+    return formatted
+
+
+def calculate_reconciled_risk(
+    session_dicts: List[Dict[str, Any]],
+    finding_dicts: List[Dict[str, Any]],
+) -> Dict[str, Any]:
+    """Calculate reconciled risk combining ML inference, Canonical Risk Aggregator, and Risk Guard."""
+    predictor = get_risk_predictor()
+    session_predictions: List[Dict[str, Any]] = []
+
+    for s in session_dicts:
+        s_id = s.get("session_id")
+        s_findings = [f for f in finding_dicts if f.get("session_id") == s_id]
+
+        feature_vec = extract_session_features(s, s_findings)
+
+        # 1. ML prediction
+        if predictor is not None:
+            try:
+                ml_pred = predictor.predict_session(s, s_findings)
+                ml_risk_level = ml_pred["risk"]["level"]
+                ml_confidence = ml_pred["risk"]["confidence"]
+                pred_quality = ml_pred["risk"].get("prediction_quality", "SUFFICIENT_EVIDENCE")
+                ev_quality = ml_pred.get("evidence_quality", "HIGH_EVIDENCE")
+            except Exception as e:
+                logger.warning(f"Inference error for session {s_id}: {e}")
+                canonical_label, _ = calculate_session_risk(feature_vec)
+                ml_risk_level = canonical_label
+                ml_confidence = 0.90
+                pred_quality = "SUFFICIENT_EVIDENCE"
+                ev_quality = "HIGH_EVIDENCE"
+        else:
+            canonical_label, _ = calculate_session_risk(feature_vec)
+            ml_risk_level = canonical_label
+            ml_confidence = 0.90
+            pred_quality = "SUFFICIENT_EVIDENCE"
+            ev_quality = "HIGH_EVIDENCE"
+
+        # 2. Reconcile with Risk Guard (ML can NEVER downgrade mandatory critical rule findings)
+        reconciled = calculate_final_risk(ml_risk_level, s_findings)
+        final_level = reconciled["final_risk_level"]
+
+        session_predictions.append({
+            "session_id": s_id,
+            "risk": {
+                "level": final_level,
+                "ml_level": ml_risk_level,
+                "confidence": ml_confidence,
+                "prediction_quality": pred_quality,
+                "evidence_quality": ev_quality,
+            },
+            "evidence_quality": ev_quality,
+        })
+
+    # PCAP-level aggregation
+    pcap_agg = aggregate_pcap_risk(session_predictions)
+    overall_level = pcap_agg.get("overall_risk_level", "LOW")
+    overall_conf = pcap_agg.get("overall_confidence", 0.90)
+
+    # Calculate calibrated numeric score
+    crit_count = sum(1 for f in finding_dicts if f.get("severity") == "CRITICAL")
+    high_count = sum(1 for f in finding_dicts if f.get("severity") == "HIGH")
+    med_count = sum(1 for f in finding_dicts if f.get("severity") == "MEDIUM")
+
+    if overall_level == "CRITICAL":
+        score = min(100, 85 + crit_count * 5)
+    elif overall_level == "HIGH":
+        score = min(84, 65 + high_count * 4)
+    elif overall_level == "MEDIUM":
+        score = min(64, 40 + med_count * 5)
     else:
-        level = "LOW"
+        score = 15
 
     return {
         "score": score,
-        "level": level,
+        "level": overall_level,
         "model_version": "rf-v1",
         "method": "RULE_ENGINE_PLUS_ML",
-        "confidence": 0.91,
+        "confidence": round(overall_conf, 2),
     }
 
 
@@ -220,9 +253,12 @@ def analyze_pcap(
         "findings_count": len(all_findings),
     }
 
-    # 5. Risk and recommendations
-    risk = calculate_risk(all_findings)
-    recommendations = generate_recommendations(all_findings)
+    # 5. Reconciled Risk and Recommendations
+    session_dicts = [p.to_dict() for p in profiles]
+    finding_dicts = [f.to_dict() for f in all_findings]
+
+    risk = calculate_reconciled_risk(session_dicts, finding_dicts)
+    recommendations = build_recommendations(all_findings)
 
     # 6. Build final contract response
     response_payload: Dict[str, Any] = {

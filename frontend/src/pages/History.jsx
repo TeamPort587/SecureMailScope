@@ -2,10 +2,33 @@ import React from 'react';
 import { useHistory } from '../hooks/useHistory';
 import HistoryTable from '../components/HistoryTable';
 import ErrorState from '../components/ErrorState';
-import { History as HistoryIcon, RefreshCw, Layers } from 'lucide-react';
+import { History as HistoryIcon, RefreshCw, Layers, Lock, LogIn } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function History() {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const { items, pagination, loading, error, refresh } = useHistory(1, 20);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 flex flex-col items-center text-center">
+        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
+          <Lock className="w-7 h-7" />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-2">Authentication Required</h2>
+        <p className="text-sm text-slate-400 max-w-md mb-6">
+          You must be signed in with an authorized analyst account to view stored PCAP forensic audit logs.
+        </p>
+        <button
+          onClick={openAuthModal}
+          className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold rounded-xl shadow-lg shadow-brand-500/25 transition-all"
+        >
+          <LogIn className="w-4 h-4" />
+          <span>Sign In to Access History</span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">

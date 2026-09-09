@@ -1,15 +1,21 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud, FileCode, CheckCircle, AlertTriangle, ArrowRight, X } from 'lucide-react';
+import { UploadCloud, FileCode, AlertTriangle, ArrowRight, X, Lock, LogIn } from 'lucide-react';
 import { validatePcapFile } from '../utils/validation';
 import { formatBytes } from '../utils/formatters';
+import { useAuth } from '../context/AuthContext';
 
 export default function UploadForm({ onUpload, uploading = false }) {
+  const { isAuthenticated, openAuthModal } = useAuth();
   const [selectedFile, setSelectedFile] = useState(null);
   const [validationError, setValidationError] = useState(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (file) => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     if (!file) return;
     const validation = validatePcapFile(file);
     if (!validation.valid) {
@@ -24,6 +30,10 @@ export default function UploadForm({ onUpload, uploading = false }) {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragOver(false);
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     if (uploading) return;
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
@@ -43,6 +53,10 @@ export default function UploadForm({ onUpload, uploading = false }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
     if (!selectedFile || uploading) return;
     onUpload(selectedFile);
   };
@@ -56,15 +70,27 @@ export default function UploadForm({ onUpload, uploading = false }) {
     }
   };
 
+  const handleZoneClick = () => {
+    if (!isAuthenticated) {
+      openAuthModal();
+      return;
+    }
+    if (!uploading) {
+      fileInputRef.current?.click();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="w-full">
       <div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
-        onClick={() => !uploading && fileInputRef.current?.click()}
+        onClick={handleZoneClick}
         className={`relative border-2 border-dashed rounded-2xl p-6 sm:p-8 text-center transition-all cursor-pointer ${
-          isDragOver
+          !isAuthenticated
+            ? 'border-slate-800 bg-slate-900/30 hover:border-brand-500/40 hover:bg-slate-900/50'
+            : isDragOver
             ? 'border-brand-400 bg-brand-500/10'
             : selectedFile
             ? 'border-brand-500/40 bg-slate-900/80'
@@ -120,6 +146,31 @@ export default function UploadForm({ onUpload, uploading = false }) {
                 Change File
               </button>
             </div>
+          </div>
+        ) : !isAuthenticated ? (
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <Lock className="w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-slate-200">
+                Sign in required to upload PCAP files
+              </p>
+              <p className="text-xs text-slate-400 mt-1 max-w-sm">
+                Node.js API Gateway requires an authenticated analyst account with a valid JWT token.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                openAuthModal();
+              }}
+              className="mt-1 inline-flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl text-xs font-semibold shadow-lg shadow-brand-600/20 transition-all"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Sign In / Register to Upload</span>
+            </button>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">

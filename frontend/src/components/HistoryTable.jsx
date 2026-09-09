@@ -25,10 +25,10 @@ export default function HistoryTable({ items = [], loading = false }) {
   }
 
   return (
-    <div className="w-full rounded-xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-sm">
+    <div className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/60 overflow-hidden shadow-sm">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs text-slate-300">
-          <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider font-mono">
+        <table className="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+          <thead className="bg-slate-50 dark:bg-slate-950/70 border-b border-slate-200 dark:border-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider font-mono">
             <tr>
               <th scope="col" className="py-3 px-3.5">Analysis ID</th>
               <th scope="col" className="py-3 px-3">Capture File</th>
@@ -40,26 +40,26 @@ export default function HistoryTable({ items = [], loading = false }) {
               <th scope="col" className="py-3 px-3.5 text-right">Action</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60 font-mono">
+          <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 font-mono">
             {items.map((item) => (
               <tr
                 key={item.analysis_id}
-                className="hover:bg-slate-800/40 transition-colors group"
+                className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors group"
               >
                 {/* ID */}
-                <td className="py-3 px-3.5 font-bold text-slate-200">
+                <td className="py-3 px-3.5 font-bold text-slate-900 dark:text-slate-200">
                   <Link
                     to={`/analysis/${item.analysis_id}`}
-                    className="hover:text-brand-400 transition-colors"
+                    className="hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
                   >
                     {item.analysis_id.slice(0, 16)}...
                   </Link>
                 </td>
 
                 {/* Filename */}
-                <td className="py-3 px-3 font-sans font-medium text-slate-200">
+                <td className="py-3 px-3 font-sans font-medium text-slate-900 dark:text-slate-200">
                   <div className="flex items-center gap-1.5">
-                    <FileText className="w-3.5 h-3.5 text-slate-500" />
+                    <FileText className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
                     <span>{item.filename}</span>
                   </div>
                 </td>
@@ -71,10 +71,22 @@ export default function HistoryTable({ items = [], loading = false }) {
 
                 {/* Status */}
                 <td className="py-3 px-3">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <CheckCircle2 className="w-3 h-3" />
-                    <span className="capitalize">{item.status || 'completed'}</span>
-                  </span>
+                  {item.status === 'FAILED' ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                      <AlertCircle className="w-3 h-3" />
+                      <span className="capitalize">{item.status || 'failed'}</span>
+                    </span>
+                  ) : item.status === 'PROCESSING' ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                      <Clock className="w-3 h-3" />
+                      <span className="capitalize">{item.status || 'processing'}</span>
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span className="capitalize">{item.status || 'completed'}</span>
+                    </span>
+                  )}
                 </td>
 
                 {/* Risk */}
@@ -98,7 +110,7 @@ export default function HistoryTable({ items = [], loading = false }) {
                 <td className="py-3 px-3.5 text-right font-sans">
                   <Link
                     to={`/analysis/${item.analysis_id}`}
-                    className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-slate-800 hover:bg-brand-600 text-slate-200 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-brand-600 dark:hover:bg-brand-600 text-slate-700 dark:text-slate-200 hover:text-white dark:hover:text-white border border-slate-200 dark:border-slate-700 transition-colors"
                   >
                     <span>Inspect</span>
                     <ArrowRight className="w-3 h-3" />
