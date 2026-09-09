@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "description": "Canonical 19-feature vector for ML risk scoring per session.",
+  "feature_count": 19,
+
+  "example": {
+    "session_id": "smtp-001",
+    "features": {
+      "encryption_plaintext": 0,
+      "encryption_starttls": 1,
+      "encryption_implicit": 0,
+
+      "deprecated_tls": 0,
+      "weak_cipher": 0,
+
+      "expired_cert": 0,
+      "not_yet_valid_cert": 0,
+      "weak_key": 0,
+
+      "auth_before_tls": 0,
+      "tls_upgrade_failed": 0,
+      "pfs_missing": 0,
+      "self_signed": 0,
+
+      "protocol_smtp": 1,
+      "protocol_imap": 0,
+      "protocol_pop3": 0,
+
+      "critical_count": 0,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0
+    }
+  },
+
+  "feature_definitions": {
+    "encryption_plaintext":  { "type": "binary", "description": "1 if encryption_mode == PLAINTEXT" },
+    "encryption_starttls":   { "type": "binary", "description": "1 if encryption_mode == STARTTLS or STLS" },
+    "encryption_implicit":   { "type": "binary", "description": "1 if encryption_mode == IMPLICIT_TLS" },
+    "deprecated_tls":        { "type": "binary", "description": "1 if TLS version is SSLv2, SSLv3, TLS 1.0, or TLS 1.1" },
+    "weak_cipher":           { "type": "binary", "description": "1 if cipher suite contains RC4, 3DES, DES, NULL, EXPORT, or MD5" },
+    "expired_cert":          { "type": "binary", "description": "1 if certificate.valid_until < current UTC time" },
+    "not_yet_valid_cert":    { "type": "binary", "description": "1 if certificate.valid_from > current UTC time" },
+    "weak_key":              { "type": "binary", "description": "1 if RSA key_size < 2048" },
+    "auth_before_tls":       { "type": "binary", "description": "1 if authentication occurred before TLS upgrade" },
+    "tls_upgrade_failed":    { "type": "binary", "description": "1 if STARTTLS/STLS upgrade was advertised but did not succeed" },
+    "pfs_missing":           { "type": "binary", "description": "1 if perfect forward secrecy is not present" },
+    "self_signed":           { "type": "binary", "description": "1 if certificate is self-signed" },
+    "protocol_smtp":         { "type": "binary", "description": "1 if protocol is SMTP" },
+    "protocol_imap":         { "type": "binary", "description": "1 if protocol is IMAP" },
+    "protocol_pop3":         { "type": "binary", "description": "1 if protocol is POP3" },
+    "critical_count":        { "type": "count",  "description": "Number of CRITICAL-severity findings for this session" },
+    "high_count":            { "type": "count",  "description": "Number of HIGH-severity findings for this session" },
+    "medium_count":          { "type": "count",  "description": "Number of MEDIUM-severity findings for this session" },
+    "low_count":             { "type": "count",  "description": "Number of LOW-severity findings for this session" }
+  },
+
+  "unknown_policy": {
+    "description": "UNKNOWN values are represented as NaN (not-a-number). They are NEVER silently converted to 0, false, or 'no issue'.",
+    "binary_values": "0 = absent, 1 = present, NaN = unknown/insufficient evidence",
+    "count_values":  "0+ = count, NaN = findings collection unavailable"
+  }
+}

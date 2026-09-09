@@ -1,0 +1,8 @@
+{
+  "analysis_id": "a1b2c3d4-5678-90ab-cdef-1234567890ab",
+  "filename": "smtp_capture.pcap",
+  "sha256": "7d793037a0760186574b0282f2f435e7c7a7f7e3c5f1d4c1c2e8e9b0a1f2c3d4",
+  "size_bytes": 1847296,
+  "requested_at": "2026-09-09T10:30:00Z",
+  "analysis_version": "1.0.0"
+}
