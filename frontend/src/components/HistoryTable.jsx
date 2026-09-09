@@ -30,14 +30,14 @@ export default function HistoryTable({ items = [], loading = false }) {
         <table className="w-full text-left text-xs text-slate-300">
           <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider font-mono">
             <tr>
-              <th scope="col" className="py-3 px-3.5">Analysis ID</th>
-              <th scope="col" className="py-3 px-3">Capture File</th>
-              <th scope="col" className="py-3 px-3">Analyzed Date</th>
-              <th scope="col" className="py-3 px-3">Status</th>
-              <th scope="col" className="py-3 px-3">Overall Risk</th>
-              <th scope="col" className="py-3 px-3">Sessions</th>
-              <th scope="col" className="py-3 px-3">Findings</th>
-              <th scope="col" className="py-3 px-3.5 text-right">Action</th>
+              <th scope="col" className="py-3.5 px-4">Analysis ID</th>
+              <th scope="col" className="py-3.5 px-3.5">Capture File</th>
+              <th scope="col" className="py-3.5 px-3.5">Analyzed Date</th>
+              <th scope="col" className="py-3.5 px-3.5">Status</th>
+              <th scope="col" className="py-3.5 px-3.5">Overall Risk</th>
+              <th scope="col" className="py-3.5 px-3.5">Sessions</th>
+              <th scope="col" className="py-3.5 px-3.5">Findings</th>
+              <th scope="col" className="py-3.5 px-4 text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800/60 font-mono">
@@ -47,7 +47,7 @@ export default function HistoryTable({ items = [], loading = false }) {
                 className="hover:bg-slate-800/40 transition-colors group"
               >
                 {/* ID */}
-                <td className="py-3 px-3.5 font-bold text-slate-200">
+                <td className="py-3.5 px-4 font-bold text-slate-200">
                   <Link
                     to={`/analysis/${item.analysis_id}`}
                     className="hover:text-brand-400 transition-colors"
@@ -57,7 +57,7 @@ export default function HistoryTable({ items = [], loading = false }) {
                 </td>
 
                 {/* Filename */}
-                <td className="py-3 px-3 font-sans font-medium text-slate-200">
+                <td className="py-3.5 px-3.5 font-sans font-medium text-slate-200">
                   <div className="flex items-center gap-1.5">
                     <FileText className="w-3.5 h-3.5 text-slate-500" />
                     <span>{item.filename}</span>
@@ -65,37 +65,37 @@ export default function HistoryTable({ items = [], loading = false }) {
                 </td>
 
                 {/* Date */}
-                <td className="py-3 px-3 text-slate-400">
+                <td className="py-3.5 px-3.5 text-slate-400">
                   {formatDate(item.created_at || item.uploaded_at)}
                 </td>
 
                 {/* Status */}
-                <td className="py-3 px-3">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <td className="py-3.5 px-3.5">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-sans px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-200 border border-emerald-500/20">
                     <CheckCircle2 className="w-3 h-3" />
                     <span className="capitalize">{item.status || 'completed'}</span>
                   </span>
                 </td>
 
                 {/* Risk */}
-                <td className="py-3 px-3">
+                <td className="py-3.5 px-3.5">
                   <RiskBadge level={item.risk_label || 'INFO'} size="sm" />
                 </td>
 
                 {/* Sessions */}
-                <td className="py-3 px-3 text-slate-300">
+                <td className="py-3.5 px-3.5 text-slate-300">
                   {item.session_count ?? '—'}
                 </td>
 
                 {/* Findings */}
-                <td className="py-3 px-3">
+                <td className="py-3.5 px-3.5">
                   <span className={item.finding_count > 0 ? 'text-amber-400 font-semibold' : 'text-slate-400'}>
                     {item.finding_count ?? '—'}
                   </span>
                 </td>
 
                 {/* Action */}
-                <td className="py-3 px-3.5 text-right font-sans">
+                <td className="py-3.5 px-4 text-right font-sans">
                   <Link
                     to={`/analysis/${item.analysis_id}`}
                     className="inline-flex items-center gap-1 px-3 py-1 text-xs rounded-lg bg-slate-800 hover:bg-brand-600 text-slate-200 hover:text-white transition-colors"

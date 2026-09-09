@@ -43,16 +43,16 @@ export function formatTriState(value) {
   }
   const str = String(value).toUpperCase().trim();
   if (str === 'YES' || str === 'TRUE') {
-    return { text: 'YES', badgeClass: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
+    return { text: 'YES', badgeClass: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/30' };
   }
   if (str === 'NO' || str === 'FALSE') {
     return { text: 'NO', badgeClass: 'bg-slate-800 text-slate-300 border-slate-700' };
   }
   if (str === 'NOT_OBSERVABLE') {
-    return { text: 'NOT OBSERVABLE', badgeClass: 'bg-purple-500/20 text-purple-300 border-purple-500/30' };
+    return { text: 'NOT OBSERVABLE', badgeClass: 'bg-purple-500/25 text-purple-200 border-purple-500/30' };
   }
   if (str === 'UNKNOWN') {
-    return { text: 'UNKNOWN', badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30' };
+    return { text: 'UNKNOWN', badgeClass: 'bg-amber-500/25 text-amber-200 border-amber-500/30' };
   }
   return { text: str, badgeClass: 'bg-slate-800 text-slate-300 border-slate-700' };
 }
@@ -64,11 +64,11 @@ export function formatEncryptionMode(mode) {
   const m = (mode || 'UNKNOWN').toUpperCase();
   switch (m) {
     case 'STARTTLS':
-      return { label: 'STARTTLS', color: 'text-sky-400', badge: 'bg-sky-500/20 text-sky-300 border-sky-500/40' };
+      return { label: 'STARTTLS', color: 'text-sky-400', badge: 'bg-sky-500/25 text-sky-200 border-sky-500/40' };
     case 'IMPLICIT_TLS':
-      return { label: 'IMPLICIT TLS', color: 'text-emerald-400', badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' };
+      return { label: 'IMPLICIT TLS', color: 'text-emerald-400', badge: 'bg-emerald-500/25 text-emerald-200 border-emerald-500/40' };
     case 'PLAINTEXT':
-      return { label: 'PLAINTEXT', color: 'text-rose-400', badge: 'bg-rose-500/20 text-rose-300 border-rose-500/40' };
+      return { label: 'PLAINTEXT', color: 'text-rose-400', badge: 'bg-rose-500/25 text-rose-200 border-rose-500/40' };
     default:
       return { label: m, color: 'text-slate-400', badge: 'bg-slate-800 text-slate-400 border-slate-700' };
   }
