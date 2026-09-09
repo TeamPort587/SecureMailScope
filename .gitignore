@@ -121,3 +121,11 @@ data/*
 *.hdf5
 *.pkl
 *.pickle
+
+# VM1, VM2 & VM3 Traffic Generator deployment staging & local helper
+ssh_vm2.py
+vm1_deploy/
+vm2_deploy/
+vm3_deploy/
+captures/
+
