@@ -10,12 +10,17 @@ import AnalysisOverview from './pages/AnalysisOverview';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
 
+import { useAuth } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Login from './pages/Login';
+
 import { useAnalysis } from './hooks/useAnalysis';
 
 export default function App() {
 
   const analysisHook = useAnalysis();
   const navigate = useNavigate();
+    const { logout, user } = useAuth();
 
   const handleSelectPreset = (presetData) => {
     analysisHook.loadPreset(presetData);
@@ -26,44 +31,63 @@ export default function App() {
     navigate('/');
   };
 
+  const handleResetAnalysis = () => {
+    analysisHook.setAnalysis(null);
+  };
+
   return (
 
     <div className="min-h-screen bg-slate-50 text-slate-900">
 
       {/* Sidebar */}
-      <Navbar onLoadPreset={handleSelectPreset} />
+      <Navbar onLoadPreset={handleSelectPreset} onResetAnalysis={handleResetAnalysis} onLogout={logout} user={user} />
 
       {/* Right of sidebar */}
             <div className="flex min-h-screen flex-col md:ml-[220px]">
 
         {/* Page content */}
         <main className="flex-1">
-          <Routes>
+                    <Routes>
+
+            <Route path="/login" element={<Login />} />
 
             <Route
               path="/"
-              element={<Dashboard analysisHook={analysisHook} />}
+              element={
+                <ProtectedRoute>
+                  <Dashboard analysisHook={analysisHook} />
+                </ProtectedRoute>
+              }
             />
 
             <Route
               path="/analysis"
-              element={<AnalysisOverview />}
+              element={
+                <ProtectedRoute>
+                  <AnalysisOverview />
+                </ProtectedRoute>
+              }
             />
 
             <Route
               path="/analysis/:id"
-              element={<Analysis />}
+              element={
+                <ProtectedRoute>
+                  <Analysis />
+                </ProtectedRoute>
+              }
             />
 
             <Route
               path="/history"
-              element={<History />}
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
             />
 
-            <Route
-              path="*"
-              element={<NotFound />}
-            />
+            <Route path="*" element={<NotFound />} />
 
           </Routes>
         </main>

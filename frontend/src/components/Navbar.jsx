@@ -20,7 +20,7 @@ import { NavLink } from 'react-router-dom';
 
 import { DEMO_PRESETS } from '../mock/demoCaptures';
 
-export default function Navbar({ onLoadPreset }) {
+export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }) {
 
   const [demoOpen, setDemoOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -71,6 +71,7 @@ export default function Navbar({ onLoadPreset }) {
             setDemoOpen={setDemoOpen}
             demoRef={demoRef}
             onNavigate={() => setMobileOpen(false)}
+            onResetAnalysis={onResetAnalysis}
           />
         </div>
       )}
@@ -83,13 +84,14 @@ export default function Navbar({ onLoadPreset }) {
           <BrandMark />
         </div>
 
-        {/* NAV */}
+                {/* NAV */}
         <div className="flex flex-1 flex-col overflow-y-auto px-3 py-5">
           <SidebarNavigation
             onLoadPreset={handlePreset}
             demoOpen={demoOpen}
             setDemoOpen={setDemoOpen}
             demoRef={demoRef}
+            onResetAnalysis={onResetAnalysis}
           />
         </div>
 
@@ -114,11 +116,11 @@ export default function Navbar({ onLoadPreset }) {
               text-xs font-bold
               shadow-sm
             ">
-              A
+              {user?.email?.[0]?.toUpperCase() || 'U'}
             </div>
             <div className="min-w-0 flex-1 text-left">
-              <p className="text-[12px] font-semibold text-slate-800 truncate">Aditi</p>
-              <p className="text-[10px] text-slate-400 truncate">aditi@securemailscope.dev</p>
+              <p className="text-[12px] font-semibold text-slate-800 truncate">{user?.email?.split('@')[0] || 'User'}</p>
+              <p className="text-[10px] text-slate-400 truncate">{user?.email || ''}</p>
             </div>
             <ChevronDown className={`
               h-3.5 w-3.5 text-slate-400 transition-transform shrink-0
@@ -134,8 +136,8 @@ export default function Navbar({ onLoadPreset }) {
               bg-white shadow-lg
             ">
               <div className="border-b border-slate-100 px-4 py-3">
-                <p className="text-[11px] font-semibold text-slate-800">Aditi</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">aditi@securemailscope.dev</p>
+                <p className="text-[11px] font-semibold text-slate-800">{user?.email?.split('@')[0] || 'User'}</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">{user?.email || ''}</p>
               </div>
               <div className="p-1.5 space-y-0.5">
                 {[
@@ -159,6 +161,7 @@ export default function Navbar({ onLoadPreset }) {
                 <div className="my-1 border-t border-slate-100" />
                 <button
                   type="button"
+                  onClick={onLogout}
                   className="
                     flex w-full items-center gap-2.5
                     rounded-lg px-3 py-2
@@ -220,6 +223,7 @@ function SidebarNavigation({
   setDemoOpen,
   demoRef,
   onNavigate,
+  onResetAnalysis,
 }) {
   return (
     <div className="flex flex-col gap-6">
@@ -230,7 +234,7 @@ function SidebarNavigation({
           Analysis
         </p>
         <div className="space-y-0.5">
-          <SidebarLink to="/" end icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" onClick={onNavigate} />
+          <SidebarLink to="/" end icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" onClick={() => { if (onResetAnalysis) onResetAnalysis(); if (onNavigate) onNavigate(); }} />
           <SidebarLink to="/analysis" icon={<FileSearch className="h-4 w-4" />} label="Analysis" onClick={onNavigate} />
         </div>
       </div>
@@ -301,10 +305,9 @@ function SidebarLink({ to, icon, label, end = false, onClick }) {
       end={end}
       onClick={onClick}
       className={({ isActive }) =>
-        `relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-medium transition-all ${
-          isActive
-            ? 'bg-brand-50 text-brand-700'
-            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+        `relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-medium transition-all ${isActive
+          ? 'bg-brand-50 text-brand-700'
+          : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
         }`
       }
     >
