@@ -36,6 +36,7 @@ CLI Usage::
 from __future__ import annotations
 
 import argparse
+import math
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -175,6 +176,14 @@ def generate_tls_state(
         return {
             "tls_upgrade_failed": 1.0,
             # In boundary case, client may have attempted fallback or observed partial handshake
+            "deprecated_tls": np.nan,
+            "weak_cipher": np.nan,
+            "pfs_missing": np.nan,
+        }
+
+    if "UNOBSERVED_HANDSHAKE" in posture:
+        return {
+            "tls_upgrade_failed": 0.0,
             "deprecated_tls": np.nan,
             "weak_cipher": np.nan,
             "pfs_missing": np.nan,
@@ -334,14 +343,19 @@ def apply_controlled_variations(
         "IMPLICIT_TLS" if row["encryption_implicit"] == 1.0 else "STARTTLS"
     )
 
-    # 1. Observational uncertainty / Partial capture visibility (12% of TLS sessions)
+    # 1. Observational uncertainty / Partial capture visibility (15% of TLS sessions)
     if enc_mode in ("STARTTLS", "IMPLICIT_TLS") and row["tls_upgrade_failed"] != 1.0:
-        if rng.random() < 0.12 and "STRICT" not in posture:
+        if rng.random() < 0.15 and "STRICT" not in posture:
             # Certificate packet dropped or handshake truncated
             row["expired_cert"] = np.nan
             row["not_yet_valid_cert"] = np.nan
             row["weak_key"] = np.nan
             row["self_signed"] = np.nan
+            # Unobserved TLS handshake details (e.g. missed server hello)
+            if rng.random() < 0.35:
+                row["deprecated_tls"] = np.nan
+                row["weak_cipher"] = np.nan
+                row["pfs_missing"] = np.nan
 
     # 2. Key-length / PFS variation in legacy TLS
     if row.get("deprecated_tls") == 1.0 and not np.isnan(row.get("weak_key", np.nan)):
@@ -543,22 +557,51 @@ def generate_synthetic_dataset(
             "imap" if candidate["protocol_imap"] == 1 else "pop3"
         )
 
+        # Observability indicators
+        enc_plain = candidate["encryption_plaintext"] == 1.0
+        tls_handshake_obs = 0.0 if enc_plain or math.isnan(candidate.get("deprecated_tls", float("nan"))) else 1.0
+        cert_obs = 0.0 if math.isnan(candidate.get("expired_cert", float("nan"))) else 1.0
+        starttls_cmd_obs = 1.0 if candidate["encryption_starttls"] == 1.0 or candidate["tls_upgrade_failed"] == 1.0 else 0.0
+        auth_obs = 0.0 if math.isnan(candidate.get("auth_before_tls", float("nan"))) else 1.0
+        sess_trunc = 1.0 if "TRUNCATED" in posture else 0.0
+        asym = 1.0 if "ASYMMETRIC" in posture else 0.0
+
+        if sess_trunc == 1.0:
+            scen_tag = "TRUNCATED_SESSION"
+        elif not enc_plain and tls_handshake_obs == 0.0:
+            scen_tag = "MISSING_SERVER_HELLO"
+        elif not enc_plain and cert_obs == 0.0:
+            scen_tag = "MISSING_CERTIFICATE"
+        else:
+            scen_tag = "FULL_SESSION"
+
         full_row: Dict[str, Any] = {
             "analysis_id": f"synthetic-{sample_counter // 4 + 1:05d}",
             "session_id": f"{proto_name}-{sample_counter:06d}",
             "scenario_id": f"{posture}-{class_counts[derived_label]:04d}",
             "scenario_family": posture,
             "data_source": "CURATED_SYNTHETIC",
+            "capture_scenario": scen_tag,
         }
         for feat in ALL_FEATURES:
             full_row[feat] = candidate[feat]
+        full_row["tls_handshake_observed"] = tls_handshake_obs
+        full_row["certificate_observed"] = cert_obs
+        full_row["starttls_command_observed"] = starttls_cmd_obs
+        full_row["authentication_observed"] = auth_obs
+        full_row["session_truncated"] = sess_trunc
+        full_row["asymmetric_capture"] = asym
         full_row["risk_label"] = derived_label
 
         rows.append(full_row)
 
     df = pd.DataFrame(rows)
-    metadata_cols = ["analysis_id", "session_id", "scenario_id", "scenario_family", "data_source"]
-    final_cols = metadata_cols + ALL_FEATURES + ["risk_label"]
+    metadata_cols = ["analysis_id", "session_id", "scenario_id", "scenario_family", "data_source", "capture_scenario"]
+    obs_cols = [
+        "tls_handshake_observed", "certificate_observed", "starttls_command_observed",
+        "authentication_observed", "session_truncated", "asymmetric_capture"
+    ]
+    final_cols = metadata_cols + ALL_FEATURES + obs_cols + ["risk_label"]
     return df[final_cols]
 
 

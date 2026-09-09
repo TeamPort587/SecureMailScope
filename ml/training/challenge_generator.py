@@ -27,9 +27,10 @@ CLI Usage::
 from __future__ import annotations
 
 import argparse
+import math
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import numpy as np
 import pandas as pd
@@ -429,14 +430,21 @@ def _explore_challenge_state(
 def generate_challenge_dataset(
     n_samples: int = 500,
     random_state: int = 1337,
+    exclude_signatures: Optional[Set[Tuple[float, ...]]] = None,
 ) -> pd.DataFrame:
     """Generate an independent, boundary-focused challenge dataset."""
     rng = np.random.default_rng(random_state)
     rows: List[Dict[str, Any]] = []
 
+    if exclude_signatures is None:
+        train_path = Path("data/processed/train.csv")
+        if train_path.is_file():
+            tdf = pd.read_csv(train_path)
+            exclude_signatures = set(tuple(r.fillna(-999.0)) for _, r in tdf[ALL_FEATURES].iterrows())
+
     mode_idx = 0
     attempts = 0
-    max_attempts = n_samples * 20
+    max_attempts = n_samples * 100
 
     while len(rows) < n_samples and attempts < max_attempts:
         attempts += 1
@@ -452,6 +460,15 @@ def generate_challenge_dataset(
         # 2. Validate against domain constraints
         is_valid, errors = validate_feature_row(candidate)
         if not is_valid:
+            continue
+
+        # 3. Ensure zero overlap with training signatures
+        sig = tuple(
+            -999.0 if (candidate.get(f) is None or (isinstance(candidate.get(f), float) and math.isnan(candidate[f])))
+            else float(candidate[f])
+            for f in ALL_FEATURES
+        )
+        if exclude_signatures and sig in exclude_signatures:
             continue
 
         sample_idx = len(rows) + 1

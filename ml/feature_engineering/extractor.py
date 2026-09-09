@@ -27,10 +27,13 @@ import numpy as np
 from ml.feature_engineering.schema import (
     ALL_FEATURES,
     DEPRECATED_TLS_VERSIONS,
+    EXTENDED_FEATURE_COUNT,
+    EXTENDED_FEATURES,
     FEATURE_COUNT,
     FINDING_TYPE_TO_FEATURE,
     KEY_SIZE_POLICY,
     MODERN_TLS_VERSIONS,
+    OBSERVABILITY_FEATURES,
     WEAK_CIPHER_PATTERNS,
 )
 
@@ -349,3 +352,122 @@ def feature_vector_to_ordered_list(vec: FeatureVector) -> List[float]:
     Guarantees identical ordering during training and inference.
     """
     return [vec[name] for name in ALL_FEATURES]
+
+
+# ── Observability feature extraction (Phase 17) ─────────────────────
+
+def extract_observability_features(
+    session: Dict[str, Any],
+    findings: List[Dict[str, Any]],
+) -> Dict[str, float]:
+    """Extract observability indicators representing whether evidence was observable.
+
+    1.0 = observable / observed in capture
+    0.0 = unobservable / not observed in capture
+
+    Features:
+    - tls_handshake_observed
+    - certificate_observed
+    - starttls_command_observed
+    - authentication_observed
+    - session_truncated
+    - asymmetric_capture
+    """
+    session_id: str = session.get("session_id", "")
+    sf = _get_session_findings(session_id, findings)
+
+    security: Optional[Dict[str, Any]] = session.get("security")
+    tls: Optional[Dict[str, Any]] = session.get("tls")
+    cert: Optional[Dict[str, Any]] = session.get("certificate")
+
+    # 1. TLS handshake observed
+    # Observed if tls dictionary is present with version/cipher, or explicit TLS findings
+    tls_handshake_obs = 0.0
+    if tls is not None and isinstance(tls, dict):
+        version = tls.get("version")
+        cipher = tls.get("cipher_suite")
+        if (version and version != "UNKNOWN") or (cipher and cipher != "UNKNOWN"):
+            tls_handshake_obs = 1.0
+    if _has_finding_type(sf, "DEPRECATED_TLS", "WEAK_CIPHER", "PFS_MISSING"):
+        tls_handshake_obs = 1.0
+
+    # 2. Certificate observed
+    cert_obs = 0.0
+    if (
+        cert is not None
+        and isinstance(cert, dict)
+        and cert.get("visibility") != "NOT_OBSERVABLE"
+    ):
+        if any(cert.get(k) is not None for k in ("subject", "valid_from", "valid_until", "key_size", "self_signed")):
+            cert_obs = 1.0
+    if _has_finding_type(sf, "EXPIRED_CERT", "NOT_YET_VALID_CERT", "WEAK_KEY", "SELF_SIGNED_CERT"):
+        cert_obs = 1.0
+
+    # 3. STARTTLS command observed
+    starttls_cmd_obs = 0.0
+    enc_mode = (security or {}).get("encryption_mode")
+    if (security or {}).get("upgrade_advertised") in ("YES", "NO") or (security or {}).get("upgrade_requested") in ("YES", "NO"):
+        starttls_cmd_obs = 1.0
+    elif _has_finding_type(sf, "FAILED_STARTTLS", "FAILED_STLS"):
+        starttls_cmd_obs = 1.0
+    elif enc_mode in ("STARTTLS", "STLS"):
+        starttls_cmd_obs = 1.0
+
+    # 4. Authentication observed
+    auth_obs = 0.0
+    if (security or {}).get("authentication_before_tls") in ("YES", "NO"):
+        auth_obs = 1.0
+    elif _has_finding_type(sf, "AUTH_BEFORE_TLS"):
+        auth_obs = 1.0
+    elif session.get("authentication") is not None:
+        auth_obs = 1.0
+
+    # 5. Session truncated
+    flags = session.get("flags") or []
+    if isinstance(flags, str):
+        flags = [flags]
+    sess_trunc = 1.0 if (
+        session.get("truncated") is True
+        or session.get("session_truncated") is True
+        or "TRUNCATED" in flags
+        or session.get("capture_scenario") in ("TRUNCATED_SESSION", "MISSING_TLS_FINISHED")
+    ) else 0.0
+
+    # 6. Asymmetric capture
+    asym = 1.0 if (
+        session.get("asymmetric") is True
+        or session.get("asymmetric_capture") is True
+        or session.get("traffic_direction") in ("INBOUND_ONLY", "OUTBOUND_ONLY", "ASYMMETRIC")
+        or session.get("capture_scenario") == "ASYMMETRIC_CAPTURE"
+    ) else 0.0
+
+    return {
+        "tls_handshake_observed": tls_handshake_obs,
+        "certificate_observed": cert_obs,
+        "starttls_command_observed": starttls_cmd_obs,
+        "authentication_observed": auth_obs,
+        "session_truncated": sess_trunc,
+        "asymmetric_capture": asym,
+    }
+
+
+def extract_extended_session_features(
+    session: Dict[str, Any],
+    findings: List[Dict[str, Any]],
+    *,
+    now: Optional[datetime] = None,
+) -> Dict[str, float]:
+    """Extract extended 25-feature vector combining 19 canonical + 6 observability features."""
+    base_vec = extract_session_features(session, findings, now=now)
+    obs_vec = extract_observability_features(session, findings)
+    combined = {**base_vec, **obs_vec}
+    assert len(combined) == EXTENDED_FEATURE_COUNT, (
+        f"Extended vector has {len(combined)} features, expected {EXTENDED_FEATURE_COUNT}"
+    )
+    return combined
+
+
+def extended_feature_vector_to_ordered_list(vec: Dict[str, float]) -> List[float]:
+    """Convert an extended feature vector dict to a list in canonical extended order."""
+    return [vec[name] for name in EXTENDED_FEATURES]
+

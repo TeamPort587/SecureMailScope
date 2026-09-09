@@ -151,3 +151,40 @@ RSA_MIN_KEY_SIZE: int = 2048
 KEY_SIZE_POLICY: Dict[str, int] = {
     "RSA": RSA_MIN_KEY_SIZE,
 }
+
+# ── Observability Features (Phase 17 Extension) ──────────────────────
+# Backwards-compatible extension representing whether network evidence
+# was observable (1 = observed, 0 = not observed / unobservable).
+OBSERVABILITY_FEATURES: List[str] = [
+    "tls_handshake_observed",
+    "certificate_observed",
+    "starttls_command_observed",
+    "authentication_observed",
+    "session_truncated",
+    "asymmetric_capture",
+]
+
+OBSERVABILITY_FEATURE_COUNT: int = len(OBSERVABILITY_FEATURES)
+
+# Extended 25-feature schema (canonical 19 + 6 observability)
+EXTENDED_SCHEMA_VERSION: str = "2.0"
+EXTENDED_FEATURES: List[str] = ALL_FEATURES + OBSERVABILITY_FEATURES
+EXTENDED_FEATURE_COUNT: int = len(EXTENDED_FEATURES)
+
+assert len(EXTENDED_FEATURES) == EXTENDED_FEATURE_COUNT, (
+    f"EXTENDED_FEATURES has {len(EXTENDED_FEATURES)} entries, expected {EXTENDED_FEATURE_COUNT}"
+)
+assert len(EXTENDED_FEATURES) == len(set(EXTENDED_FEATURES)), "Duplicate feature names detected in extended schema"
+
+# ── Granular Evidence Quality Levels (Phase 23) ──────────────────────
+EVIDENCE_HIGH: str = "HIGH_EVIDENCE"
+EVIDENCE_PARTIAL: str = "PARTIAL_EVIDENCE"
+EVIDENCE_LOW: str = "LOW_EVIDENCE"
+EVIDENCE_UNKNOWN: str = "UNKNOWN_EVIDENCE"
+VALID_EVIDENCE_QUALITIES: FrozenSet[str] = frozenset({
+    EVIDENCE_HIGH,
+    EVIDENCE_PARTIAL,
+    EVIDENCE_LOW,
+    EVIDENCE_UNKNOWN,
+})
+

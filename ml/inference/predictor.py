@@ -39,6 +39,10 @@ from ml.feature_engineering.extractor import (
 from ml.feature_engineering.schema import (
     ALL_FEATURES,
     BINARY_FEATURES,
+    EVIDENCE_HIGH,
+    EVIDENCE_LOW,
+    EVIDENCE_PARTIAL,
+    EVIDENCE_UNKNOWN,
     FEATURE_COUNT,
     LOW_EVIDENCE_THRESHOLD,
     QUALITY_LOW,
@@ -108,6 +112,52 @@ def assess_prediction_quality(
         warnings.append("Protocol unknown")
 
     return quality, warnings
+
+
+def calculate_evidence_quality(
+    feature_vec: Dict[str, float],
+) -> str:
+    """Calculate granular evidence quality level for uncertainty handling (Phase 23).
+
+    Returns
+    -------
+    str
+        One of 'HIGH_EVIDENCE', 'PARTIAL_EVIDENCE', 'LOW_EVIDENCE', 'UNKNOWN_EVIDENCE'.
+    """
+    proto_features = ["protocol_smtp", "protocol_imap", "protocol_pop3"]
+    if all(_is_nan(feature_vec.get(f)) for f in proto_features):
+        return EVIDENCE_UNKNOWN
+
+    enc_features = ["encryption_plaintext", "encryption_starttls", "encryption_implicit"]
+    if all(_is_nan(feature_vec.get(f)) for f in enc_features):
+        return EVIDENCE_UNKNOWN
+
+    nan_binary = sum(
+        1 for f in BINARY_FEATURES
+        if _is_nan(feature_vec.get(f))
+    )
+    nan_ratio = nan_binary / len(BINARY_FEATURES) if BINARY_FEATURES else 0.0
+
+    if nan_ratio >= 0.70:
+        return EVIDENCE_UNKNOWN
+
+    is_plaintext = feature_vec.get("encryption_plaintext") == 1.0
+    if is_plaintext:
+        return EVIDENCE_HIGH if nan_ratio <= 0.50 else EVIDENCE_PARTIAL
+
+    # Encrypted session (STARTTLS or IMPLICIT_TLS)
+    tls_features = ["deprecated_tls", "weak_cipher", "pfs_missing"]
+    cert_features = ["expired_cert", "not_yet_valid_cert", "weak_key", "self_signed"]
+
+    tls_observed = any(not _is_nan(feature_vec.get(f)) for f in tls_features)
+    cert_observed = any(not _is_nan(feature_vec.get(f)) for f in cert_features)
+
+    if tls_observed and cert_observed:
+        return EVIDENCE_HIGH if nan_ratio < 0.25 else EVIDENCE_PARTIAL
+    elif tls_observed or cert_observed:
+        return EVIDENCE_PARTIAL
+    else:
+        return EVIDENCE_LOW
 
 
 def _is_nan(value: Any) -> bool:
@@ -218,6 +268,7 @@ class RiskPredictor:
 
         # Evidence quality
         quality, warnings = assess_prediction_quality(feature_vec)
+        evidence_quality = calculate_evidence_quality(feature_vec)
 
         # Risk signals
         risk_signals = _extract_risk_signals(feature_vec)
@@ -233,9 +284,12 @@ class RiskPredictor:
             "risk": {
                 "level": str(predicted_label),
                 "confidence": round(confidence, 4),
+                "ml_confidence": round(confidence, 4),
                 "model_version": self.metadata.get("model_version", "unknown"),
                 "prediction_quality": quality,
+                "evidence_quality": evidence_quality,
             },
+            "evidence_quality": evidence_quality,
             "risk_signals": risk_signals,
             "warnings": warnings,
             "features_used": features_used,

@@ -165,11 +165,24 @@ def combine_datasets(
 
     combined = pd.concat([real_df, synthetic_df], ignore_index=True)
 
-    final_cols = METADATA_COLUMNS + ALL_FEATURES
+    final_cols = list(METADATA_COLUMNS)
+    if "capture_scenario" in combined.columns and "capture_scenario" not in final_cols:
+        final_cols.append("capture_scenario")
+    for feat in ALL_FEATURES:
+        if feat not in final_cols:
+            final_cols.append(feat)
+    obs_cols = [
+        "tls_handshake_observed", "certificate_observed", "starttls_command_observed",
+        "authentication_observed", "session_truncated", "asymmetric_capture"
+    ]
+    for obs in obs_cols:
+        if obs in combined.columns and obs not in final_cols:
+            final_cols.append(obs)
     if "risk_label" in combined.columns:
         final_cols.append("risk_label")
 
-    return combined[final_cols]
+    present_cols = [c for c in final_cols if c in combined.columns]
+    return combined[present_cols]
 
 
 def split_dataset(

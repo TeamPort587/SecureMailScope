@@ -26,7 +26,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 
-from ml.feature_engineering.schema import ALL_FEATURES, FEATURE_COUNT
+from ml.feature_engineering.schema import (
+    ALL_FEATURES,
+    EXTENDED_FEATURE_COUNT,
+    EXTENDED_FEATURES,
+    FEATURE_COUNT,
+)
 
 
 def build_pipeline(
@@ -95,3 +100,23 @@ def prepare_feature_matrix(
     """
     df = features_to_dataframe(feature_rows)
     return df.values
+
+
+def extended_features_to_dataframe(
+    feature_rows: List[Dict[str, float]],
+) -> pd.DataFrame:
+    """Convert a list of extended feature-vector dicts to a DataFrame (25 columns)."""
+    df = pd.DataFrame(feature_rows, columns=EXTENDED_FEATURES)
+    assert df.shape[1] == EXTENDED_FEATURE_COUNT, (
+        f"Expected {EXTENDED_FEATURE_COUNT} columns, got {df.shape[1]}"
+    )
+    return df
+
+
+def prepare_extended_feature_matrix(
+    feature_rows: List[Dict[str, float]],
+) -> np.ndarray:
+    """Convert extended feature-vector dicts to a numpy matrix with 25 columns."""
+    df = extended_features_to_dataframe(feature_rows)
+    return df.values
+
