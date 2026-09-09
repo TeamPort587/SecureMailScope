@@ -56,17 +56,24 @@ export async function apiClient(endpoint, options = {}) {
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
+      if (response.status === 401) {
+        setAuthToken(null);
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('auth:required'));
+        }
+      }
+
       const message =
         data?.error?.message ||
         data?.message ||
         (response.status === 401
-          ? 'Authentication required. Please check your credentials.'
+          ? 'Authentication required. Please sign in to continue.'
           : response.status === 403
-          ? 'You do not have permission to view or export this analysis.'
+          ? 'You do not have permission to perform this action.'
           : response.status === 413
           ? 'Uploaded PCAP file is too large.'
           : response.status === 404
-          ? 'The requested analysis was not found.'
+          ? 'The requested resource was not found.'
           : `Server request failed (HTTP ${response.status})`);
 
       const error = new Error(message);

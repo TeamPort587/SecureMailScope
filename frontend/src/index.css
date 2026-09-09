@@ -14,77 +14,6 @@
   }
 
   body {
-    min-height: 100vh;
-    background: #f8fafc;
-    color: #0f172a;
-    font-family: 'Inter', sans-serif;
-    font-weight: 400;
-
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-
-    text-rendering: optimizeLegibility;
-  }
-
-  button,
-  input,
-  select,
-  textarea {
-    font: inherit;
-  }
-
-  code,
-  pre,
-  .font-mono,
-  .ui-mono {
-    font-family: 'JetBrains Mono', monospace !important;
-  }
-
-  /* --------------------------------------------------------------
-     GLOBAL HEADINGS
-  -------------------------------------------------------------- */
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: #0f172a;
-    letter-spacing: -0.025em;
-    font-weight: 650;
-  }
-
-  h1 {
-    font-size: 1.875rem;
-    line-height: 2.25rem;
-  }
-
-  h2 {
-    font-size: 1.5rem;
-    line-height: 2rem;
-  }
-
-  h3 {
-    font-size: 1.125rem;
-    line-height: 1.625rem;
-  }
-
-  h4 {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-
-  ::selection {
-    background: rgba(14, 165, 233, 0.16);
-    color: #0f172a;
-  }
-}
-
-
-/* ================================================================
-   DESIGN SYSTEM
-================================================================ */
 
 @layer components {
 
@@ -331,6 +260,7 @@
   .ui-button:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14);
+    @apply bg-slate-950 text-slate-100 font-sans transition-colors duration-200;
   }
 
 
@@ -425,10 +355,6 @@
 }
 
 
-/* ================================================================
-   GLOBAL FOCUS
-================================================================ */
-
 :focus-visible {
   outline: 2px solid #0ea5e9;
   outline-offset: 2px;
@@ -437,8 +363,194 @@
 
 /* ================================================================
    SCROLLBAR
-================================================================ */
 
+/* ==========================================================================
+   LIGHT MODE DESIGN SYSTEM
+   ========================================================================== */
+
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Header & Navigation */
+html.light header {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-bottom-color: #e2e8f0 !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.light header a[class*="bg-slate-800"],
+html.light header nav a[class*="bg-slate-800"] {
+  background-color: #e0f2fe !important;
+  color: #0369a1 !important;
+  font-weight: 600;
+}
+
+html.light header nav a:not([class*="bg-slate-800"]) {
+  color: #475569 !important;
+}
+
+html.light header nav a:not([class*="bg-slate-800"]):hover {
+  color: #0f172a !important;
+  background-color: #f1f5f9 !important;
+}
+
+/* Footer */
+html.light footer {
+  background-color: #ffffff !important;
+  border-top-color: #e2e8f0 !important;
+}
+
+/* Surfaces & Containers (handles all opacity variants like /70, /80, /60) */
+html.light [class*="bg-slate-950"] {
+  background-color: #f8fafc !important;
+}
+
+html.light [class*="bg-slate-900"]:not(button.bg-brand-600) {
+  background-color: #ffffff !important;
+}
+
+html.light [class*="bg-slate-850"] {
+  background-color: #f8fafc !important;
+}
+
+html.light [class*="bg-slate-800"]:not(button.bg-brand-600) {
+  background-color: #f1f5f9 !important;
+}
+
+html.light [class*="hover:bg-slate-800"]:hover,
+html.light [class*="hover:bg-slate-850"]:hover,
+html.light [class*="hover:bg-slate-900"]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* Borders & Dividers */
+html.light [class*="border-slate-800"],
+html.light [class*="border-slate-700"] {
+  border-color: #e2e8f0 !important;
+}
+
+html.light [class*="divide-slate-800"] > :not([hidden]) ~ :not([hidden]) {
+  border-color: #e2e8f0 !important;
+}
+
+/* Typography & Headings */
+html.light [class*="text-white"]:not([class*="bg-brand-600"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-amber"]):not([class*="bg-sky"]):not([class*="bg-orange"]),
+html.light [class*="text-slate-100"]:not([class*="bg-brand-600"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-amber"]):not([class*="bg-sky"]):not([class*="bg-orange"]),
+html.light [class*="text-slate-200"]:not([class*="bg-brand-600"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-emerald"]):not([class*="bg-amber"]):not([class*="bg-sky"]):not([class*="bg-orange"]) {
+  color: #0f172a !important;
+}
+
+html.light [class*="text-slate-300"],
+html.light [class*="text-slate-400"] {
+  color: #475569 !important;
+}
+
+html.light [class*="text-slate-500"] {
+  color: #64748b !important;
+}
+
+/* Brand Accents in Light Mode */
+html.light [class*="text-brand-400"],
+html.light [class*="text-brand-300"] {
+  color: #0284c7 !important;
+}
+
+html.light [class*="bg-brand-500/"] {
+  background-color: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+html.light [class*="border-brand-500/"] {
+  border-color: #bae6fd !important;
+}
+
+/* Severity & Risk Badges in Light Mode */
+html.light [class*="text-red-300"],
+html.light [class*="text-red-400"] {
+  color: #b91c1c !important;
+}
+html.light [class*="bg-red-500/"] {
+  background-color: #fef2f2 !important;
+  border-color: #fecaca !important;
+  color: #b91c1c !important;
+}
+
+html.light [class*="text-orange-300"],
+html.light [class*="text-orange-400"] {
+  color: #c2410c !important;
+}
+html.light [class*="bg-orange-500/"] {
+  background-color: #fff7ed !important;
+  border-color: #fed7aa !important;
+  color: #c2410c !important;
+}
+
+html.light [class*="text-amber-300"],
+html.light [class*="text-amber-400"] {
+  color: #b45309 !important;
+}
+html.light [class*="bg-amber-500/"] {
+  background-color: #fffbeb !important;
+  border-color: #fde68a !important;
+  color: #b45309 !important;
+}
+
+html.light [class*="text-emerald-300"],
+html.light [class*="text-emerald-400"] {
+  color: #047857 !important;
+}
+html.light [class*="bg-emerald-500/"] {
+  background-color: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+  color: #047857 !important;
+}
+
+html.light [class*="text-blue-300"],
+html.light [class*="text-blue-400"] {
+  color: #1d4ed8 !important;
+}
+html.light [class*="bg-blue-500/"] {
+  background-color: #eff6ff !important;
+  border-color: #bfdbfe !important;
+  color: #1d4ed8 !important;
+}
+
+/* Tables in Light Mode */
+html.light thead {
+  background-color: #f8fafc !important;
+  border-bottom-color: #e2e8f0 !important;
+}
+
+html.light thead th {
+  color: #475569 !important;
+}
+
+html.light tbody tr:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Inputs & Form Controls */
+html.light input,
+html.light select,
+html.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+html.light input::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Code and Evidence Panels */
+html.light .evidence-panel {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Custom scrollbars */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -448,9 +560,17 @@
   background: #f1f5f9;
 }
 
+html.light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 999px;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -578,22 +698,6 @@
   color: #a16207;
 }
 
-.severity-low {
-  background-color: #fefce8;
-  color: #a16207;
-  border: 1px solid #fde047;
-}
-
-.severity-info {
-  border: 1px solid #bfdbfe;
-  background: #dbeafe;
-  color: #1d4ed8;
-}
-
-
-/* ================================================================
-   DARK MODE
-================================================================ */
 
 html.dark body {
   background: #0b1120;
@@ -645,4 +749,7 @@ html.dark ::-webkit-scrollbar-track {
 
 html.dark ::-webkit-scrollbar-thumb {
   background: #334155;
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

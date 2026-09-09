@@ -9,11 +9,12 @@ import Analysis from './pages/Analysis';
 import AnalysisOverview from './pages/AnalysisOverview';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
-
+import AuthModal from './components/AuthModal';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { useAnalysis } from './hooks/useAnalysis';
 
-export default function App() {
-
+function AppContent() {
   const analysisHook = useAnalysis();
   const navigate = useNavigate();
 
@@ -27,54 +28,36 @@ export default function App() {
   };
 
   return (
+    <div className="min-h-screen flex flex-col bg-slate-950 text-slate-100 selection:bg-brand-500 selection:text-white">
+      {/* Shell Header */}
+      <Navbar onSelectPreset={handleSelectPreset} />
 
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+      {/* Main Content Area */}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Dashboard analysisHook={analysisHook} />} />
+          <Route path="/analysis/:id" element={<Analysis />} />
+          <Route path="/history" element={<History />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
 
-      {/* Sidebar */}
-      <Navbar onLoadPreset={handleSelectPreset} />
+      {/* Shell Footer */}
+      <Footer />
 
-      {/* Right of sidebar */}
-            <div className="flex min-h-screen flex-col md:ml-[220px]">
-
-        {/* Page content */}
-        <main className="flex-1">
-          <Routes>
-
-            <Route
-              path="/"
-              element={<Dashboard analysisHook={analysisHook} />}
-            />
-
-            <Route
-              path="/analysis"
-              element={<AnalysisOverview />}
-            />
-
-            <Route
-              path="/analysis/:id"
-              element={<Analysis />}
-            />
-
-            <Route
-              path="/history"
-              element={<History />}
-            />
-
-            <Route
-              path="*"
-              element={<NotFound />}
-            />
-
-          </Routes>
-        </main>
-
-        {/* Footer */}
-        <Footer />
-
-      </div>
-
+      {/* Central Auth Modal */}
+      <AuthModal />
     </div>
 
   );
+}
 
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ThemeProvider>
+  );
 }

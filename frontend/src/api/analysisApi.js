@@ -105,16 +105,16 @@ export const analysisApi = {
       return result;
 
     } catch (err) {
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-        console.warn(
-          'Backend unavailable. Using local development analysis.'
-        );
-
-        return createFallbackAnalysis(file.name);
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
+        console.warn('Mock mode active, serving mock analysis.');
+        const fallback = {
+          ...mockAnalysis,
+          analysis_id: 'mock-' + Date.now(),
+          filename: file.name,
+          uploaded_at: new Date().toISOString(),
+        };
+        localMockAnalyses.unshift(fallback);
+        return fallback;
       }
 
       throw err;
@@ -195,56 +195,7 @@ export const analysisApi = {
       );
 
     } catch (err) {
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-
-        const start =
-          (page - 1) * limit;
-
-        const end =
-          start + limit;
-
-        const items =
-          localMockAnalyses
-            .map((analysis) => ({
-              analysis_id:
-                analysis.analysis_id,
-
-              filename:
-                analysis.filename,
-
-              status:
-                analysis.status || 'COMPLETED',
-
-              risk_label:
-                analysis.risk?.level ||
-                'UNKNOWN',
-
-              risk_score:
-                analysis.risk?.score ??
-                null,
-
-              session_count:
-                analysis.summary?.total_sessions ||
-                analysis.sessions?.length ||
-                0,
-
-              finding_count:
-                analysis.summary?.findings_count ||
-                analysis.findings?.length ||
-                0,
-
-              created_at:
-                analysis.uploaded_at,
-
-              completed_at:
-                analysis.uploaded_at,
-            }))
-            .slice(start, end);
-
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
         return {
           items,
 
@@ -331,36 +282,9 @@ export const analysisApi = {
       return result;
 
     } catch (err) {
-
-      /*
-       | Only fallback for actual connectivity/auth problems.
-       |
-       | DO NOT fallback on 404.
-       */
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-
-        const fallback =
-          findLocalAnalysis(analysisId);
-
-        if (fallback) {
-          return fallback;
-        }
-
-        throw new Error(
-          'Backend is unavailable and this analysis is not available locally.'
-        );
-      }
-
-
-      if (err.status === 404) {
-
-        throw new Error(
-          `Analysis record "${analysisId}" was not found.`
-        );
+      if (USE_MOCK_ENV && (err.isNetworkError || err.status === 401)) {
+        const match = localMockAnalyses.find((a) => a.analysis_id === analysisId) || mockAnalysis;
+        return match;
       }
 
       throw err;
@@ -412,26 +336,11 @@ export const analysisApi = {
       );
 
     } catch (err) {
-
-      if (
-        (err.isNetworkError ||
-          err.status === 401) &&
-        localMatch
-      ) {
-
-        return new Blob(
-          [
-            JSON.stringify(
-              localMatch,
-              null,
-              2
-            ),
-          ],
-          {
-            type:
-              'application/json',
-          }
-        );
+      if (USE_MOCK_ENV) {
+        // Generate export blob from local data
+        const match = localMockAnalyses.find((a) => a.analysis_id === analysisId) || mockAnalysis;
+        const jsonString = JSON.stringify(match, null, 2);
+        return new Blob([jsonString], { type: 'application/json' });
       }
 
       throw err;
