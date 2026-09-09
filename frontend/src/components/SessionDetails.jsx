@@ -26,7 +26,7 @@ export default function SessionDetails({ session, onClose }) {
                 <h3 id="session-modal-title" className="text-base font-bold text-white font-mono">
                   {session.session_id}
                 </h3>
-                <span className={`text-[11px] px-2 py-0.5 rounded-full border font-mono ${enc.badge}`}>
+                <span className={`text-[11px] px-2.5 py-1 rounded-full border font-mono ${enc.badge}`}>
                   {enc.label}
                 </span>
               </div>
@@ -45,9 +45,9 @@ export default function SessionDetails({ session, onClose }) {
         </div>
 
         {/* Scrollable Content */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs">
+        <div className="p-6 overflow-y-auto space-y-7 text-xs">
           {/* Connection Endpoints */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 font-mono">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-950/60 border border-slate-800 font-mono">
             <div>
               <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Client (Source)</span>
               <span className="text-slate-200 text-sm font-semibold">
@@ -68,45 +68,45 @@ export default function SessionDetails({ session, onClose }) {
               <Lock className="w-4 h-4" />
               <span>Protocol Handshake & Upgrade Controls</span>
             </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Upgrade Advertised */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
+              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-slate-300 font-medium block">Upgrade Advertised</span>
                   <span className="text-[10px] text-slate-500">STARTTLS / STLS capability announced</span>
                 </div>
                 {(() => {
                   const state = formatTriState(session.security?.upgrade_advertised);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
+                  return <span className={`px-2.5 py-1 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
                 })()}
               </div>
 
               {/* Upgrade Requested */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
+              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-slate-300 font-medium block">Upgrade Requested</span>
                   <span className="text-[10px] text-slate-500">Client initiated TLS upgrade command</span>
                 </div>
                 {(() => {
                   const state = formatTriState(session.security?.upgrade_requested);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
+                  return <span className={`px-2.5 py-1 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
                 })()}
               </div>
 
               {/* Upgrade Succeeded */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
+              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-slate-300 font-medium block">Upgrade Succeeded</span>
                   <span className="text-[10px] text-slate-500">TLS session established after upgrade</span>
                 </div>
                 {(() => {
                   const state = formatTriState(session.security?.upgrade_succeeded);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
+                  return <span className={`px-2.5 py-1 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
                 })()}
               </div>
 
               {/* Authentication Before TLS (Critical Check) */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
+              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
                 <div>
                   <span className="text-slate-300 font-medium block">Auth Before TLS</span>
                   <span className="text-[10px] text-slate-500">AUTH commands sent over plaintext</span>
@@ -115,7 +115,7 @@ export default function SessionDetails({ session, onClose }) {
                   const state = formatTriState(session.security?.authentication_before_tls);
                   const isVuln = state.text === 'YES';
                   return (
-                    <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${isVuln ? 'bg-red-500/20 text-red-300 border-red-500/40 font-bold' : state.badgeClass}`}>
+                    <span className={`px-2.5 py-1 rounded font-mono text-[11px] border ${isVuln ? 'bg-red-500/25 text-red-200 border-red-500/40 font-bold' : state.badgeClass}`}>
                       {state.text}
                     </span>
                   );
@@ -123,12 +123,12 @@ export default function SessionDetails({ session, onClose }) {
               </div>
 
               {/* Capture Completeness */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between sm:col-span-2">
+              <div className="p-3.5 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between sm:col-span-2">
                 <div>
                   <span className="text-slate-300 font-medium block">Capture Completeness</span>
                   <span className="text-[10px] text-slate-500">Full TCP 3-way handshake and stream teardown captured</span>
                 </div>
-                <span className="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-800 text-slate-300 border border-slate-700">
+                <span className="px-2.5 py-1 rounded font-mono text-[11px] bg-slate-800 text-slate-200 border border-slate-700">
                   {session.security?.capture_completeness || 'UNKNOWN'}
                 </span>
               </div>
