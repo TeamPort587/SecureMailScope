@@ -36,7 +36,7 @@ import { useAnalysis } from '../hooks/useAnalysis';
 
 import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
-import Recommendations from '../components/Recommendations';
+import Recommendations, { getAffectedSessions } from '../components/Recommendations';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
 
@@ -1611,6 +1611,9 @@ export default function Analysis() {
                         recommendation={
                           recommendation
                         }
+                        findings={findings}
+                        sessions={sessions}
+                        onSelectSession={(sId) => setActiveTab('sessions')}
                       />
 
                     )
@@ -1709,6 +1712,9 @@ export default function Analysis() {
 
             <Recommendations
               recommendations={recommendations}
+              findings={findings}
+              sessions={sessions}
+              onSelectSession={(sId) => setActiveTab('sessions')}
             />
 
           </div>
@@ -2264,6 +2270,9 @@ function FindingHighlight({
 
 function RecommendationPreview({
   recommendation,
+  findings = [],
+  sessions = [],
+  onSelectSession,
 }) {
 
   const title =
@@ -2292,6 +2301,7 @@ function RecommendationPreview({
     '';
 
   const priorityStyles = getSeverityStyles(priority);
+  const affectedSessions = getAffectedSessions(recommendation, findings);
 
 
   return (
@@ -2359,6 +2369,42 @@ function RecommendationPreview({
       ">
         {description}
       </p>
+
+      {/* Target sessions pills */}
+      {affectedSessions.length > 0 && (
+        <div className="mt-2.5 flex flex-wrap items-center gap-1">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mr-0.5">
+            Sessions:
+          </span>
+          {affectedSessions.map((sId) => (
+            <button
+              key={sId}
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelectSession?.(sId);
+              }}
+              className="
+                inline-flex items-center gap-1
+                rounded
+                border border-slate-200
+                bg-slate-50
+                px-1.5 py-0.5
+                font-mono
+                text-[10px]
+                font-medium
+                text-slate-600
+                hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700
+                transition-colors
+              "
+              title={`View session ${sId}`}
+            >
+              <span className="h-1 w-1 rounded-full bg-amber-500" />
+              {sId}
+            </button>
+          ))}
+        </div>
+      )}
 
 
       <div className="

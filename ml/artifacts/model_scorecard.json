@@ -21,11 +21,11 @@
     "RandomForestClassifier": {
       "validation_macro_f1": 0.661,
       "validation_accuracy": 0.9,
-      "cross_validation_macro_f1": 0.9019,
-      "cross_validation_std": 0.0649,
-      "challenge_macro_f1": 0.7899,
-      "calibration_brier_score": 0.2105,
-      "composite_score": 0.7719
+      "cross_validation_macro_f1": 0.8836,
+      "cross_validation_std": 0.0756,
+      "challenge_macro_f1": 0.6967,
+      "calibration_brier_score": 0.1943,
+      "composite_score": 0.7494
     },
     "ExtraTreesClassifier": {
       "validation_macro_f1": 0.661,
@@ -46,7 +46,7 @@
       "composite_score": 0.7608
     }
   },
-  "selection_rationale": "RandomForestClassifier selected as primary production model for explainable tree feature importances and inference contract stability, achieving strong 5-fold CV F1 (0.9019) and test/challenge generalization, benchmarked against ExtraTreesClassifier.",
+  "selection_rationale": "RandomForestClassifier selected as primary production model for explainable tree feature importances and inference contract stability, achieving strong 5-fold CV F1 (0.8836) and test/challenge generalization, benchmarked against ExtraTreesClassifier.",
   "selected_model": "RandomForestClassifier",
   "top_scoring_candidate": "ExtraTreesClassifier"
 }
