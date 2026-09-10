@@ -1,85 +1,84 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { authApi } from '../api/authApi';
-import { getAuthToken, setAuthToken } from '../api/client';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext(null);
 
+const API_BASE = 'http://localhost:3000/api';
+
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => getAuthToken());
-  const [userEmail, setUserEmail] = useState(() => authApi.getCurrentUserEmail());
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem('sms_auth_token'));
+  const [loading, setLoading] = useState(true);
 
-  // Sync token and email
   useEffect(() => {
-    const handleAuthRequired = () => {
-      setToken(null);
-      setUserEmail(null);
-      setIsAuthModalOpen(true);
-    };
-
-    window.addEventListener('auth:required', handleAuthRequired);
-    return () => window.removeEventListener('auth:required', handleAuthRequired);
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const isExpired = payload.exp * 1000 < Date.now();
+        if (isExpired) {
+          logout();
+        } else {
+          setUser({ id: payload.sub, email: payload.email });
+        }
+      } catch {
+        logout();
+      }
+    }
+    setLoading(false);
   }, []);
 
-  const openAuthModal = useCallback(() => {
-    setIsAuthModalOpen(true);
-  }, []);
+  const login = async (email, password) => {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const closeAuthModal = useCallback(() => {
-    setIsAuthModalOpen(false);
-  }, []);
+    const data = await res.json();
 
-  const login = useCallback(async (email, password) => {
-    const res = await authApi.login(email, password);
-    setToken(getAuthToken());
-    setUserEmail(email);
-    setIsAuthModalOpen(false);
-    return res;
-  }, []);
+    if (!res.ok) {
+      throw new Error(data?.message || 'Invalid email or password.');
+    }
 
-  const register = useCallback(async (email, password) => {
-    const res = await authApi.register(email, password);
-    setToken(getAuthToken());
-    setUserEmail(email);
-    setIsAuthModalOpen(false);
-    return res;
-  }, []);
-
-  const logout = useCallback(() => {
-    authApi.logout();
-    setToken(null);
-    setUserEmail(null);
-  }, []);
-
-  const value = {
-    token,
-    userEmail,
-    isAuthenticated: Boolean(token),
-    isAuthModalOpen,
-    openAuthModal,
-    closeAuthModal,
-    login,
-    register,
-    logout,
+    localStorage.setItem('sms_auth_token', data.token);
+    setToken(data.token);
+    setUser(data.user);
+    const payload = JSON.parse(atob(data.token.split('.')[1]));
+const msUntilExpiry = payload.exp * 1000 - Date.now();
+setTimeout(logout, msUntilExpiry);
+    return data;
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const register = async (email, password) => {
+    const res = await fetch(`${API_BASE}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.message || 'Registration failed.');
+    }
+
+    return data;
+  };
+
+  const logout = () => {
+    localStorage.removeItem('sms_auth_token');
+    setToken(null);
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, loading, login, register, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (!context) {
-    return {
-      token: 'test-token',
-      userEmail: 'test@example.com',
-      isAuthenticated: true,
-      isAuthModalOpen: false,
-      openAuthModal: () => {},
-      closeAuthModal: () => {},
-      login: async () => {},
-      register: async () => {},
-      logout: () => {},
-    };
-  }
-  return context;
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used inside AuthProvider');
+  return ctx;
 }

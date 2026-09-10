@@ -73,13 +73,11 @@ async function login(req, res, next) {
 
     logger.info('User login success', { userId: user.id });
 
-    res.json({
-      token,
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-    });
+   res.json({
+  status: 'success',
+  token,
+  user: { id: user.id, email: user.email },
+});
   } catch (err) {
     next(err);
   }
