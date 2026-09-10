@@ -14,6 +14,7 @@ const healthRoutes = require('./routes/health');
 const authRoutes = require('./routes/auth');
 const analyzeRoutes = require('./routes/analyze');
 const analysesRoutes = require('./routes/analyses');
+const copilotRoutes = require('./routes/copilot');
 
 const app = express();
 
@@ -55,6 +56,7 @@ app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/analyze', analyzeRoutes);
 app.use('/api/analyses', analysesRoutes);
+app.use('/api/copilot', copilotRoutes);
 
 // ---------------------------------------------------------------------------
 // 404 catch-all
