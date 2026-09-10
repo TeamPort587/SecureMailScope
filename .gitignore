@@ -129,3 +129,6 @@ vm2_deploy/
 vm3_deploy/
 captures/
 
+
+test_risk_model.py
+test_pcap_analysis.py

@@ -246,6 +246,11 @@ class RiskPredictor:
             )
 
         self.pipeline = joblib.load(model_path)
+        # Compatibility safeguard across scikit-learn versions
+        if hasattr(self.pipeline, "named_steps") and "imputer" in self.pipeline.named_steps:
+            imp = self.pipeline.named_steps["imputer"]
+            if not hasattr(imp, "_fill_dtype") and hasattr(imp, "_fit_dtype"):
+                imp._fill_dtype = imp._fit_dtype
 
     def predict_session(
         self,
