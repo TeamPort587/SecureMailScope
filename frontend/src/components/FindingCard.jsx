@@ -57,30 +57,122 @@ export default function FindingCard({ finding }) {
   : 0;
 
   return (
-    <div className={`rounded-xl border p-4 transition-all bg-white dark:bg-slate-900/60 border-slate-200 dark:border-slate-800 ${config.border} hover:bg-slate-50 dark:hover:bg-slate-900/80 shadow-sm`}>
-      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
-        {/* Finding Header */}
-        <div className="space-y-1.5 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <RiskBadge level={finding.severity} size="sm" />
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-              Type: {finding.finding_type}
-            </span>
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-brand-50 dark:bg-brand-500/10 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-500/20 font-semibold">
-              Session: {finding.session_id}
-            </span>
-            <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400">
-              Confidence: <strong className="text-slate-800 dark:text-slate-200">{finding.confidence || 'OBSERVED'}</strong>
-            </span>
+    <article
+      className="
+        group relative overflow-hidden
+        rounded-xl border border-slate-200
+        bg-white
+        shadow-[0_2px_10px_rgba(15,23,42,0.025)]
+        transition-all duration-200
+        hover:border-slate-300
+        hover:shadow-[0_6px_24px_rgba(15,23,42,0.055)]
+      "
+    >
+      {/* Severity accent */}
+      <div className={`absolute inset-y-0 left-0 w-1 ${style.accent}`} />
+
+      {/* Main finding */}
+      <div className="p-5 pl-6 sm:p-6">
+        <div className="flex items-start gap-4">
+          {/* Icon */}
+          <div
+            className={`
+              flex h-10 w-10 shrink-0
+              items-center justify-center
+              rounded-xl border
+              ${style.icon}
+            `}
+          >
+            <ShieldAlert className="h-[18px] w-[18px]" />
           </div>
 
-          <h4 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
-            {finding.title}
-          </h4>
+          {/* Content */}
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <RiskBadge level={severity} size="sm" />
+            </div>
 
-          <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
-            {finding.description}
-          </p>
+            <h3 className="mt-3 text-[16px] font-semibold leading-6 text-slate-900">
+              {finding?.title || "Security finding detected"}
+            </h3>
+
+            {finding?.description && (
+              <p className="mt-1.5 max-w-4xl text-sm leading-6 text-slate-600">
+                {finding.description}
+              </p>
+            )}
+          </div>
+
+          {/* Evidence */}
+          {finding?.evidence && (
+            <button
+  type="button"
+  onClick={() => setShowEvidence(!showEvidence)}
+  aria-expanded={showEvidence}
+  className={`
+    hidden shrink-0
+    items-center gap-2.5
+    rounded-xl border
+    px-3.5 py-2.5
+    text-xs font-semibold
+    transition-all duration-200
+    sm:inline-flex
+    ${
+      showEvidence
+        ? 'border-blue-200 bg-blue-50 text-blue-700'
+        : `
+            border-slate-200
+            bg-white
+            text-slate-600
+            hover:border-blue-200
+            hover:bg-blue-50/50
+            hover:text-blue-700
+          `
+    }
+  `}
+>
+  <div
+    className={`
+      flex h-7 w-7 items-center justify-center
+      rounded-lg
+      ${
+        showEvidence
+          ? 'bg-blue-100'
+          : 'bg-slate-100'
+      }
+    `}
+  >
+    <Terminal
+      className={`
+        h-3.5 w-3.5
+        ${
+          showEvidence
+            ? 'text-blue-600'
+            : 'text-slate-500'
+        }
+      `}
+    />
+  </div>
+
+  <div className="text-left">
+    <p className="leading-4">
+      {showEvidence ? 'Evidence visible' : 'View evidence'}
+    </p>
+
+    {!showEvidence && evidenceCount > 0 && (
+      <p className="mt-0.5 text-[10px] font-normal text-slate-400">
+        {evidenceCount} supporting attributes
+      </p>
+    )}
+  </div>
+
+  {showEvidence ? (
+    <ChevronUp className="ml-1 h-3.5 w-3.5 text-blue-500" />
+  ) : (
+    <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-400" />
+  )}
+</button>
+          )}
         </div>
 
         {/* Mobile evidence */}
@@ -88,11 +180,6 @@ export default function FindingCard({ finding }) {
           <button
             type="button"
             onClick={() => setShowEvidence(!showEvidence)}
-            className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors shrink-0 ${
-              showEvidence
-                ? 'bg-brand-50 dark:bg-brand-500/20 text-brand-700 dark:text-brand-300 border-brand-300 dark:border-brand-500/40'
-                : 'bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
-            }`}
             aria-expanded={showEvidence}
             className={`
               mt-4 flex w-full
@@ -108,9 +195,15 @@ export default function FindingCard({ finding }) {
               }
             `}
           >
-            <Terminal className="w-3.5 h-3.5 text-brand-600 dark:text-brand-400" />
-            <span>Evidence</span>
-            {showEvidence ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+            <Terminal className="h-3.5 w-3.5" />
+
+            {showEvidence ? "Hide evidence" : "View evidence"}
+
+            {showEvidence ? (
+              <ChevronUp className="h-3.5 w-3.5" />
+            ) : (
+              <ChevronDown className="h-3.5 w-3.5" />
+            )}
           </button>
         )}
       </div>
