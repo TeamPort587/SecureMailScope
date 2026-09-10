@@ -1,0 +1,72 @@
+[
+  {
+    "run": 1,
+    "analysis_id": "cf476b1c-a3b4-4025-a5c2-57ef0555c3c0",
+    "duration_sec": 0.809,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 2,
+    "analysis_id": "e4fa96f2-60df-4e0e-8c9b-c33376988318",
+    "duration_sec": 0.491,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 3,
+    "analysis_id": "0b6a247d-0cc9-4e8a-b62d-2a224231ad96",
+    "duration_sec": 0.408,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 4,
+    "analysis_id": "a4db1620-39ef-471b-86a4-a7848c7f9f14",
+    "duration_sec": 0.477,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 5,
+    "analysis_id": "5b258efa-76fb-489e-b0b2-ed86b028d609",
+    "duration_sec": 0.757,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 6,
+    "analysis_id": "7c53c32e-0c1d-4329-b4fe-49859e2119ca",
+    "duration_sec": 0.734,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 7,
+    "analysis_id": "b65be2c4-1f2f-455f-96a1-cd69b74d01ae",
+    "duration_sec": 0.535,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 8,
+    "analysis_id": "08f9fc3f-2b2b-4e0e-899b-70a040f367d0",
+    "duration_sec": 0.498,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 9,
+    "analysis_id": "413605b8-ae01-40bb-88ac-84bb82b557f7",
+    "duration_sec": 0.446,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  },
+  {
+    "run": 10,
+    "analysis_id": "8d8db6e8-27fa-49a6-8852-83dd5cb16e06",
+    "duration_sec": 0.296,
+    "risk_score": 15,
+    "risk_level": "LOW"
+  }
+]
