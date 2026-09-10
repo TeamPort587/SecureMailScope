@@ -28,6 +28,8 @@ def extract_security_profile(
     tls_info = None
     if sec_info.encryption_mode in ("STARTTLS", "IMPLICIT_TLS") or sec_info.upgrade_succeeded == "YES":
         tls_info = extract_tls_info(session.packets)
+        if tls_info and sec_info.upgrade_succeeded == "NO" and not tls_info.cipher_suite:
+            tls_info = None
 
     # 3. Extract Certificate metadata
     cert_info = None
