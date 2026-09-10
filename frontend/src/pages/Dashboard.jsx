@@ -6,6 +6,7 @@ import RiskSummary from '../components/RiskSummary';
 import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
 import Recommendations from '../components/Recommendations';
+import CopilotChat from '../components/CopilotChat';
 import ErrorState from '../components/ErrorState';
 
 import {
@@ -514,6 +515,23 @@ export default function Dashboard({ analysisHook }) {
                     countClass="text-yellow-700 bg-yellow-50 border-yellow-200"
                   />
 
+                  <AnalysisTab
+                    active={
+                      activeTab === 'ai-assistance'
+                    }
+                    onClick={() =>
+                      setActiveTab('ai-assistance')
+                    }
+                    icon={
+                      <img
+                        src="/Agent_SMS_logo_2.jpeg"
+                        alt="Agent SMS"
+                        className="h-4 w-4 rounded-sm object-contain"
+                      />
+                    }
+                    label="AI Assistance"
+                  />
+
                 </div>
 
               </div>
@@ -616,6 +634,19 @@ export default function Dashboard({ analysisHook }) {
               </section>
             )}
 
+
+            {/* =================================================
+                AI ASSISTANCE / COPILOT
+            ================================================== */}
+
+            {activeTab === 'ai-assistance' && (
+              <section>
+
+                <CopilotChat analysis={analysis} />
+
+              </section>
+            )}
+
           </div>
         )}
 
@@ -655,13 +686,17 @@ function AnalysisTab({
         <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-brand-500" />
       )}
 
-      <Icon
-        className={`h-4 w-4 ${
-          active
-            ? 'text-brand-600'
-            : 'text-slate-400'
-        }`}
-      />
+      {React.isValidElement(Icon) ? (
+        Icon
+      ) : typeof Icon === 'function' ? (
+        <Icon
+          className={`h-4 w-4 ${
+            active
+              ? 'text-brand-600'
+              : 'text-slate-400'
+          }`}
+        />
+      ) : null}
 
       <span>
         {label}

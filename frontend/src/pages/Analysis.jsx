@@ -37,6 +37,7 @@ import { useAnalysis } from '../hooks/useAnalysis';
 import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
 import Recommendations, { getAffectedSessions } from '../components/Recommendations';
+import CopilotChat from '../components/CopilotChat';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
 
@@ -1247,6 +1248,23 @@ export default function Analysis() {
               count={recommendations.length}
             />
 
+            <AnalysisTab
+              active={
+                activeTab === 'ai-assistance'
+              }
+              onClick={() =>
+                setActiveTab('ai-assistance')
+              }
+              icon={
+                <img
+                  src="/Agent_SMS_logo_2.jpeg"
+                  alt="Agent SMS"
+                  className="h-4 w-4 rounded-sm object-contain"
+                />
+              }
+              label="AI Assistance"
+            />
+
           </div>
 
         </div>
@@ -1721,6 +1739,15 @@ export default function Analysis() {
 
         </div>
 
+      )}
+
+
+      {/* ========================================================
+          AI ASSISTANCE TAB
+      ======================================================== */}
+
+      {activeTab === 'ai-assistance' && (
+        <CopilotChat analysis={analysis} />
       )}
 
 

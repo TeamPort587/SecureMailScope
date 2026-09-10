@@ -11,6 +11,8 @@ import FindingCard from '../components/FindingCard';
 import EvidencePanel from '../components/EvidencePanel';
 import Recommendations from '../components/Recommendations';
 import HistoryTable from '../components/HistoryTable';
+import CopilotChat from '../components/CopilotChat';
+import { copilotApi } from '../api/copilotApi';
 
 import mockAnalysis from '../mock/mockAnalysis.json';
 
@@ -173,6 +175,58 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       expect(screen.getByText('test_traffic.pcap')).toBeInTheDocument();
       expect(screen.getByText('completed')).toBeInTheDocument();
+    });
+  });
+
+  // --- CopilotChat ---
+  describe('CopilotChat', () => {
+    it('renders header, initial welcome message, and suggested questions', async () => {
+      vi.spyOn(copilotApi, 'getStatus').mockResolvedValue({
+        status: 'online',
+        model: 'mailscope-sec:3b',
+        model_available: true,
+      });
+
+      vi.spyOn(copilotApi, 'getSuggestions').mockResolvedValue([
+        'What are the risks of plaintext email authentication observed here?',
+        'How can I enforce modern TLS (v1.3) and strong ciphers in my mail server?',
+      ]);
+
+      render(<CopilotChat analysis={mockAnalysis} />);
+
+      expect(screen.getByText('Agent SMS')).toBeInTheDocument();
+      expect(screen.getByText('OLLAMA')).toBeInTheDocument();
+      expect(await screen.findByText(/What are the risks of plaintext/i)).toBeInTheDocument();
+      expect(screen.getByText(/How can I enforce modern TLS/i)).toBeInTheDocument();
+    });
+
+    it('submits a question and displays assistant response with source metadata', async () => {
+      vi.spyOn(copilotApi, 'getStatus').mockResolvedValue({
+        status: 'online',
+        model: 'mailscope-sec:3b',
+        model_available: true,
+      });
+
+      vi.spyOn(copilotApi, 'getSuggestions').mockResolvedValue([]);
+      vi.spyOn(copilotApi, 'chat').mockResolvedValue({
+        response: 'Enforce STARTTLS and reject plaintext AUTH commands.',
+        model: 'mailscope-sec:3b',
+        source: 'ollama',
+      });
+
+      render(<CopilotChat analysis={mockAnalysis} />);
+
+      expect(await screen.findByText(/Agent SMS/i)).toBeInTheDocument();
+
+      const input = screen.getByPlaceholderText(/Ask about security findings/i);
+      fireEvent.change(input, { target: { value: 'How to fix plaintext auth?' } });
+
+      const sendButton = screen.getByTitle('Send message');
+      fireEvent.click(sendButton);
+
+      expect(screen.getByText('How to fix plaintext auth?')).toBeInTheDocument();
+      expect(await screen.findByText(/Enforce STARTTLS and reject plaintext/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/source: ollama/i).length).toBeGreaterThanOrEqual(1);
     });
   });
 });
