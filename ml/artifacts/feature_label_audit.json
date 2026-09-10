@@ -1,0 +1,1572 @@
+{
+  "total_samples": 6404,
+  "class_distribution": {
+    "LOW": 1602,
+    "CRITICAL": 1602,
+    "MEDIUM": 1600,
+    "HIGH": 1600
+  },
+  "leakage_threshold_used": 0.95,
+  "flagged_leakage_count": 7,
+  "flagged_leakages": [
+    {
+      "feature": "encryption_plaintext",
+      "value": "1",
+      "target_class": "CRITICAL",
+      "purity": 1.0,
+      "count": 640,
+      "reason": "Value 1 appears in class 'CRITICAL' with 100.0% purity (640/640)"
+    },
+    {
+      "feature": "expired_cert",
+      "value": "1",
+      "target_class": "HIGH",
+      "purity": 1.0,
+      "count": 270,
+      "reason": "Value 1 appears in class 'HIGH' with 100.0% purity (270/270)"
+    },
+    {
+      "feature": "not_yet_valid_cert",
+      "value": "1",
+      "target_class": "HIGH",
+      "purity": 1.0,
+      "count": 132,
+      "reason": "Value 1 appears in class 'HIGH' with 100.0% purity (132/132)"
+    },
+    {
+      "feature": "auth_before_tls",
+      "value": "1",
+      "target_class": "CRITICAL",
+      "purity": 1.0,
+      "count": 1410,
+      "reason": "Value 1 appears in class 'CRITICAL' with 100.0% purity (1410/1410)"
+    },
+    {
+      "feature": "critical_count",
+      "value": "1",
+      "target_class": "CRITICAL",
+      "purity": 1.0,
+      "count": 660,
+      "reason": "Value 1 appears in class 'CRITICAL' with 100.0% purity (660/660)"
+    },
+    {
+      "feature": "critical_count",
+      "value": "2",
+      "target_class": "CRITICAL",
+      "purity": 1.0,
+      "count": 248,
+      "reason": "Value 2 appears in class 'CRITICAL' with 100.0% purity (248/248)"
+    },
+    {
+      "feature": "medium_count",
+      "value": "3",
+      "target_class": "HIGH",
+      "purity": 1.0,
+      "count": 18,
+      "reason": "Value 3 appears in class 'HIGH' with 100.0% purity (18/18)"
+    }
+  ],
+  "features": {
+    "encryption_plaintext": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 962,
+            "HIGH": 1600,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 5764
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 640,
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 640
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "1",
+          "class": "CRITICAL",
+          "count": 640,
+          "total_with_value": 640,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "CRITICAL": {
+          "mean": 0.4,
+          "std": 0.49,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "encryption_starttls": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 696,
+            "HIGH": 584,
+            "LOW": 748,
+            "MEDIUM": 898
+          },
+          "total": 2926
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 906,
+            "HIGH": 1016,
+            "LOW": 854,
+            "MEDIUM": 702
+          },
+          "total": 3478
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.533,
+          "std": 0.499,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MEDIUM": {
+          "mean": 0.439,
+          "std": 0.496,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.635,
+          "std": 0.482,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.566,
+          "std": 0.496,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "encryption_implicit": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 1546,
+            "HIGH": 1016,
+            "LOW": 854,
+            "MEDIUM": 702
+          },
+          "total": 4118
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 56,
+            "HIGH": 584,
+            "LOW": 748,
+            "MEDIUM": 898
+          },
+          "total": 2286
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.467,
+          "std": 0.499,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MEDIUM": {
+          "mean": 0.561,
+          "std": 0.496,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.365,
+          "std": 0.482,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.035,
+          "std": 0.184,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "deprecated_tls": {
+      "overall_missing_rate": 0.1818,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 311,
+          "missing_rate": 0.1944
+        },
+        "CRITICAL": {
+          "missing_count": 853,
+          "missing_rate": 0.5325
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 561,
+            "HIGH": 959,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 4722
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 188,
+            "HIGH": 330,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 518
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 853,
+            "HIGH": 311,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1164
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.256,
+          "std": 0.437,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.251,
+          "std": 0.434,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "weak_cipher": {
+      "overall_missing_rate": 0.1818,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 311,
+          "missing_rate": 0.1944
+        },
+        "CRITICAL": {
+          "missing_count": 853,
+          "missing_rate": 0.5325
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 424,
+            "HIGH": 942,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 4568
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 325,
+            "HIGH": 347,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 672
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 853,
+            "HIGH": 311,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1164
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.269,
+          "std": 0.444,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.434,
+          "std": 0.496,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "expired_cert": {
+      "overall_missing_rate": 0.3587,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 676,
+          "missing_rate": 0.422
+        },
+        "MEDIUM": {
+          "missing_count": 339,
+          "missing_rate": 0.2119
+        },
+        "HIGH": {
+          "missing_count": 378,
+          "missing_rate": 0.2362
+        },
+        "CRITICAL": {
+          "missing_count": 904,
+          "missing_rate": 0.5643
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 698,
+            "HIGH": 952,
+            "LOW": 926,
+            "MEDIUM": 1261
+          },
+          "total": 3837
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 0,
+            "HIGH": 270,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 270
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 904,
+            "HIGH": 378,
+            "LOW": 676,
+            "MEDIUM": 339
+          },
+          "total": 2297
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "1",
+          "class": "HIGH",
+          "count": 270,
+          "total_with_value": 270,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.221,
+          "std": 0.415,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "not_yet_valid_cert": {
+      "overall_missing_rate": 0.3587,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 676,
+          "missing_rate": 0.422
+        },
+        "MEDIUM": {
+          "missing_count": 339,
+          "missing_rate": 0.2119
+        },
+        "HIGH": {
+          "missing_count": 378,
+          "missing_rate": 0.2362
+        },
+        "CRITICAL": {
+          "missing_count": 904,
+          "missing_rate": 0.5643
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 698,
+            "HIGH": 1090,
+            "LOW": 926,
+            "MEDIUM": 1261
+          },
+          "total": 3975
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 0,
+            "HIGH": 132,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 132
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 904,
+            "HIGH": 378,
+            "LOW": 676,
+            "MEDIUM": 339
+          },
+          "total": 2297
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "1",
+          "class": "HIGH",
+          "count": 132,
+          "total_with_value": 132,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.108,
+          "std": 0.311,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "weak_key": {
+      "overall_missing_rate": 0.3587,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 676,
+          "missing_rate": 0.422
+        },
+        "MEDIUM": {
+          "missing_count": 339,
+          "missing_rate": 0.2119
+        },
+        "HIGH": {
+          "missing_count": 378,
+          "missing_rate": 0.2362
+        },
+        "CRITICAL": {
+          "missing_count": 904,
+          "missing_rate": 0.5643
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 567,
+            "HIGH": 778,
+            "LOW": 926,
+            "MEDIUM": 1261
+          },
+          "total": 3532
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 131,
+            "HIGH": 444,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 575
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 904,
+            "HIGH": 378,
+            "LOW": 676,
+            "MEDIUM": 339
+          },
+          "total": 2297
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.363,
+          "std": 0.481,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.188,
+          "std": 0.391,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "auth_before_tls": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 192,
+            "HIGH": 1600,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 4994
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 1410,
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1410
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "1",
+          "class": "CRITICAL",
+          "count": 1410,
+          "total_with_value": 1410,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "CRITICAL": {
+          "mean": 0.88,
+          "std": 0.325,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "tls_upgrade_failed": {
+      "overall_missing_rate": 0.0002,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 1,
+          "missing_rate": 0.0006
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 1388,
+            "HIGH": 1289,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 5879
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 213,
+            "HIGH": 311,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 524
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 1,
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.194,
+          "std": 0.396,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.133,
+          "std": 0.34,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "pfs_missing": {
+      "overall_missing_rate": 0.1818,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 311,
+          "missing_rate": 0.1944
+        },
+        "CRITICAL": {
+          "missing_count": 853,
+          "missing_rate": 0.5325
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 492,
+            "HIGH": 793,
+            "LOW": 1602,
+            "MEDIUM": 573
+          },
+          "total": 3460
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 257,
+            "HIGH": 496,
+            "LOW": 0,
+            "MEDIUM": 1027
+          },
+          "total": 1780
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 853,
+            "HIGH": 311,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1164
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.642,
+          "std": 0.48,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.385,
+          "std": 0.487,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.343,
+          "std": 0.475,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "self_signed": {
+      "overall_missing_rate": 0.3587,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 676,
+          "missing_rate": 0.422
+        },
+        "MEDIUM": {
+          "missing_count": 339,
+          "missing_rate": 0.2119
+        },
+        "HIGH": {
+          "missing_count": 378,
+          "missing_rate": 0.2362
+        },
+        "CRITICAL": {
+          "missing_count": 904,
+          "missing_rate": 0.5643
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 654,
+            "HIGH": 847,
+            "LOW": 926,
+            "MEDIUM": 729
+          },
+          "total": 3156
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 44,
+            "HIGH": 375,
+            "LOW": 0,
+            "MEDIUM": 532
+          },
+          "total": 951
+        },
+        "NaN": {
+          "counts": {
+            "CRITICAL": 904,
+            "HIGH": 378,
+            "LOW": 676,
+            "MEDIUM": 339
+          },
+          "total": 2297
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.422,
+          "std": 0.494,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.307,
+          "std": 0.461,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.063,
+          "std": 0.243,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "protocol_smtp": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 955,
+            "HIGH": 981,
+            "LOW": 932,
+            "MEDIUM": 979
+          },
+          "total": 3847
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 647,
+            "HIGH": 619,
+            "LOW": 670,
+            "MEDIUM": 621
+          },
+          "total": 2557
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.418,
+          "std": 0.493,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MEDIUM": {
+          "mean": 0.388,
+          "std": 0.487,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.387,
+          "std": 0.487,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.404,
+          "std": 0.491,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "protocol_imap": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 1045,
+            "HIGH": 1047,
+            "LOW": 1077,
+            "MEDIUM": 1045
+          },
+          "total": 4214
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 557,
+            "HIGH": 553,
+            "LOW": 525,
+            "MEDIUM": 555
+          },
+          "total": 2190
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.328,
+          "std": 0.47,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MEDIUM": {
+          "mean": 0.347,
+          "std": 0.476,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.346,
+          "std": 0.476,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.348,
+          "std": 0.476,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "protocol_pop3": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 1204,
+            "HIGH": 1172,
+            "LOW": 1195,
+            "MEDIUM": 1176
+          },
+          "total": 4747
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 398,
+            "HIGH": 428,
+            "LOW": 407,
+            "MEDIUM": 424
+          },
+          "total": 1657
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.254,
+          "std": 0.435,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "MEDIUM": {
+          "mean": 0.265,
+          "std": 0.441,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "HIGH": {
+          "mean": 0.268,
+          "std": 0.443,
+          "min": 0.0,
+          "max": 1.0
+        },
+        "CRITICAL": {
+          "mean": 0.248,
+          "std": 0.432,
+          "min": 0.0,
+          "max": 1.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "critical_count": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 694,
+            "HIGH": 1600,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 5496
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 660,
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 660
+        },
+        "2": {
+          "counts": {
+            "CRITICAL": 248,
+            "HIGH": 0,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 248
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "1",
+          "class": "CRITICAL",
+          "count": 660,
+          "total_with_value": 660,
+          "purity": 1.0
+        },
+        {
+          "value": "2",
+          "class": "CRITICAL",
+          "count": 248,
+          "total_with_value": 248,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "CRITICAL": {
+          "mean": 0.722,
+          "std": 0.715,
+          "min": 0.0,
+          "max": 2.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "high_count": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 727,
+            "HIGH": 433,
+            "LOW": 1602,
+            "MEDIUM": 1600
+          },
+          "total": 4362
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 551,
+            "HIGH": 855,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 1406
+        },
+        "2": {
+          "counts": {
+            "CRITICAL": 307,
+            "HIGH": 259,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 566
+        },
+        "3": {
+          "counts": {
+            "CRITICAL": 17,
+            "HIGH": 53,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 70
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "HIGH": {
+          "mean": 0.958,
+          "std": 0.751,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "CRITICAL": {
+          "mean": 0.759,
+          "std": 0.794,
+          "min": 0.0,
+          "max": 3.0
+        }
+      },
+      "leakage_risk": "LOW"
+    },
+    "medium_count": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 749,
+            "HIGH": 563,
+            "LOW": 1602,
+            "MEDIUM": 607
+          },
+          "total": 3521
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 588,
+            "HIGH": 638,
+            "LOW": 0,
+            "MEDIUM": 862
+          },
+          "total": 2088
+        },
+        "2": {
+          "counts": {
+            "CRITICAL": 265,
+            "HIGH": 381,
+            "LOW": 0,
+            "MEDIUM": 131
+          },
+          "total": 777
+        },
+        "3": {
+          "counts": {
+            "CRITICAL": 0,
+            "HIGH": 18,
+            "LOW": 0,
+            "MEDIUM": 0
+          },
+          "total": 18
+        }
+      },
+      "exclusive_values": [
+        {
+          "value": "3",
+          "class": "HIGH",
+          "count": 18,
+          "total_with_value": 18,
+          "purity": 1.0
+        }
+      ],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.0,
+          "std": 0.0,
+          "min": 0.0,
+          "max": 0.0
+        },
+        "MEDIUM": {
+          "mean": 0.703,
+          "std": 0.611,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "HIGH": {
+          "mean": 0.909,
+          "std": 0.792,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "CRITICAL": {
+          "mean": 0.698,
+          "std": 0.736,
+          "min": 0.0,
+          "max": 2.0
+        }
+      },
+      "leakage_risk": "HIGH"
+    },
+    "low_count": {
+      "overall_missing_rate": 0.0,
+      "missing_by_class": {
+        "LOW": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "MEDIUM": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "HIGH": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        },
+        "CRITICAL": {
+          "missing_count": 0,
+          "missing_rate": 0.0
+        }
+      },
+      "contingency_table": {
+        "0": {
+          "counts": {
+            "CRITICAL": 810,
+            "HIGH": 691,
+            "LOW": 722,
+            "MEDIUM": 600
+          },
+          "total": 2823
+        },
+        "1": {
+          "counts": {
+            "CRITICAL": 578,
+            "HIGH": 660,
+            "LOW": 620,
+            "MEDIUM": 608
+          },
+          "total": 2466
+        },
+        "2": {
+          "counts": {
+            "CRITICAL": 214,
+            "HIGH": 249,
+            "LOW": 203,
+            "MEDIUM": 384
+          },
+          "total": 1050
+        },
+        "3": {
+          "counts": {
+            "CRITICAL": 0,
+            "HIGH": 0,
+            "LOW": 57,
+            "MEDIUM": 8
+          },
+          "total": 65
+        }
+      },
+      "exclusive_values": [],
+      "numeric_stats_by_class": {
+        "LOW": {
+          "mean": 0.747,
+          "std": 0.81,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "MEDIUM": {
+          "mean": 0.875,
+          "std": 0.787,
+          "min": 0.0,
+          "max": 3.0
+        },
+        "HIGH": {
+          "mean": 0.724,
+          "std": 0.715,
+          "min": 0.0,
+          "max": 2.0
+        },
+        "CRITICAL": {
+          "mean": 0.628,
+          "std": 0.708,
+          "min": 0.0,
+          "max": 2.0
+        }
+      },
+      "leakage_risk": "LOW"
+    }
+  }
+}

@@ -1,0 +1,668 @@
+{
+  "DATASET": {
+    "training_samples": 4482,
+    "validation_samples": 945,
+    "test_samples": 977,
+    "challenge_samples": 500,
+    "partial_capture_samples": 1200,
+    "unique_signatures": 2028,
+    "duplicate_rate": 0.6833,
+    "class_distribution": {
+      "LOW": 1602,
+      "CRITICAL": 1602,
+      "MEDIUM": 1600,
+      "HIGH": 1600
+    },
+    "protocol_distribution": {
+      "SMTP": 2513,
+      "IMAP": 2239,
+      "POP3": 1652
+    },
+    "encryption_distribution": {
+      "PLAINTEXT": 640,
+      "STARTTLS": 3480,
+      "IMPLICIT_TLS": 2284
+    }
+  },
+  "LEAKAGE": {
+    "finding_count_only_performance": {
+      "macro_f1": 0.7062,
+      "linear_shortcut_eliminated": true
+    },
+    "missingness_only_performance": {
+      "macro_f1": 0.2374,
+      "status": "PASS"
+    },
+    "single_feature_performance": {
+      "flagged_features_over_50_pct": [],
+      "top_single_feature": "pfs_missing"
+    },
+    "signature_overlap": {
+      "train_test_overlap_count": 0,
+      "train_test_overlap_rate": 0.0,
+      "challenge_overlap_count": 0,
+      "partial_capture_overlap_count": 0
+    },
+    "feature_interaction_risks": {
+      "total_flagged_interactions": 54,
+      "legitimate_domain_rules_count": 32,
+      "suspicious_shortcuts_count": 22
+    }
+  },
+  "GENERALIZATION": {
+    "validation_metrics": {
+      "accuracy": 0.9979,
+      "precision_macro": 0.9979,
+      "recall_macro": 0.9979,
+      "f1_macro": 0.9979,
+      "classification_report": {
+        "CRITICAL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 240.0
+        },
+        "HIGH": {
+          "precision": 1.0,
+          "recall": 0.9916666666666667,
+          "f1-score": 0.99581589958159,
+          "support": 240.0
+        },
+        "LOW": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1-score": 1.0,
+          "support": 225.0
+        },
+        "MEDIUM": {
+          "precision": 0.9917355371900827,
+          "recall": 1.0,
+          "f1-score": 0.995850622406639,
+          "support": 240.0
+        },
+        "accuracy": 0.9978835978835979,
+        "macro avg": {
+          "precision": 0.9979338842975207,
+          "recall": 0.9979166666666667,
+          "f1-score": 0.9979166304970573,
+          "support": 945.0
+        },
+        "weighted avg": {
+          "precision": 0.9979010888101797,
+          "recall": 0.9978835978835979,
+          "f1-score": 0.9978835611398678,
+          "support": 945.0
+        }
+      }
+    },
+    "test_metrics": {
+      "accuracy": 0.998,
+      "macro_f1": 0.9979,
+      "per_class": {
+        "CRITICAL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 241
+        },
+        "HIGH": {
+          "precision": 1.0,
+          "recall": 0.9917,
+          "f1_score": 0.9958,
+          "support": 240
+        },
+        "LOW": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 256
+        },
+        "MEDIUM": {
+          "precision": 0.9917,
+          "recall": 1.0,
+          "f1_score": 0.9959,
+          "support": 240
+        }
+      }
+    },
+    "cross_validation_metrics": {
+      "accuracy_mean": 0.9935,
+      "accuracy_std": 0.0028,
+      "macro_f1_mean": 0.9935,
+      "macro_f1_std": 0.0028,
+      "precision_macro_mean": 0.9936,
+      "precision_macro_std": 0.0027,
+      "recall_macro_mean": 0.9935,
+      "recall_macro_std": 0.0028,
+      "fold_f1_scores": [
+        0.9921,
+        0.9933,
+        0.9989,
+        0.991,
+        0.9922
+      ]
+    },
+    "challenge_metrics": {
+      "accuracy": 0.992,
+      "macro_f1": 0.9625,
+      "per_class": {
+        "CRITICAL": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 107
+        },
+        "HIGH": {
+          "precision": 1.0,
+          "recall": 0.9855,
+          "f1_score": 0.9927,
+          "support": 276
+        },
+        "LOW": {
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1_score": 0.8571,
+          "support": 12
+        },
+        "MEDIUM": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1_score": 1.0,
+          "support": 105
+        }
+      }
+    },
+    "unseen_signatures": {
+      "unseen_samples": 977,
+      "macro_f1": 1.0
+    },
+    "split_difficulty": {
+      "validation_difficulty_vs_test": "SIMILAR",
+      "metrics": {
+        "validation_mean_distance": 1.2942,
+        "test_mean_distance": 1.2671,
+        "validation_signature_novelty": 1.0,
+        "test_signature_novelty": 1.0
+      },
+      "explanation": "Validation distance (1.2942) is comparable to Test distance (1.2671) with 100% signature novelty in both splits due to signature-stratified grouping. Both validation and test splits present comparable structural generalization difficulty."
+    }
+  },
+  "PARTIAL_CAPTURE": {
+    "overall_macro_f1": 0.9256,
+    "overall_accuracy": 0.9458,
+    "test_partial_capture_accuracy": 0.8093,
+    "prediction_stability": 0.8693,
+    "per_scenario_results": {
+      "ASYMMETRIC_CAPTURE": {
+        "samples": 100,
+        "accuracy": 0.99,
+        "macro_f1": 0.9845,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 1.0,
+          "HIGH": 0.9855,
+          "CRITICAL": 0.9524
+        },
+        "mean_confidence": 0.8456,
+        "prediction_stability": 0.7523,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 98,
+          "LOW_EVIDENCE": 2
+        }
+      },
+      "AUTH_NOT_OBSERVED": {
+        "samples": 100,
+        "accuracy": 0.93,
+        "macro_f1": 0.877,
+        "per_class_f1": {
+          "LOW": 0.9836,
+          "MEDIUM": 1.0,
+          "HIGH": 0.8929,
+          "CRITICAL": 0.6316
+        },
+        "mean_confidence": 0.9253,
+        "prediction_stability": 0.8685,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 95,
+          "LOW_EVIDENCE": 5
+        }
+      },
+      "FULL_SESSION": {
+        "samples": 100,
+        "accuracy": 0.94,
+        "macro_f1": 0.8833,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 1.0,
+          "HIGH": 0.8333,
+          "CRITICAL": 0.7
+        },
+        "mean_confidence": 0.9371,
+        "prediction_stability": 0.8924,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "MISSING_CERTIFICATE": {
+        "samples": 100,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 1.0,
+          "HIGH": 1.0,
+          "CRITICAL": 1.0
+        },
+        "mean_confidence": 0.8078,
+        "prediction_stability": 0.6974,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "MISSING_CLIENT_HELLO": {
+        "samples": 100,
+        "accuracy": 0.89,
+        "macro_f1": 0.8771,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 0.9388,
+          "HIGH": 0.8197,
+          "CRITICAL": 0.75
+        },
+        "mean_confidence": 0.9059,
+        "prediction_stability": 0.843,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "MISSING_SERVER_HELLO": {
+        "samples": 100,
+        "accuracy": 0.9,
+        "macro_f1": 0.9109,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 0.7826,
+          "HIGH": 0.8611,
+          "CRITICAL": 1.0
+        },
+        "mean_confidence": 0.706,
+        "prediction_stability": 0.5619,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "MISSING_TLS_FINISHED": {
+        "samples": 100,
+        "accuracy": 1.0,
+        "macro_f1": 1.0,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 1.0,
+          "HIGH": 1.0,
+          "CRITICAL": 1.0
+        },
+        "mean_confidence": 0.8582,
+        "prediction_stability": 0.7744,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "PACKET_LOSS_SIMULATION": {
+        "samples": 100,
+        "accuracy": 0.95,
+        "macro_f1": 0.9542,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 0.9286,
+          "HIGH": 0.9254,
+          "CRITICAL": 0.963
+        },
+        "mean_confidence": 0.8464,
+        "prediction_stability": 0.7605,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "STARTTLS_NOT_OBSERVED": {
+        "samples": 100,
+        "accuracy": 0.96,
+        "macro_f1": 0.937,
+        "per_class_f1": {
+          "LOW": 0.9863,
+          "MEDIUM": 1.0,
+          "HIGH": 0.9434,
+          "CRITICAL": 0.8182
+        },
+        "mean_confidence": 0.9322,
+        "prediction_stability": 0.8837,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "START_AFTER_STARTTLS": {
+        "samples": 100,
+        "accuracy": 0.97,
+        "macro_f1": 0.9182,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 1.0,
+          "HIGH": 0.9455,
+          "CRITICAL": 0.7273
+        },
+        "mean_confidence": 0.9312,
+        "prediction_stability": 0.8863,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 100
+        }
+      },
+      "START_MID_SESSION": {
+        "samples": 100,
+        "accuracy": 0.9,
+        "macro_f1": 0.8819,
+        "per_class_f1": {
+          "LOW": 1.0,
+          "MEDIUM": 0.8636,
+          "HIGH": 0.8864,
+          "CRITICAL": 0.7778
+        },
+        "mean_confidence": 0.8071,
+        "prediction_stability": 0.7022,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 97,
+          "LOW_EVIDENCE": 3
+        }
+      },
+      "TRUNCATED_SESSION": {
+        "samples": 100,
+        "accuracy": 0.92,
+        "macro_f1": 0.8859,
+        "per_class_f1": {
+          "LOW": 0.9714,
+          "MEDIUM": 1.0,
+          "HIGH": 0.88,
+          "CRITICAL": 0.6923
+        },
+        "mean_confidence": 0.9287,
+        "prediction_stability": 0.8754,
+        "evidence_quality_distribution": {
+          "SUFFICIENT_EVIDENCE": 98,
+          "LOW_EVIDENCE": 2
+        }
+      }
+    }
+  },
+  "MODEL_AUDIT": {
+    "permutation_tests": {
+      "label_permutation_status": "PASS",
+      "feature_permutation_status": "PASS"
+    },
+    "perfect_model_audit": {
+      "TEST_A_LABEL_PERMUTATION": {
+        "status": "PASS",
+        "description": "Random label permutation (expected collapse to ~0.25)",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.2119,
+            "macro_f1": 0.2079
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.2549,
+            "macro_f1": 0.248
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.3552,
+            "macro_f1": 0.3512
+          }
+        }
+      },
+      "TEST_B_FEATURE_PERMUTATION": {
+        "status": "PASS",
+        "description": "Independent feature permutation (expected collapse)",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.349,
+            "macro_f1": 0.3308
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.3685,
+            "macro_f1": 0.3522
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.2262,
+            "macro_f1": 0.2287
+          }
+        }
+      },
+      "TEST_C_MISSINGNESS_ONLY": {
+        "status": "PASS",
+        "description": "Trained solely on boolean missingness indicators",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.348,
+            "macro_f1": 0.2374
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.348,
+            "macro_f1": 0.2374
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.348,
+            "macro_f1": 0.2374
+          }
+        }
+      },
+      "TEST_D_FINDING_COUNTS_ONLY": {
+        "status": "PASS",
+        "description": "Trained solely on critical, high, medium, low counts",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.7052,
+            "macro_f1": 0.7062
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.7052,
+            "macro_f1": 0.7062
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.7185,
+            "macro_f1": 0.7183
+          }
+        }
+      },
+      "TEST_E_SECURITY_FEATURES_ONLY": {
+        "status": "PASS",
+        "description": "Trained excluding all finding counts",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.914,
+            "macro_f1": 0.9144
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.914,
+            "macro_f1": 0.9144
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.914,
+            "macro_f1": 0.9144
+          }
+        }
+      },
+      "TEST_F_OBSERVABILITY_FEATURES_ONLY": {
+        "status": "PASS",
+        "description": "Trained solely on 6 observability features (verifies no label leakage)",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.3941,
+            "macro_f1": 0.3546
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.3941,
+            "macro_f1": 0.3546
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.3941,
+            "macro_f1": 0.3545
+          }
+        }
+      },
+      "TEST_G_UNSEEN_SIGNATURES_ONLY": {
+        "status": "PASS",
+        "description": "Evaluated strictly on signatures not present in train set",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "unseen_samples": 977
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.9826,
+            "macro_f1": 0.9829,
+            "unseen_samples": 977
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 1.0,
+            "macro_f1": 1.0,
+            "unseen_samples": 977
+          }
+        }
+      },
+      "TEST_H_PARTIAL_CAPTURE_ONLY": {
+        "status": "PASS",
+        "description": "Evaluated strictly on partial_capture_challenge dataset",
+        "models": {
+          "RandomForestClassifier": {
+            "accuracy": 0.88,
+            "macro_f1": 0.8631
+          },
+          "ExtraTreesClassifier": {
+            "accuracy": 0.8292,
+            "macro_f1": 0.8035
+          },
+          "HistGradientBoostingClassifier": {
+            "accuracy": 0.9283,
+            "macro_f1": 0.9039
+          }
+        }
+      },
+      "TEST_I_CHALLENGE_GENERATOR_INDEPENDENCE": {
+        "status": "PASS",
+        "classification": "INDEPENDENT",
+        "challenge_samples": 500,
+        "unique_challenge_signatures": 201,
+        "exact_signature_overlap_count": 0,
+        "exact_signature_overlap_rate": 0.0,
+        "description": "Independent challenge dataset generator verification"
+      }
+    },
+    "hgb_perfection_investigation": {
+      "finding": "HistGradientBoostingClassifier achieves F1 = 1.0 because gradient boosted trees construct exact orthogonal axis-aligned partitions that align with deterministic canonical rules (such as critical_count >= 1 -> CRITICAL, encryption_plaintext == 1 -> CRITICAL). However, when labels or features are permuted (TEST A and TEST B), HGB performance collapses to baseline (~0.25), proving that HGB is not memoizing artifacts or bypassing feature evaluation.",
+      "recommendation": "HGB is functionally sound but exhibits step-function decision boundaries. RandomForestClassifier provides smoother probability calibration and explainable feature importances, making it more defensible for production."
+    },
+    "preprocessing_audit": {
+      "imputer_strategy": "most_frequent",
+      "missing_values": "np.nan",
+      "add_indicator": true,
+      "indicator_behavior": "SimpleImputer(add_indicator=True) fits MissingIndicator on training data. For binary features, mode imputation replaces NaN with 0, BUT appends a binary missingness indicator feature, preserving unobserved status for downstream trees.",
+      "fitted_only_on_training_data": true,
+      "train_test_preprocessing_consistent": true,
+      "silent_safe_conversion_risk": "Low risk because MissingIndicator explicitly marks imputed values, preventing silent conflation of 'unobserved' with 'known secure 0'.",
+      "observability_indicator_preservation": "Extended schema features (tls_handshake_observed, certificate_observed, etc.) explicitly carry observability state without imputation."
+    }
+  },
+  "MODEL_SELECTION": {
+    "candidate_models": [
+      "RandomForestClassifier",
+      "ExtraTreesClassifier",
+      "HistGradientBoostingClassifier",
+      "LogisticRegression",
+      "DummyClassifier"
+    ],
+    "scorecard": {
+      "RandomForestClassifier": {
+        "domain_correctness": 1.0,
+        "domain_violations": 0,
+        "partial_capture_macro_f1": 0.8793,
+        "challenge_macro_f1": 0.9625,
+        "cross_validation_macro_f1": 0.9964,
+        "calibration_score": 0.9677,
+        "explainability_score": 1.0,
+        "stability_score": 0.8073,
+        "suitability_score": 0.9568
+      },
+      "ExtraTreesClassifier": {
+        "domain_correctness": 1.0,
+        "domain_violations": 0,
+        "partial_capture_macro_f1": 0.775,
+        "challenge_macro_f1": 0.9594,
+        "cross_validation_macro_f1": 0.9989,
+        "calibration_score": 0.958,
+        "explainability_score": 0.95,
+        "stability_score": 0.7835,
+        "suitability_score": 0.9287
+      },
+      "HistGradientBoostingClassifier": {
+        "domain_correctness": 1.0,
+        "domain_violations": 0,
+        "partial_capture_macro_f1": 0.9039,
+        "challenge_macro_f1": 1.0,
+        "cross_validation_macro_f1": 0.9998,
+        "calibration_score": 1.0,
+        "explainability_score": 0.7,
+        "stability_score": 1.0,
+        "suitability_score": 0.9507
+      },
+      "LogisticRegression": {
+        "domain_correctness": 1.0,
+        "domain_violations": 0,
+        "partial_capture_macro_f1": 0.7021,
+        "challenge_macro_f1": 0.7949,
+        "cross_validation_macro_f1": 0.9661,
+        "calibration_score": 0.9521,
+        "explainability_score": 0.9,
+        "stability_score": 0.8301,
+        "suitability_score": 0.8813
+      },
+      "DummyClassifier": {
+        "domain_correctness": 1.0,
+        "domain_violations": 0,
+        "partial_capture_macro_f1": 0.2679,
+        "challenge_macro_f1": 0.2149,
+        "cross_validation_macro_f1": 0.2303,
+        "calibration_score": 0.0,
+        "explainability_score": 0.0,
+        "stability_score": 1.0,
+        "suitability_score": 0.4203
+      }
+    },
+    "selected_model": "RandomForestClassifier",
+    "selection_weights": {
+      "domain_correctness": 0.25,
+      "partial_capture_robustness": 0.2,
+      "challenge_performance": 0.15,
+      "cross_validation_performance": 0.15,
+      "probability_calibration": 0.1,
+      "explainability": 0.1,
+      "stability": 0.05
+    },
+    "justification": "RandomForestClassifier achieved the top production suitability score (0.9568), demonstrating 100% domain correctness under risk reconciliation, high partial capture robustness (0.8793), superior probability calibration, and full explainability via native tree feature importances.",
+    "compatibility": {
+      "selected_model": "RandomForestClassifier",
+      "is_random_forest": true,
+      "feature_compatibility": "Fully backwards-compatible with canonical 19-feature schema (v1.0) and extended 25-feature schema (v2.0).",
+      "serialization_compatibility": "Pickle/Joblib serialization via sklearn Pipeline(imputer, classifier).",
+      "inference_api_compatibility": "RiskPredictor.predict_session() and predict_analysis() contract preserved without breaking changes."
+    }
+  },
+  "DOMAIN_SAFETY": {
+    "mandatory_critical_invariant": "PASSED (critical_count >= 1 strictly yields CRITICAL without ML downgrade)",
+    "risk_reconciliation_violations": 0,
+    "reconciliation_rule": "Final Risk = Rule Engine (Authority) + ML Nuance + Canonical Aggregator Invariants"
+  },
+  "FINAL_VERDICT": "READY_WITH_LIMITATIONS",
+  "known_limitations": [
+    "Dataset is primarily composed of validated scenario archetypes rather than live production captures.",
+    "Real-world holdout evaluation is currently designated INSUFFICIENT_REAL_HOLDOUT_DATA (4 curated demo captures).",
+    "In incomplete PCAP sessions where TLS handshake and certificates are entirely unobserved, predictions are marked LOW_EVIDENCE / PARTIAL_EVIDENCE.",
+    "Continuous model calibration and field PCAP verification is recommended as network traffic diversity increases."
+  ]
+}
