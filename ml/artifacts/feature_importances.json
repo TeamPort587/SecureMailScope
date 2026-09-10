@@ -1,0 +1,21 @@
+{
+  "encryption_plaintext": 0.0392,
+  "encryption_starttls": 0.0125,
+  "encryption_implicit": 0.0125,
+  "deprecated_tls": 0.0162,
+  "weak_cipher": 0.0297,
+  "expired_cert": 0.023,
+  "not_yet_valid_cert": 0.0109,
+  "weak_key": 0.0405,
+  "auth_before_tls": 0.1894,
+  "tls_upgrade_failed": 0.0359,
+  "pfs_missing": 0.1122,
+  "self_signed": 0.059,
+  "protocol_smtp": 0.005,
+  "protocol_imap": 0.0048,
+  "protocol_pop3": 0.0041,
+  "critical_count": 0.0689,
+  "high_count": 0.1473,
+  "medium_count": 0.0963,
+  "low_count": 0.0394
+}
