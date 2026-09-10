@@ -257,40 +257,47 @@ export default function AnalysisOverview() {
 
       {/* STATS */}
       <div className="mb-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
         <StatCard
-          icon={<Database className="h-4 w-4" />}
+          icon={<Database className="h-5 w-5" />}
           label="Total Analyses"
           value={analyses.length}
           description="Available security reports"
-          iconClass="bg-brand-50 text-brand-600"
+          iconBg="bg-brand-100"
+          iconText="text-brand-600"
+          glow="shadow-[0_0_18px_4px_rgba(14,165,233,0.13)]"
+          topBar="from-brand-300 via-brand-400 to-brand-300"
         />
-
         <StatCard
-          icon={<ShieldAlert className="h-4 w-4" />}
-          label="High Risk"
+          icon={<ShieldAlert className="h-5 w-5" />}
+          label="High / Critical Risk"
           value={highRiskCount}
-          description="High or critical posture"
-          iconClass="bg-rose-50 text-rose-600"
+          description="Elevated risk posture"
+          iconBg="bg-rose-100"
+          iconText="text-rose-600"
+          glow="shadow-[0_0_18px_4px_rgba(239,68,68,0.13)]"
+          topBar="from-rose-300 via-rose-400 to-rose-300"
           alert={highRiskCount > 0}
         />
-
         <StatCard
-          icon={<Activity className="h-4 w-4" />}
+          icon={<Activity className="h-5 w-5" />}
           label="Captured Sessions"
           value={totalSessions}
           description="Across all analyses"
-          iconClass="bg-sky-50 text-sky-600"
+          iconBg="bg-sky-100"
+          iconText="text-sky-600"
+          glow="shadow-[0_0_18px_4px_rgba(14,165,233,0.13)]"
+          topBar="from-sky-300 via-sky-400 to-sky-300"
         />
-
         <StatCard
-          icon={<AlertTriangle className="h-4 w-4" />}
+          icon={<AlertTriangle className="h-5 w-5" />}
           label="Security Findings"
           value={totalFindings}
           description="Issues requiring review"
-          iconClass="bg-amber-50 text-amber-600"
+          iconBg="bg-amber-100"
+          iconText="text-amber-600"
+          glow="shadow-[0_0_18px_4px_rgba(245,158,11,0.13)]"
+          topBar="from-amber-300 via-amber-400 to-amber-300"
         />
-
       </div>
 
 
@@ -490,45 +497,38 @@ export default function AnalysisOverview() {
 }
 
 
-function StatCard({
-  icon,
-  label,
-  value,
-  description,
-  iconClass,
-  alert,
-}) {
+function StatCard({ icon, label, value, description, iconBg, iconText, glow, topBar, alert }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-soft-hover">
 
+      {/* coloured top bar */}
+      <div className={`absolute inset-x-0 top-0 h-[3px] rounded-t-xl bg-gradient-to-r opacity-60 transition-opacity duration-200 group-hover:opacity-100 ${topBar}`} />
+
+      {/* header row */}
       <div className="flex items-start justify-between">
 
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClass}`}
-        >
+        {/* icon with glow */}
+        <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconBg} ${iconText} ${glow} transition-transform duration-200 group-hover:scale-110`}>
           {icon}
         </div>
 
         {alert && (
-          <span className="flex items-center gap-1 rounded-full bg-rose-50 px-2 py-1 text-[9px] font-semibold text-rose-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-            Attention
+          <span className="flex items-center gap-1.5 rounded-full border border-rose-100 bg-rose-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-rose-600">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
+            Alert
           </span>
         )}
 
       </div>
 
-      <p className="mt-5 text-2xl font-semibold tracking-tight text-slate-900">
-        {value}
-      </p>
-
-      <p className="mt-1 text-xs font-semibold text-slate-700">
-        {label}
-      </p>
-
-      <p className="mt-1 text-[10px] text-slate-400">
-        {description}
-      </p>
+            {/* value + label inline */}
+      <div className="mt-4 flex items-end justify-between">
+        <div>
+          <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+          <p className="mt-0.5 text-xs font-semibold text-slate-700">{label}</p>
+          <p className="mt-0.5 text-[10px] text-slate-400">{description}</p>
+        </div>
+      </div>
 
     </div>
   );
