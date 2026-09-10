@@ -1,0 +1,2198 @@
+{
+  "total_families": 35,
+  "families": {
+    "DEMO_CAPTURE": {
+      "risk_label": [
+        "LOW",
+        "CRITICAL"
+      ],
+      "sample_count": 4,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "PLAINTEXT",
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          1
+        ],
+        "medium_count": [
+          0,
+          0
+        ],
+        "low_count": [
+          0,
+          0
+        ]
+      },
+      "constant_features": {
+        "medium_count": 0.0,
+        "low_count": 0.0
+      },
+      "varying_features": [
+        "encryption_plaintext",
+        "encryption_starttls",
+        "encryption_implicit",
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "auth_before_tls",
+        "tls_upgrade_failed",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "tls_upgrade_failed",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_HIGH_CRIT_MULTIPLE_HIGH_FINDINGS": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 198,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_HIGH_CRIT_STARTTLS_FAIL_OBSCURED": {
+      "risk_label": "HIGH",
+      "sample_count": 155,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 1.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_LOW_MED_MINOR_LOW_FINDINGS": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 200,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          3
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_LOW_MED_SELF_SIGNED_CLEAN_CIPHER": {
+      "risk_label": [
+        "MEDIUM",
+        "LOW",
+        "HIGH"
+      ],
+      "sample_count": 208,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          3
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_LOW_MED_UNOBSERVED_HANDSHAKE": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 206,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "pfs_missing",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_MED_HIGH_PFS_AND_SELF_SIGNED": {
+      "risk_label": [
+        "HIGH",
+        "MEDIUM"
+      ],
+      "sample_count": 177,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          3
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 1.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_BOUNDARY_MED_HIGH_WEAK_KEY_ISOLATED": {
+      "risk_label": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 158,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_COMPOUNDING_FAILURES_NO_CRIT_COUNT": {
+      "risk_label": [
+        "CRITICAL",
+        "HIGH"
+      ],
+      "sample_count": 54,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          1,
+          3
+        ],
+        "medium_count": [
+          1,
+          2
+        ],
+        "low_count": [
+          0,
+          1
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 1.0,
+        "weak_cipher": 1.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 1.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_COMPOUNDING_MODERATE_ESCALATION": {
+      "risk_label": "MEDIUM",
+      "sample_count": 221,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 1.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_DEPRECATED_TLS_AND_WEAK_CIPHER": {
+      "risk_label": [
+        "HIGH",
+        "CRITICAL"
+      ],
+      "sample_count": 175,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          1,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 1.0,
+        "weak_cipher": 1.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_DEPRECATED_TLS_LEGACY": {
+      "risk_label": [
+        "HIGH",
+        "CRITICAL"
+      ],
+      "sample_count": 163,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 1.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_EXPIRED_CERTIFICATE": {
+      "risk_label": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 159,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_INSECURE_SHORT_KEY": {
+      "risk_label": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 158,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_INTERNAL_SELF_SIGNED": {
+      "risk_label": [
+        "MEDIUM",
+        "LOW",
+        "HIGH"
+      ],
+      "sample_count": 201,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_LEGACY_CIPHER_NO_PFS": {
+      "risk_label": "MEDIUM",
+      "sample_count": 221,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 1.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERATE_LIMITED_VISIBILITY": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 199,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "pfs_missing",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERN_BENIGN_INFO_ALERTS": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 200,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          3
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERN_IMPLICIT_TLS": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 199,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          1
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 1.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERN_STARTTLS_CLEAN": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 199,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERN_STRICT_TLS13": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 200,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "expired_cert": 0.0,
+        "not_yet_valid_cert": 0.0,
+        "weak_key": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "self_signed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "pfs_missing",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_MODERN_TLS_OBSCURED_CERT": {
+      "risk_label": [
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 200,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          1
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "pfs_missing",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_NOT_YET_VALID_CERTIFICATE": {
+      "risk_label": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 161,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_OBSOLETE_WEAK_CIPHER": {
+      "risk_label": [
+        "HIGH",
+        "CRITICAL"
+      ],
+      "sample_count": 163,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "weak_cipher": 1.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "deprecated_tls",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_PFS_MISSING_IMPLICIT": {
+      "risk_label": "MEDIUM",
+      "sample_count": 221,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          0
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 1.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 1.0,
+        "critical_count": 0.0,
+        "high_count": 0.0
+      },
+      "varying_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_PLAINTEXT_MULTIPLE_SENSITIVE_EXPOSURES": {
+      "risk_label": "CRITICAL",
+      "sample_count": 213,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "PLAINTEXT"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 1.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 0.0
+      },
+      "varying_features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_PLAINTEXT_TRAFFIC_UNENCRYPTED": {
+      "risk_label": "CRITICAL",
+      "sample_count": 213,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "PLAINTEXT"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 1.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "tls_upgrade_failed": 0.0
+      },
+      "varying_features": [
+        "auth_before_tls",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_PLAINTEXT_WITH_AUTHENTICATION": {
+      "risk_label": "CRITICAL",
+      "sample_count": 213,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "PLAINTEXT"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 1.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 0.0
+      },
+      "varying_features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_REJECTED_STARTTLS_UPGRADE": {
+      "risk_label": "HIGH",
+      "sample_count": 156,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 1.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_SELF_SIGNED_IMPLICIT": {
+      "risk_label": [
+        "MEDIUM",
+        "LOW",
+        "HIGH"
+      ],
+      "sample_count": 204,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          3
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 1.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_STARTTLS_AUTH_BEFORE_TLS_PERMISSIVE": {
+      "risk_label": "CRITICAL",
+      "sample_count": 212,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 0.0
+      },
+      "varying_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_STARTTLS_AUTH_BEFORE_TLS_STRICT": {
+      "risk_label": "CRITICAL",
+      "sample_count": 212,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "expired_cert": 0.0,
+        "not_yet_valid_cert": 0.0,
+        "weak_key": 0.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 0.0,
+        "self_signed": 0.0
+      },
+      "varying_features": [
+        "pfs_missing",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_STARTTLS_EARLY_AUTH_FAILED_UPGRADE": {
+      "risk_label": "CRITICAL",
+      "sample_count": 212,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 1.0
+      },
+      "varying_features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_STARTTLS_EARLY_AUTH_WEAK_CIPHER": {
+      "risk_label": "CRITICAL",
+      "sample_count": 212,
+      "is_single_label": true,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          2
+        ],
+        "high_count": [
+          0,
+          2
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 1.0,
+        "encryption_implicit": 0.0,
+        "weak_cipher": 1.0,
+        "auth_before_tls": 1.0,
+        "tls_upgrade_failed": 0.0
+      },
+      "varying_features": [
+        "deprecated_tls",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    },
+    "POSTURE_WEAK_KEY_AND_EXPIRED_CERT": {
+      "risk_label": [
+        "HIGH",
+        "LOW",
+        "MEDIUM"
+      ],
+      "sample_count": 157,
+      "is_single_label": false,
+      "protocols_used": [
+        "SMTP",
+        "IMAP",
+        "POP3"
+      ],
+      "encryption_modes_used": [
+        "STARTTLS",
+        "IMPLICIT_TLS"
+      ],
+      "finding_count_ranges": {
+        "critical_count": [
+          0,
+          0
+        ],
+        "high_count": [
+          0,
+          3
+        ],
+        "medium_count": [
+          0,
+          2
+        ],
+        "low_count": [
+          0,
+          2
+        ]
+      },
+      "constant_features": {
+        "encryption_plaintext": 0.0,
+        "deprecated_tls": 0.0,
+        "weak_cipher": 0.0,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "critical_count": 0.0
+      },
+      "varying_features": [
+        "encryption_starttls",
+        "encryption_implicit",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "missing_features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "template_determinism_risk": "MODERATE"
+    }
+  }
+}

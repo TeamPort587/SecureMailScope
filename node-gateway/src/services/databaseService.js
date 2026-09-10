@@ -272,14 +272,15 @@ async function persistAnalysisResult(analysisId, data) {
 
       await client.query(
         `INSERT INTO recommendations
-           (analysis_id, finding_id, priority, title, recommendation_text)
-         VALUES ($1,$2,$3,$4,$5)`,
+           (analysis_id, finding_id, priority, title, recommendation_text, affected_sessions)
+         VALUES ($1,$2,$3,$4,$5,$6)`,
         [
           analysisId,
           findingDbId,
           rec.priority,
           rec.title || null,
           rec.recommendation_text,
+          JSON.stringify(rec.affected_sessions || []),
         ]
       );
     }
@@ -467,7 +468,7 @@ async function getFullAnalysis(analysisId) {
 
     // Recommendations
     const recsResult = await pool.query(
-      `SELECT id AS recommendation_id, finding_id, priority, title, recommendation_text
+      `SELECT id AS recommendation_id, finding_id, priority, title, recommendation_text, affected_sessions
        FROM recommendations
        WHERE analysis_id = $1
        ORDER BY priority ASC`,
@@ -553,6 +554,11 @@ async function getFullAnalysis(analysisId) {
       priority: row.priority,
       title: row.title,
       description: row.recommendation_text,
+      affected_sessions: Array.isArray(row.affected_sessions)
+        ? row.affected_sessions
+        : (typeof row.affected_sessions === 'string'
+            ? JSON.parse(row.affected_sessions)
+            : []),
     }));
 
     return { sessions, findings, risk, recommendations };

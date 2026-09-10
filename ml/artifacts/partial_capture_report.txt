@@ -1,0 +1,117 @@
+==================================================================
+SECUREMAILSCOPE PARTIAL CAPTURE ROBUSTNESS REPORT
+==================================================================
+Total Incomplete Samples Evaluated: 1200
+Overall Accuracy:                  0.9458
+Overall Macro F1:                  0.9256
+Mean Prediction Confidence:        0.8693
+
+--- PER-SCENARIO DETAILED BREAKDOWN ---
+
+Scenario: ASYMMETRIC_CAPTURE
+  Samples:      100
+  Accuracy:     0.9900
+  Macro F1:     0.9845
+  Confidence:   0.8456
+  Stability:    0.7523
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 1.0, 'HIGH': 0.9855, 'CRITICAL': 0.9524}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 98, 'LOW_EVIDENCE': 2}
+
+Scenario: AUTH_NOT_OBSERVED
+  Samples:      100
+  Accuracy:     0.9300
+  Macro F1:     0.8770
+  Confidence:   0.9253
+  Stability:    0.8685
+  Per-Class F1: {'LOW': 0.9836, 'MEDIUM': 1.0, 'HIGH': 0.8929, 'CRITICAL': 0.6316}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 95, 'LOW_EVIDENCE': 5}
+
+Scenario: FULL_SESSION
+  Samples:      100
+  Accuracy:     0.9400
+  Macro F1:     0.8833
+  Confidence:   0.9371
+  Stability:    0.8924
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 1.0, 'HIGH': 0.8333, 'CRITICAL': 0.7}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: MISSING_CERTIFICATE
+  Samples:      100
+  Accuracy:     1.0000
+  Macro F1:     1.0000
+  Confidence:   0.8078
+  Stability:    0.6974
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 1.0, 'HIGH': 1.0, 'CRITICAL': 1.0}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: MISSING_CLIENT_HELLO
+  Samples:      100
+  Accuracy:     0.8900
+  Macro F1:     0.8771
+  Confidence:   0.9059
+  Stability:    0.8430
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 0.9388, 'HIGH': 0.8197, 'CRITICAL': 0.75}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: MISSING_SERVER_HELLO
+  Samples:      100
+  Accuracy:     0.9000
+  Macro F1:     0.9109
+  Confidence:   0.7060
+  Stability:    0.5619
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 0.7826, 'HIGH': 0.8611, 'CRITICAL': 1.0}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: MISSING_TLS_FINISHED
+  Samples:      100
+  Accuracy:     1.0000
+  Macro F1:     1.0000
+  Confidence:   0.8582
+  Stability:    0.7744
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 1.0, 'HIGH': 1.0, 'CRITICAL': 1.0}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: PACKET_LOSS_SIMULATION
+  Samples:      100
+  Accuracy:     0.9500
+  Macro F1:     0.9542
+  Confidence:   0.8464
+  Stability:    0.7605
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 0.9286, 'HIGH': 0.9254, 'CRITICAL': 0.963}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: STARTTLS_NOT_OBSERVED
+  Samples:      100
+  Accuracy:     0.9600
+  Macro F1:     0.9370
+  Confidence:   0.9322
+  Stability:    0.8837
+  Per-Class F1: {'LOW': 0.9863, 'MEDIUM': 1.0, 'HIGH': 0.9434, 'CRITICAL': 0.8182}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: START_AFTER_STARTTLS
+  Samples:      100
+  Accuracy:     0.9700
+  Macro F1:     0.9182
+  Confidence:   0.9312
+  Stability:    0.8863
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 1.0, 'HIGH': 0.9455, 'CRITICAL': 0.7273}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 100}
+
+Scenario: START_MID_SESSION
+  Samples:      100
+  Accuracy:     0.9000
+  Macro F1:     0.8819
+  Confidence:   0.8071
+  Stability:    0.7022
+  Per-Class F1: {'LOW': 1.0, 'MEDIUM': 0.8636, 'HIGH': 0.8864, 'CRITICAL': 0.7778}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 97, 'LOW_EVIDENCE': 3}
+
+Scenario: TRUNCATED_SESSION
+  Samples:      100
+  Accuracy:     0.9200
+  Macro F1:     0.8859
+  Confidence:   0.9287
+  Stability:    0.8754
+  Per-Class F1: {'LOW': 0.9714, 'MEDIUM': 1.0, 'HIGH': 0.88, 'CRITICAL': 0.6923}
+  Evidence:     {'SUFFICIENT_EVIDENCE': 98, 'LOW_EVIDENCE': 2}

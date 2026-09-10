@@ -608,6 +608,9 @@ export default function Dashboard({ analysisHook }) {
                   recommendations={
                     analysis.recommendations
                   }
+                  findings={analysis.findings || []}
+                  sessions={analysis.sessions || []}
+                  onSelectSession={() => setActiveTab('sessions')}
                 />
 
               </section>

@@ -1,0 +1,158 @@
+{
+  "classes": [
+    "CRITICAL",
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "test_confidence": {
+    "split_name": "test",
+    "sample_count": 977,
+    "accuracy": 0.998,
+    "macro_f1": 0.9979,
+    "mean_max_probability": 0.8879,
+    "median_max_probability": 0.9185,
+    "min_max_probability": 0.4619,
+    "low_confidence_rate_under_70": 0.0716,
+    "brier_score": 0.0404,
+    "calibration_bins": [
+      {
+        "bin_range": "0.4-0.5",
+        "sample_count": 2,
+        "mean_predicted_probability": 0.4737,
+        "actual_accuracy": 0.5
+      },
+      {
+        "bin_range": "0.5-0.6",
+        "sample_count": 44,
+        "mean_predicted_probability": 0.5672,
+        "actual_accuracy": 0.9773
+      },
+      {
+        "bin_range": "0.6-0.7",
+        "sample_count": 24,
+        "mean_predicted_probability": 0.6164,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.7-0.8",
+        "sample_count": 126,
+        "mean_predicted_probability": 0.7686,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.8-0.9",
+        "sample_count": 179,
+        "mean_predicted_probability": 0.8598,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.9-1.0",
+        "sample_count": 534,
+        "mean_predicted_probability": 0.9514,
+        "actual_accuracy": 1.0
+      }
+    ]
+  },
+  "challenge_confidence": {
+    "split_name": "challenge",
+    "sample_count": 500,
+    "accuracy": 0.992,
+    "macro_f1": 0.9625,
+    "mean_max_probability": 0.8706,
+    "median_max_probability": 0.9169,
+    "min_max_probability": 0.5183,
+    "low_confidence_rate_under_70": 0.108,
+    "brier_score": 0.0548,
+    "calibration_bins": [
+      {
+        "bin_range": "0.5-0.6",
+        "sample_count": 5,
+        "mean_predicted_probability": 0.5617,
+        "actual_accuracy": 0.8
+      },
+      {
+        "bin_range": "0.6-0.7",
+        "sample_count": 49,
+        "mean_predicted_probability": 0.6489,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.7-0.8",
+        "sample_count": 86,
+        "mean_predicted_probability": 0.7661,
+        "actual_accuracy": 0.9651
+      },
+      {
+        "bin_range": "0.8-0.9",
+        "sample_count": 89,
+        "mean_predicted_probability": 0.8495,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.9-1.0",
+        "sample_count": 252,
+        "mean_predicted_probability": 0.9532,
+        "actual_accuracy": 1.0
+      }
+    ]
+  },
+  "boundary_confidence": {
+    "split_name": "boundary",
+    "sample_count": 309,
+    "accuracy": 1.0,
+    "macro_f1": 1.0,
+    "mean_max_probability": 0.8598,
+    "median_max_probability": 0.9008,
+    "min_max_probability": 0.5768,
+    "low_confidence_rate_under_70": 0.11,
+    "brier_score": 0.0519,
+    "calibration_bins": [
+      {
+        "bin_range": "0.5-0.6",
+        "sample_count": 20,
+        "mean_predicted_probability": 0.5768,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.6-0.7",
+        "sample_count": 14,
+        "mean_predicted_probability": 0.6414,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.7-0.8",
+        "sample_count": 57,
+        "mean_predicted_probability": 0.7707,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.8-0.9",
+        "sample_count": 61,
+        "mean_predicted_probability": 0.8548,
+        "actual_accuracy": 1.0
+      },
+      {
+        "bin_range": "0.9-1.0",
+        "sample_count": 153,
+        "mean_predicted_probability": 0.9484,
+        "actual_accuracy": 1.0
+      }
+    ]
+  },
+  "calibration_comparison": {
+    "raw_model": {
+      "test_brier_score": 0.0404,
+      "test_accuracy": 0.998,
+      "test_mean_max_prob": 0.8879,
+      "challenge_brier_score": 0.0548
+    },
+    "calibrated_model": {
+      "test_brier_score": 0.0087,
+      "test_accuracy": 1.0,
+      "test_mean_max_prob": 0.9728,
+      "challenge_brier_score": 0.0187
+    },
+    "recommendation": "Keep raw RandomForest model if Brier score is comparable and probabilities maintain sharp discernment, or adopt CalibratedClassifierCV if probabilistic risk calibration is paramount."
+  }
+}

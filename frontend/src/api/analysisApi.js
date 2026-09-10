@@ -76,49 +76,26 @@ export const analysisApi = {
       return createFallbackAnalysis(file.name);
     }
 
-    try {
-      const formData = new FormData();
+    const formData = new FormData();
+    formData.append('file', file);
 
-      formData.append('file', file);
+    const result = await apiClient('/api/analyze', {
+      method: 'POST',
+      body: formData,
+    });
 
-      const result = await apiClient('/api/analyze', {
-        method: 'POST',
-        body: formData,
-      });
-
-      /*
-       | Store locally too so navigation to:
-       | /analysis/:id
-       | works immediately.
-       */
-
-      if (result?.analysis_id) {
-        const exists = findLocalAnalysis(
-          result.analysis_id
-        );
-
-        if (!exists) {
-          localMockAnalyses.unshift(result);
-        }
+    /*
+     | Store locally too so navigation to:
+     | /analysis/:id works immediately for cached views.
+     */
+    if (result?.analysis_id) {
+      const exists = findLocalAnalysis(result.analysis_id);
+      if (!exists) {
+        localMockAnalyses.unshift(result);
       }
-
-      return result;
-
-    } catch (err) {
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-        console.warn(
-          'Backend unavailable. Using local development analysis.'
-        );
-
-        return createFallbackAnalysis(file.name);
-      }
-
-      throw err;
     }
+
+    return result;
   },
 
 
@@ -188,77 +165,9 @@ export const analysisApi = {
       };
     }
 
-    try {
-
-      return await apiClient(
-        `/api/analyses?page=${page}&limit=${limit}`
-      );
-
-    } catch (err) {
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-
-        const start =
-          (page - 1) * limit;
-
-        const end =
-          start + limit;
-
-        const items =
-          localMockAnalyses
-            .map((analysis) => ({
-              analysis_id:
-                analysis.analysis_id,
-
-              filename:
-                analysis.filename,
-
-              status:
-                analysis.status || 'COMPLETED',
-
-              risk_label:
-                analysis.risk?.level ||
-                'UNKNOWN',
-
-              risk_score:
-                analysis.risk?.score ??
-                null,
-
-              session_count:
-                analysis.summary?.total_sessions ||
-                analysis.sessions?.length ||
-                0,
-
-              finding_count:
-                analysis.summary?.findings_count ||
-                analysis.findings?.length ||
-                0,
-
-              created_at:
-                analysis.uploaded_at,
-
-              completed_at:
-                analysis.uploaded_at,
-            }))
-            .slice(start, end);
-
-        return {
-          items,
-
-          pagination: {
-            page,
-            limit,
-            total:
-              localMockAnalyses.length,
-          },
-        };
-      }
-
-      throw err;
-    }
+    return await apiClient(
+      `/api/analyses?page=${page}&limit=${limit}`
+    );
   },
 
 
@@ -269,22 +178,13 @@ export const analysisApi = {
   */
 
   async getAnalysis(analysisId) {
+    const isDemoId =
+      String(analysisId).startsWith('demo-') ||
+      String(analysisId).startsWith('sec-') ||
+      String(analysisId).startsWith('local-');
 
-    /*
-     | First check local state.
-     |
-     | This is important for:
-     | - demo presets
-     | - newly uploaded mock files
-     | - immediate navigation
-     |
-     */
-
-    const localMatch =
-      findLocalAnalysis(analysisId);
-
-    if (USE_MOCK_ENV) {
-
+    if (USE_MOCK_ENV || isDemoId) {
+      const localMatch = findLocalAnalysis(analysisId);
       if (localMatch) {
         return localMatch;
       }
@@ -294,77 +194,9 @@ export const analysisApi = {
       );
     }
 
-
-    /*
-     | If analysis already exists locally,
-     | return it immediately.
-     */
-
-    if (localMatch) {
-      return localMatch;
-    }
-
-
-    /*
-     | Otherwise ask backend.
-     */
-
-    try {
-
-      const result =
-        await apiClient(
-          `/api/analyses/${encodeURIComponent(analysisId)}`
-        );
-
-      if (result?.analysis_id) {
-
-        const exists =
-          findLocalAnalysis(
-            result.analysis_id
-          );
-
-        if (!exists) {
-          localMockAnalyses.unshift(result);
-        }
-      }
-
-      return result;
-
-    } catch (err) {
-
-      /*
-       | Only fallback for actual connectivity/auth problems.
-       |
-       | DO NOT fallback on 404.
-       */
-
-      if (
-        err.isNetworkError ||
-        err.status === 401
-      ) {
-
-        const fallback =
-          findLocalAnalysis(analysisId);
-
-        if (fallback) {
-          return fallback;
-        }
-
-        throw new Error(
-          'Backend is unavailable and this analysis is not available locally.'
-        );
-      }
-
-
-      if (err.status === 404) {
-
-        throw new Error(
-          `Analysis record "${analysisId}" was not found.`
-        );
-      }
-
-      throw err;
-    }
+    return await apiClient(
+      `/api/analyses/${encodeURIComponent(analysisId)}`
+    );
   },
 
 
@@ -375,12 +207,13 @@ export const analysisApi = {
   */
 
   async exportAnalysis(analysisId) {
+    const isDemoId =
+      String(analysisId).startsWith('demo-') ||
+      String(analysisId).startsWith('sec-') ||
+      String(analysisId).startsWith('local-');
 
-    const localMatch =
-      findLocalAnalysis(analysisId);
-
-    if (USE_MOCK_ENV) {
-
+    if (USE_MOCK_ENV || isDemoId) {
+      const localMatch = findLocalAnalysis(analysisId);
       if (!localMatch) {
         throw new Error(
           'Analysis not available for export.'
@@ -402,40 +235,12 @@ export const analysisApi = {
       );
     }
 
-    try {
-
-      return await apiClient(
-        `/api/analyses/${encodeURIComponent(analysisId)}/export`,
-        {
-          asBlob: true,
-        }
-      );
-
-    } catch (err) {
-
-      if (
-        (err.isNetworkError ||
-          err.status === 401) &&
-        localMatch
-      ) {
-
-        return new Blob(
-          [
-            JSON.stringify(
-              localMatch,
-              null,
-              2
-            ),
-          ],
-          {
-            type:
-              'application/json',
-          }
-        );
+    return await apiClient(
+      `/api/analyses/${encodeURIComponent(analysisId)}/export`,
+      {
+        asBlob: true,
       }
-
-      throw err;
-    }
+    );
   },
 
 

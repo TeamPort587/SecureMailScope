@@ -106,6 +106,7 @@ const recommendationSchema = z.object({
   priority: priority,
   title: z.string(),
   description: z.string(),
+  affected_sessions: z.array(z.string()).optional(),
 });
 
 // -- Summary schema ------------------------------------------------------------

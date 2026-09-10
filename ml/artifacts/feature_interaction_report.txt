@@ -1,0 +1,280 @@
+==================================================================
+SECUREMAILSCOPE PAIRWISE FEATURE INTERACTION & PURITY REPORT
+==================================================================
+Total Samples Analyzed:       4479
+Pairs Above Min Samples (15): 131
+Purity Threshold:             98.0%
+Total Flagged Interactions:   54
+  - Legitimate Domain Rules:  32
+  - Suspicious Shortcuts:     22
+
+--- DETAILED FLAGGED INTERACTIONS ---
+1. [LEGITIMATE_DOMAIN_RULE] encryption_starttls + auth_before_tls
+   Dominant Class: CRITICAL (Purity: 100.00%, N=622)
+   Breakdown: {'CRITICAL': 622}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+2. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=620)
+   Breakdown: {'CRITICAL': 620}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+3. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + medium_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=513)
+   Breakdown: {'CRITICAL': 513}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+4. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + high_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=507)
+   Breakdown: {'CRITICAL': 507}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+5. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + low_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=457)
+   Breakdown: {'CRITICAL': 457}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+6. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + protocol_smtp
+   Dominant Class: CRITICAL (Purity: 100.00%, N=415)
+   Breakdown: {'CRITICAL': 415}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+7. [LEGITIMATE_DOMAIN_RULE] encryption_starttls + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=378)
+   Breakdown: {'CRITICAL': 378}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+8. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + auth_before_tls
+   Dominant Class: CRITICAL (Purity: 100.00%, N=361)
+   Breakdown: {'CRITICAL': 361}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+9. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + protocol_imap
+   Dominant Class: CRITICAL (Purity: 100.00%, N=358)
+   Breakdown: {'CRITICAL': 358}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+10. [LEGITIMATE_DOMAIN_RULE] critical_count + medium_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=342)
+   Breakdown: {'CRITICAL': 342}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+11. [LEGITIMATE_DOMAIN_RULE] critical_count + high_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=329)
+   Breakdown: {'CRITICAL': 329}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+12. [LEGITIMATE_DOMAIN_RULE] critical_count + low_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=308)
+   Breakdown: {'CRITICAL': 308}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+13. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=277)
+   Breakdown: {'CRITICAL': 277}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+14. [LEGITIMATE_DOMAIN_RULE] protocol_smtp + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=264)
+   Breakdown: {'CRITICAL': 264}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+15. [LEGITIMATE_DOMAIN_RULE] protocol_imap + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=247)
+   Breakdown: {'CRITICAL': 247}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+16. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + high_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=227)
+   Breakdown: {'CRITICAL': 227}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+17. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + medium_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=227)
+   Breakdown: {'CRITICAL': 227}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+18. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + protocol_pop3
+   Dominant Class: CRITICAL (Purity: 100.00%, N=210)
+   Breakdown: {'CRITICAL': 210}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+19. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + low_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=204)
+   Breakdown: {'CRITICAL': 204}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+20. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + protocol_imap
+   Dominant Class: CRITICAL (Purity: 100.00%, N=177)
+   Breakdown: {'CRITICAL': 177}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+21. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + protocol_smtp
+   Dominant Class: CRITICAL (Purity: 100.00%, N=156)
+   Breakdown: {'CRITICAL': 156}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+22. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + tls_upgrade_failed
+   Dominant Class: CRITICAL (Purity: 100.00%, N=149)
+   Breakdown: {'CRITICAL': 149}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+23. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + high_count
+   Dominant Class: HIGH (Purity: 100.00%, N=146)
+   Breakdown: {'HIGH': 146}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+24. [LEGITIMATE_DOMAIN_RULE] weak_cipher + auth_before_tls
+   Dominant Class: CRITICAL (Purity: 100.00%, N=145)
+   Breakdown: {'CRITICAL': 145}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+25. [LEGITIMATE_DOMAIN_RULE] protocol_pop3 + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=144)
+   Breakdown: {'CRITICAL': 144}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+26. [SUSPICIOUS_SYNTHETIC_SHORTCUT] weak_key + self_signed
+   Dominant Class: HIGH (Purity: 100.00%, N=128)
+   Breakdown: {'HIGH': 128}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+27. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + pfs_missing
+   Dominant Class: CRITICAL (Purity: 100.00%, N=125)
+   Breakdown: {'CRITICAL': 125}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+28. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + medium_count
+   Dominant Class: HIGH (Purity: 100.00%, N=116)
+   Breakdown: {'HIGH': 116}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+29. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + low_count
+   Dominant Class: HIGH (Purity: 100.00%, N=111)
+   Breakdown: {'HIGH': 111}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+30. [SUSPICIOUS_SYNTHETIC_SHORTCUT] encryption_starttls + expired_cert
+   Dominant Class: HIGH (Purity: 100.00%, N=108)
+   Breakdown: {'HIGH': 108}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+31. [LEGITIMATE_DOMAIN_RULE] encryption_plaintext + protocol_pop3
+   Dominant Class: CRITICAL (Purity: 100.00%, N=92)
+   Breakdown: {'CRITICAL': 92}
+   Rationale: Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)
+
+32. [SUSPICIOUS_SYNTHETIC_SHORTCUT] weak_cipher + weak_key
+   Dominant Class: CRITICAL (Purity: 100.00%, N=88)
+   Breakdown: {'CRITICAL': 88}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+33. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + protocol_smtp
+   Dominant Class: HIGH (Purity: 100.00%, N=81)
+   Breakdown: {'HIGH': 81}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+34. [LEGITIMATE_DOMAIN_RULE] weak_cipher + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=77)
+   Breakdown: {'CRITICAL': 77}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+35. [SUSPICIOUS_SYNTHETIC_SHORTCUT] encryption_implicit + expired_cert
+   Dominant Class: HIGH (Purity: 100.00%, N=76)
+   Breakdown: {'HIGH': 76}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+36. [LEGITIMATE_DOMAIN_RULE] tls_upgrade_failed + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=75)
+   Breakdown: {'CRITICAL': 75}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+37. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + high_count
+   Dominant Class: HIGH (Purity: 100.00%, N=63)
+   Breakdown: {'HIGH': 63}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+38. [LEGITIMATE_DOMAIN_RULE] pfs_missing + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=63)
+   Breakdown: {'CRITICAL': 63}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+39. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + protocol_imap
+   Dominant Class: HIGH (Purity: 100.00%, N=60)
+   Breakdown: {'HIGH': 60}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+40. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + low_count
+   Dominant Class: HIGH (Purity: 100.00%, N=58)
+   Breakdown: {'HIGH': 58}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+41. [LEGITIMATE_DOMAIN_RULE] deprecated_tls + auth_before_tls
+   Dominant Class: CRITICAL (Purity: 100.00%, N=57)
+   Breakdown: {'CRITICAL': 57}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+42. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + medium_count
+   Dominant Class: HIGH (Purity: 100.00%, N=56)
+   Breakdown: {'HIGH': 56}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+43. [SUSPICIOUS_SYNTHETIC_SHORTCUT] encryption_starttls + not_yet_valid_cert
+   Dominant Class: HIGH (Purity: 100.00%, N=55)
+   Breakdown: {'HIGH': 55}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+44. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + self_signed
+   Dominant Class: HIGH (Purity: 100.00%, N=53)
+   Breakdown: {'HIGH': 53}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+45. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + protocol_pop3
+   Dominant Class: HIGH (Purity: 100.00%, N=43)
+   Breakdown: {'HIGH': 43}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+46. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + weak_key
+   Dominant Class: HIGH (Purity: 100.00%, N=41)
+   Breakdown: {'HIGH': 41}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+47. [SUSPICIOUS_SYNTHETIC_SHORTCUT] encryption_implicit + not_yet_valid_cert
+   Dominant Class: HIGH (Purity: 100.00%, N=39)
+   Breakdown: {'HIGH': 39}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+48. [LEGITIMATE_DOMAIN_RULE] deprecated_tls + critical_count
+   Dominant Class: CRITICAL (Purity: 100.00%, N=35)
+   Breakdown: {'CRITICAL': 35}
+   Rationale: Active rule engine critical finding mandates CRITICAL (rule 1.1)
+
+49. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + protocol_imap
+   Dominant Class: HIGH (Purity: 100.00%, N=35)
+   Breakdown: {'HIGH': 35}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+50. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + protocol_smtp
+   Dominant Class: HIGH (Purity: 100.00%, N=34)
+   Breakdown: {'HIGH': 34}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+51. [SUSPICIOUS_SYNTHETIC_SHORTCUT] expired_cert + pfs_missing
+   Dominant Class: HIGH (Purity: 100.00%, N=28)
+   Breakdown: {'HIGH': 28}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+52. [LEGITIMATE_DOMAIN_RULE] auth_before_tls + self_signed
+   Dominant Class: CRITICAL (Purity: 100.00%, N=28)
+   Breakdown: {'CRITICAL': 28}
+   Rationale: Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)
+
+53. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + protocol_pop3
+   Dominant Class: HIGH (Purity: 100.00%, N=25)
+   Breakdown: {'HIGH': 25}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut
+
+54. [SUSPICIOUS_SYNTHETIC_SHORTCUT] not_yet_valid_cert + pfs_missing
+   Dominant Class: HIGH (Purity: 100.00%, N=18)
+   Breakdown: {'HIGH': 18}
+   Rationale: Synthetic feature pairing with unexpectedly high purity; audit for shortcut

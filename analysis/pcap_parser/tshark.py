@@ -59,6 +59,8 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
 
     # Frame layer
     frame = layers.get("frame", {})
+    if isinstance(frame, list):
+        frame = frame[0] if frame else {}
     frame_num_str = frame.get("frame.number", "0")
     try:
         frame_number = int(frame_num_str)
@@ -73,11 +75,15 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
 
     # IP / IPv6 layer
     ip_layer = layers.get("ip", {}) or layers.get("ipv6", {})
+    if isinstance(ip_layer, list):
+        ip_layer = ip_layer[0] if ip_layer else {}
     src_ip = ip_layer.get("ip.src") or ip_layer.get("ipv6.src") or "0.0.0.0"
     dst_ip = ip_layer.get("ip.dst") or ip_layer.get("ipv6.dst") or "0.0.0.0"
 
     # TCP layer
     tcp_layer = layers.get("tcp", {})
+    if isinstance(tcp_layer, list):
+        tcp_layer = tcp_layer[0] if tcp_layer else {}
     if not tcp_layer:
         # We only analyze TCP traffic for email protocols (SMTP, IMAP, POP3)
         return None
@@ -104,30 +110,58 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
     if "smtp" in layers:
         protocol = "SMTP"
         smtp_layer = layers["smtp"]
-        # Extract commands and responses
-        for k, v in smtp_layer.items():
-            if "req.command" in k or "req.parameter" in k or "response.code" in k or "rsp.parameter" in k:
-                app_data_chunks.append(str(v))
-            elif isinstance(v, dict):
-                for sub_k, sub_v in v.items():
-                    if "line" in sub_k or "command" in sub_k or "parameter" in sub_k:
-                        app_data_chunks.append(str(sub_v))
+        smtp_list = smtp_layer if isinstance(smtp_layer, list) else [smtp_layer]
+        for s_layer in smtp_list:
+            if isinstance(s_layer, dict):
+                for k, v in s_layer.items():
+                    if "req.command" in k or "req.parameter" in k or "response.code" in k or "rsp.parameter" in k:
+                        if isinstance(v, list):
+                            app_data_chunks.extend(str(item) for item in v)
+                        else:
+                            app_data_chunks.append(str(v))
+                    elif isinstance(v, dict):
+                        for sub_k, sub_v in v.items():
+                            if "line" in sub_k or "command" in sub_k or "parameter" in sub_k:
+                                if isinstance(sub_v, list):
+                                    app_data_chunks.extend(str(item) for item in sub_v)
+                                else:
+                                    app_data_chunks.append(str(sub_v))
+                    elif isinstance(v, list):
+                        for item in v:
+                            if isinstance(item, dict):
+                                for sub_k, sub_v in item.items():
+                                    if "line" in sub_k or "command" in sub_k or "parameter" in sub_k:
+                                        app_data_chunks.append(str(sub_v))
+                            else:
+                                app_data_chunks.append(str(item))
 
     # IMAP layer
     elif "imap" in layers:
         protocol = "IMAP"
         imap_layer = layers["imap"]
-        for k, v in imap_layer.items():
-            if "request" in k or "response" in k or "line" in k:
-                app_data_chunks.append(str(v))
+        imap_list = imap_layer if isinstance(imap_layer, list) else [imap_layer]
+        for i_layer in imap_list:
+            if isinstance(i_layer, dict):
+                for k, v in i_layer.items():
+                    if "request" in k or "response" in k or "line" in k:
+                        if isinstance(v, list):
+                            app_data_chunks.extend(str(item) for item in v)
+                        else:
+                            app_data_chunks.append(str(v))
 
     # POP layer
     elif "pop" in layers:
         protocol = "POP3"
         pop_layer = layers["pop"]
-        for k, v in pop_layer.items():
-            if "request" in k or "response" in k or "line" in k:
-                app_data_chunks.append(str(v))
+        pop_list = pop_layer if isinstance(pop_layer, list) else [pop_layer]
+        for p_layer in pop_list:
+            if isinstance(p_layer, dict):
+                for k, v in p_layer.items():
+                    if "request" in k or "response" in k or "line" in k:
+                        if isinstance(v, list):
+                            app_data_chunks.extend(str(item) for item in v)
+                        else:
+                            app_data_chunks.append(str(v))
 
     # TLS layer
     tls_handshake_type = None
@@ -177,41 +211,76 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
 
         _extract_tls_fields(tls_layer)
 
-    # Certificate information from x509 layers if present
-    x509_layer = layers.get("x509af") or layers.get("x509sat") or layers.get("x509ce")
-    if x509_layer or "tls" in layers:
-        # Scan for certificate subject / issuer / validity
-        cert_data: Dict[str, Any] = {}
+    # Certificate information from x509 layers or tls.handshake.certificate
+    cert_data: Dict[str, Any] = {}
 
-        def _extract_cert_fields(obj: Any):
-            if isinstance(obj, dict):
-                for k, v in obj.items():
-                    k_lower = k.lower()
-                    if "notbefore" in k_lower or "valid_from" in k_lower or "not_before" in k_lower:
-                        cert_data["valid_from"] = str(v)
-                    elif "notafter" in k_lower or "valid_until" in k_lower or "not_after" in k_lower:
-                        cert_data["valid_until"] = str(v)
-                    elif "subject" in k_lower and "id" not in k_lower:
-                        if isinstance(v, str) and "=" in v:
-                            cert_data["subject"] = v
-                    elif "issuer" in k_lower and "id" not in k_lower:
-                        if isinstance(v, str) and "=" in v:
-                            cert_data["issuer"] = v
-                    elif "keysize" in k_lower or "public_key_size" in k_lower or "rsa.n" in k_lower:
-                        try:
-                            cert_data["key_size"] = int(v)
-                        except (ValueError, TypeError):
-                            pass
-                    elif "algorithm" in k_lower and "public" in k_lower:
-                        cert_data["key_type"] = str(v)
-                    _extract_cert_fields(v)
-            elif isinstance(obj, list):
-                for item in obj:
-                    _extract_cert_fields(item)
+    def _find_der_cert(obj: Any) -> Optional[str]:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k == "tls.handshake.certificate":
+                    if isinstance(v, list) and v:
+                        return v[0]
+                    elif isinstance(v, str):
+                        return v
+                res = _find_der_cert(v)
+                if res:
+                    return res
+        elif isinstance(obj, list):
+            for item in obj:
+                res = _find_der_cert(item)
+                if res:
+                    return res
+        return None
 
-        _extract_cert_fields(layers)
-        if cert_data:
-            tls_cert_info = cert_data
+    cert_hex = _find_der_cert(layers)
+    if cert_hex:
+        try:
+            from cryptography import x509
+            clean_hex = cert_hex.replace(":", "").replace(" ", "").strip()
+            der_bytes = bytes.fromhex(clean_hex)
+            parsed_cert = x509.load_der_x509_certificate(der_bytes)
+            cert_data["subject"] = parsed_cert.subject.rfc4514_string()
+            cert_data["issuer"] = parsed_cert.issuer.rfc4514_string()
+            cert_data["valid_from"] = parsed_cert.not_valid_before_utc.isoformat()
+            cert_data["valid_until"] = parsed_cert.not_valid_after_utc.isoformat()
+            cert_data["key_size"] = getattr(parsed_cert.public_key(), "key_size", 2048)
+            cert_data["key_type"] = "RSA"
+        except Exception:
+            pass
+
+    if not cert_data:
+        x509_layer = layers.get("x509af") or layers.get("x509sat") or layers.get("x509ce")
+        if x509_layer or "tls" in layers:
+            def _extract_cert_fields(obj: Any):
+                if isinstance(obj, dict):
+                    for k, v in obj.items():
+                        k_lower = k.lower()
+                        if "notbefore" in k_lower or "valid_from" in k_lower or "not_before" in k_lower:
+                            cert_data["valid_from"] = str(v)
+                        elif "notafter" in k_lower or "valid_until" in k_lower or "not_after" in k_lower:
+                            cert_data["valid_until"] = str(v)
+                        elif "subject" in k_lower and "id" not in k_lower:
+                            if isinstance(v, str) and "=" in v:
+                                cert_data["subject"] = v
+                        elif "issuer" in k_lower and "id" not in k_lower:
+                            if isinstance(v, str) and "=" in v:
+                                cert_data["issuer"] = v
+                        elif "keysize" in k_lower or "public_key_size" in k_lower or "rsa.n" in k_lower:
+                            try:
+                                cert_data["key_size"] = int(v)
+                            except (ValueError, TypeError):
+                                pass
+                        elif "algorithm" in k_lower and "public" in k_lower:
+                            cert_data["key_type"] = str(v)
+                        _extract_cert_fields(v)
+                elif isinstance(obj, list):
+                    for item in obj:
+                        _extract_cert_fields(item)
+
+            _extract_cert_fields(layers)
+
+    if cert_data:
+        tls_cert_info = cert_data
 
     # Raw payload data if available
     payload = layers.get("data", {}).get("data.data", "")
@@ -306,8 +375,20 @@ def parse_pcap_with_tshark(file_path: str, timeout_sec: int = 60) -> List[Packet
     if not output:
         return []
 
+    def _preserve_duplicates_hook(pairs):
+        d = {}
+        for k, v in pairs:
+            if k in d:
+                if isinstance(d[k], list):
+                    d[k].append(v)
+                else:
+                    d[k] = [d[k], v]
+            else:
+                d[k] = v
+        return d
+
     try:
-        packets_data = json.loads(output)
+        packets_data = json.loads(output, object_pairs_hook=_preserve_duplicates_hook)
     except json.JSONDecodeError as err:
         raise CorruptPCAPError(f"Corrupt or invalid JSON emitted by TShark: {err}")
 

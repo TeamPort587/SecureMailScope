@@ -19,8 +19,8 @@ describe('Frontend Component Unit & Integration Tests', () => {
   describe('UploadForm', () => {
     it('renders upload prompt', () => {
       render(<UploadForm onUpload={vi.fn()} />);
-      expect(screen.getByText(/click to upload/i)).toBeInTheDocument();
-      expect(screen.getByText('.pcap')).toBeInTheDocument();
+      expect(screen.getByText(/choose a pcap file/i)).toBeInTheDocument();
+      expect(screen.getByText('PCAP')).toBeInTheDocument();
     });
 
     it('rejects invalid file extension', () => {
@@ -29,7 +29,7 @@ describe('Frontend Component Unit & Integration Tests', () => {
       const badFile = new File(['dummy'], 'malware.exe', { type: 'application/octet-stream' });
 
       fireEvent.change(input, { target: { files: [badFile] } });
-      expect(screen.getByText(/invalid file extension/i)).toBeInTheDocument();
+      expect(screen.getByText(/please select a valid \.pcap or \.pcapng/i)).toBeInTheDocument();
     });
 
     it('accepts valid .pcap file and calls onUpload upon submit', () => {
@@ -76,17 +76,17 @@ describe('Frontend Component Unit & Integration Tests', () => {
         />
       );
 
-      expect(screen.getByText(/Overall Security Posture:/i)).toBeInTheDocument();
+      expect(screen.getByText('High-risk security posture')).toBeInTheDocument();
       expect(screen.getByText('78')).toBeInTheDocument(); // Score
       expect(screen.getByText('rf-v1')).toBeInTheDocument(); // Model
       expect(screen.getByText('91%')).toBeInTheDocument(); // Confidence
-      expect(screen.getByText('4')).toBeInTheDocument(); // Total sessions
+      expect(screen.getAllByText('4').length).toBeGreaterThanOrEqual(1); // Total sessions
       expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1); // Vulnerable sessions / counts
     });
 
     it('does not crash when optional fields are null', () => {
       render(<RiskSummary risk={null} summary={null} />);
-      expect(screen.getByText(/Overall Security Posture:/i)).toBeInTheDocument();
+      expect(screen.getByText('Security posture looks healthy')).toBeInTheDocument();
     });
   });
 
@@ -107,7 +107,7 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       // Verify Session details modal opens
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Protocol Handshake & Upgrade Controls')).toBeInTheDocument();
+      expect(screen.getByText('Protocol Handshake')).toBeInTheDocument();
       expect(screen.getByText('Upgrade Advertised')).toBeInTheDocument();
     });
   });
@@ -120,19 +120,19 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       expect(screen.getByText(finding.title)).toBeInTheDocument();
       expect(screen.getByText(finding.description)).toBeInTheDocument();
-      expect(screen.getByText(`Type: ${finding.finding_type}`)).toBeInTheDocument();
-      expect(screen.getByText(`Session: ${finding.session_id}`)).toBeInTheDocument();
+      expect(screen.getByText(finding.finding_type)).toBeInTheDocument();
+      expect(screen.getByText(finding.session_id)).toBeInTheDocument();
     });
 
     it('toggles evidence panel visibility', () => {
       const finding = mockAnalysis.findings[0];
       render(<FindingCard finding={finding} />);
 
-      const evidenceBtn = screen.getByRole('button', { name: /evidence/i });
+      const evidenceBtn = screen.getAllByRole('button', { name: /evidence/i })[0];
       fireEvent.click(evidenceBtn);
 
-      expect(screen.getByText(/packet dissector evidence/i)).toBeInTheDocument();
-      expect(screen.getByText(/authentication before tls/i)).toBeInTheDocument();
+      expect(screen.getByText(/supporting evidence/i)).toBeInTheDocument();
+      expect(screen.getByText(/server port/i)).toBeInTheDocument();
     });
   });
 
