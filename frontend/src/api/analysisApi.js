@@ -30,6 +30,27 @@ const localMockAnalyses = [
 |--------------------------------------------------------------------------
 */
 
+const DEMO_ANALYSIS_IDS = new Set(
+  [
+    ...DEMO_PRESETS.filter((preset) => preset?.data?.analysis_id).map((preset) =>
+      String(preset.data.analysis_id)
+    ),
+    String(mockAnalysis?.analysis_id),
+  ].filter(Boolean)
+);
+
+function isDemoId(analysisId) {
+  if (!analysisId) return false;
+  const idStr = String(analysisId);
+  return (
+    DEMO_ANALYSIS_IDS.has(idStr) ||
+    idStr.startsWith('demo-') ||
+    idStr.startsWith('sec-') ||
+    idStr.startsWith('multi-') ||
+    idStr.startsWith('local-')
+  );
+}
+
 function findLocalAnalysis(analysisId) {
   return localMockAnalyses.find(
     (analysis) =>
@@ -178,12 +199,7 @@ export const analysisApi = {
   */
 
   async getAnalysis(analysisId) {
-    const isDemoId =
-      String(analysisId).startsWith('demo-') ||
-      String(analysisId).startsWith('sec-') ||
-      String(analysisId).startsWith('local-');
-
-    if (USE_MOCK_ENV || isDemoId) {
+    if (USE_MOCK_ENV || isDemoId(analysisId)) {
       const localMatch = findLocalAnalysis(analysisId);
       if (localMatch) {
         return localMatch;
@@ -207,12 +223,7 @@ export const analysisApi = {
   */
 
   async exportAnalysis(analysisId) {
-    const isDemoId =
-      String(analysisId).startsWith('demo-') ||
-      String(analysisId).startsWith('sec-') ||
-      String(analysisId).startsWith('local-');
-
-    if (USE_MOCK_ENV || isDemoId) {
+    if (USE_MOCK_ENV || isDemoId(analysisId)) {
       const localMatch = findLocalAnalysis(analysisId);
       if (!localMatch) {
         throw new Error(
