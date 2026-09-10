@@ -112,7 +112,7 @@ class CertificateInfo:
     def to_dict(self) -> Dict[str, Any]:
         if self.visibility == "NOT_OBSERVABLE":
             return {"visibility": "NOT_OBSERVABLE"}
-        res: Dict[str, Any] = {}
+        res: Dict[str, Any] = {"visibility": "OBSERVED"}
         if self.subject is not None:
             res["subject"] = self.subject
         if self.issuer is not None:

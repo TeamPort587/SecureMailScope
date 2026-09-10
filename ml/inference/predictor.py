@@ -25,6 +25,7 @@ import argparse
 import json
 import math
 import sys
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -245,7 +246,13 @@ class RiskPredictor:
                 f"Model: {model_features}, Schema: {ALL_FEATURES}"
             )
 
-        self.pipeline = joblib.load(model_path)
+        with warnings.catch_warnings():
+            try:
+                from sklearn.exceptions import InconsistentVersionWarning
+                warnings.simplefilter("ignore", InconsistentVersionWarning)
+            except ImportError:
+                pass
+            self.pipeline = joblib.load(model_path)
         # Compatibility safeguard across scikit-learn versions
         if hasattr(self.pipeline, "named_steps") and "imputer" in self.pipeline.named_steps:
             imp = self.pipeline.named_steps["imputer"]
