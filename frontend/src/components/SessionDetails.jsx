@@ -1,230 +1,730 @@
 import React from 'react';
-import { X, Shield, Lock, Key, Award, AlertCircle, FileText, CheckCircle2, XCircle, HelpCircle, EyeOff } from 'lucide-react';
-import { formatTriState, formatEncryptionMode, formatDate } from '../utils/formatters';
+import {
+  X,
+  Shield,
+  Lock,
+  Key,
+  Award,
+  EyeOff,
+  CheckCircle2,
+  XCircle,
+  HelpCircle,
+} from 'lucide-react';
+
+import {
+  formatTriState,
+  formatEncryptionMode,
+  formatDate,
+} from '../utils/formatters';
 
 export default function SessionDetails({ session, onClose }) {
   if (!session) return null;
 
-  const enc = formatEncryptionMode(session?.security?.encryption_mode);
+  const enc = formatEncryptionMode(
+    session?.security?.encryption_mode
+  );
+
+  const TriStateBadge = ({ value, vulnerable = false }) => {
+    const state = formatTriState(value);
+
+    const isYes = state.text === 'YES';
+    const isNo = state.text === 'NO';
+
+    let styles =
+      'border-slate-200 bg-slate-50 text-slate-600';
+
+    if (vulnerable && isYes) {
+      styles =
+        'border-red-200 bg-red-50 text-red-700';
+    } else if (isYes) {
+      styles =
+        'border-yellow-200 bg-yellow-50 text-yellow-700';
+    } else if (isNo) {
+      styles =
+        'border-slate-200 bg-slate-100 text-slate-500';
+    } else {
+      styles =
+        'border-amber-200 bg-amber-50 text-amber-700';
+    }
+
+    return (
+      <span
+        className={`
+          inline-flex items-center rounded-lg border
+          px-2.5 py-1 text-[11px] font-semibold
+          font-mono tracking-wide
+          ${styles}
+        `}
+      >
+        {state.text}
+      </span>
+    );
+  };
+
+  const SectionHeader = ({
+    icon: Icon,
+    title,
+    description,
+    color = 'brand',
+  }) => {
+    const colorStyles = {
+      brand:
+        'bg-brand-500/10 border-brand-500/20 text-brand-600',
+      sky:
+        'bg-sky-50 border-sky-200 text-sky-600',
+      purple:
+        'bg-violet-50 border-violet-200 text-violet-600',
+    };
+
+    return (
+      <div className="flex items-center gap-3">
+        <div
+          className={`
+            flex h-9 w-9 shrink-0 items-center justify-center
+            rounded-xl border
+            ${colorStyles[color]}
+          `}
+        >
+          <Icon className="h-4 w-4" />
+        </div>
+
+        <div>
+          <h4 className="text-sm font-semibold text-slate-800">
+            {title}
+          </h4>
+
+          {description && (
+            <p className="mt-0.5 text-[11px] text-slate-500">
+              {description}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const ControlCard = ({
+    title,
+    description,
+    value,
+    vulnerable = false,
+  }) => {
+    return (
+      <div
+        className="
+          rounded-xl
+          border border-slate-200/90
+          bg-white
+          px-4 py-3.5
+          shadow-[0_1px_2px_rgba(15,23,42,0.025)]
+          transition-colors
+          hover:border-slate-300
+        "
+      >
+        <div className="flex items-center justify-between gap-4">
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-slate-700">
+              {title}
+            </p>
+
+            <p className="mt-1 text-[11px] leading-5 text-slate-500">
+              {description}
+            </p>
+          </div>
+
+          <div className="shrink-0">
+            <TriStateBadge
+              value={value}
+              vulnerable={vulnerable}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150"
+      className="
+        fixed inset-0 z-50
+        flex items-center justify-center
+        bg-slate-900/25
+        p-4
+        backdrop-blur-sm
+        animate-in fade-in duration-150
+      "
       role="dialog"
       aria-modal="true"
       aria-labelledby="session-modal-title"
     >
-      <div className="relative w-full max-w-3xl rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950/40">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
-              <Shield className="w-5 h-5" />
+      <div
+        className="
+          relative flex w-full max-w-4xl flex-col
+          overflow-hidden rounded-2xl
+          border border-slate-200
+          bg-[#f8fafc]
+          shadow-[0_24px_80px_rgba(15,23,42,0.18)]
+          max-h-[90vh]
+        "
+      >
+        {/* HEADER */}
+
+        <div
+          className="
+            flex items-center justify-between
+            border-b border-slate-200
+            bg-gradient-to-r
+            from-brand-500/[0.035]
+            via-white
+            to-white
+            px-6 py-5
+          "
+        >
+          <div className="flex items-center gap-3.5">
+            <div
+              className="
+                flex h-11 w-11 items-center justify-center
+                rounded-xl
+                border border-brand-500/20
+                bg-brand-500/[0.07]
+              "
+            >
+              <Shield className="h-5 w-5 text-brand-600" />
             </div>
+
             <div>
-              <div className="flex items-center gap-2">
-                <h3 id="session-modal-title" className="text-base font-bold text-white font-mono">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <h3
+                  id="session-modal-title"
+                  className="
+                    font-mono text-base
+                    font-bold text-slate-800
+                  "
+                >
                   {session.session_id}
                 </h3>
-                <span className={`text-[11px] px-2 py-0.5 rounded-full border font-mono ${enc.badge}`}>
+
+                <span
+                  className="
+    inline-flex items-center
+    rounded-lg border
+    border-brand-500/25
+    bg-brand-500/10
+    px-3 py-1.5
+    text-[10px]
+    font-semibold
+    uppercase
+    tracking-wide
+    text-brand-600
+  "
+                >
                   {enc.label}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
-                {session.protocol} ({session.service || 'email-service'}) • Stream Inspection
+
+              <p className="mt-1 text-xs text-slate-500">
+                {session.protocol}
+                {' · '}
+                {session.service || 'email-service'}
+                {' · '}
+                Session security inspection
               </p>
             </div>
           </div>
+
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="
+              flex h-9 w-9 items-center justify-center
+              rounded-xl
+              border border-transparent
+              text-slate-400
+              transition-all
+              hover:border-slate-200
+              hover:bg-slate-100
+              hover:text-slate-700
+            "
             aria-label="Close session details"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="p-6 overflow-y-auto space-y-6 text-xs">
-          {/* Connection Endpoints */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3.5 rounded-xl bg-slate-950/60 border border-slate-800 font-mono">
-            <div>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Client (Source)</span>
-              <span className="text-slate-200 text-sm font-semibold">
-                {session.client_ip || '—'}:{session.client_port || '—'}
-              </span>
+        {/* CONTENT */}
+
+        <div
+          className="
+            flex-1 overflow-y-auto
+            px-6 py-6
+            space-y-8
+          "
+        >
+          {/* CONNECTION */}
+
+          <section className="space-y-3">
+            <SectionHeader
+              icon={Shield}
+              title="Connection Endpoints"
+              description="Network participants reconstructed from the captured stream"
+              color="brand"
+            />
+
+            <div
+              className="
+                grid grid-cols-1 gap-3
+                sm:grid-cols-2
+              "
+            >
+              {/* CLIENT */}
+
+              <div
+                className="
+                  rounded-xl
+                  border border-slate-200
+                  bg-gradient-to-br
+                  from-brand-500/[0.045]
+                  to-white
+                  p-4
+                "
+              >
+                <p
+                  className="
+                    text-[10px]
+                    font-semibold uppercase
+                    tracking-wider text-slate-400
+                  "
+                >
+                  Client · Source
+                </p>
+
+                <p
+                  className="
+                    mt-2
+                    font-mono text-sm
+                    font-semibold text-slate-700
+                  "
+                >
+                  {session.client_ip || '—'}
+                  <span className="mx-1 text-slate-400">
+                    :
+                  </span>
+                  {session.client_port || '—'}
+                </p>
+              </div>
+
+              {/* SERVER */}
+
+              <div
+                className="
+                  rounded-xl
+                  border border-slate-200
+                  bg-gradient-to-br
+                  from-sky-500/[0.04]
+                  to-white
+                  p-4
+                "
+              >
+                <p
+                  className="
+                    text-[10px]
+                    font-semibold uppercase
+                    tracking-wider text-slate-400
+                  "
+                >
+                  Server · Destination
+                </p>
+
+                <p
+                  className="
+                    mt-2
+                    font-mono text-sm
+                    font-semibold text-slate-700
+                  "
+                >
+                  {session.server_ip || '—'}
+                  <span className="mx-1 text-slate-400">
+                    :
+                  </span>
+                  {session.server_port || '—'}
+                </p>
+              </div>
             </div>
-            <div>
-              <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Server (Destination)</span>
-              <span className="text-slate-200 text-sm font-semibold">
-                {session.server_ip || '—'}:{session.server_port || '—'}
-              </span>
-            </div>
-          </div>
+          </section>
 
-          {/* Security & Protocol Handshake (Tri-state evidence) */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-brand-400 flex items-center gap-2">
-              <Lock className="w-4 h-4" />
-              <span>Protocol Handshake & Upgrade Controls</span>
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-              {/* Upgrade Advertised */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <span className="text-slate-300 font-medium block">Upgrade Advertised</span>
-                  <span className="text-[10px] text-slate-500">STARTTLS / STLS capability announced</span>
-                </div>
-                {(() => {
-                  const state = formatTriState(session.security?.upgrade_advertised);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
-                })()}
-              </div>
+          {/* HANDSHAKE */}
 
-              {/* Upgrade Requested */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <span className="text-slate-300 font-medium block">Upgrade Requested</span>
-                  <span className="text-[10px] text-slate-500">Client initiated TLS upgrade command</span>
-                </div>
-                {(() => {
-                  const state = formatTriState(session.security?.upgrade_requested);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
-                })()}
-              </div>
+          <section className="space-y-3">
+            <SectionHeader
+              icon={Lock}
+              title="Protocol Handshake"
+              description="TLS upgrade and authentication security controls"
+              color="brand"
+            />
 
-              {/* Upgrade Succeeded */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <span className="text-slate-300 font-medium block">Upgrade Succeeded</span>
-                  <span className="text-[10px] text-slate-500">TLS session established after upgrade</span>
-                </div>
-                {(() => {
-                  const state = formatTriState(session.security?.upgrade_succeeded);
-                  return <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${state.badgeClass}`}>{state.text}</span>;
-                })()}
-              </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <ControlCard
+                title="Upgrade Advertised"
+                description="STARTTLS or STLS capability was announced"
+                value={
+                  session.security?.upgrade_advertised
+                }
+              />
 
-              {/* Authentication Before TLS (Critical Check) */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between">
-                <div>
-                  <span className="text-slate-300 font-medium block">Auth Before TLS</span>
-                  <span className="text-[10px] text-slate-500">AUTH commands sent over plaintext</span>
-                </div>
-                {(() => {
-                  const state = formatTriState(session.security?.authentication_before_tls);
-                  const isVuln = state.text === 'YES';
-                  return (
-                    <span className={`px-2 py-0.5 rounded font-mono text-[11px] border ${isVuln ? 'bg-red-500/20 text-red-300 border-red-500/40 font-bold' : state.badgeClass}`}>
-                      {state.text}
-                    </span>
-                  );
-                })()}
-              </div>
+              <ControlCard
+                title="Upgrade Requested"
+                description="Client initiated a TLS upgrade command"
+                value={
+                  session.security?.upgrade_requested
+                }
+              />
 
-              {/* Capture Completeness */}
-              <div className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 flex items-center justify-between sm:col-span-2">
-                <div>
-                  <span className="text-slate-300 font-medium block">Capture Completeness</span>
-                  <span className="text-[10px] text-slate-500">Full TCP 3-way handshake and stream teardown captured</span>
-                </div>
-                <span className="px-2 py-0.5 rounded font-mono text-[11px] bg-slate-800 text-slate-300 border border-slate-700">
-                  {session.security?.capture_completeness || 'UNKNOWN'}
-                </span>
-              </div>
-            </div>
-          </div>
+              <ControlCard
+                title="Upgrade Succeeded"
+                description="TLS session was established after upgrade"
+                value={
+                  session.security?.upgrade_succeeded
+                }
+              />
 
-          {/* TLS Parameters */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-sky-400 flex items-center gap-2">
-              <Key className="w-4 h-4" />
-              <span>TLS Cryptographic Parameters</span>
-            </h4>
-            {session.tls ? (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 p-3.5 rounded-xl bg-slate-800/30 border border-slate-800 font-mono">
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">TLS Version</span>
-                  <span className="text-slate-200 font-semibold text-xs">{session.tls.version || 'UNKNOWN'}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Forward Secrecy (PFS)</span>
-                  <span className={`text-xs font-semibold ${session.tls.pfs === 'YES' ? 'text-emerald-400' : 'text-slate-300'}`}>
-                    {session.tls.pfs || 'UNKNOWN'}
+              <ControlCard
+                title="Authentication Before TLS"
+                description="Authentication commands observed over plaintext"
+                value={
+                  session.security
+                    ?.authentication_before_tls
+                }
+                vulnerable
+              />
+
+              {/* CAPTURE */}
+
+              <div
+                className="
+                  sm:col-span-2
+                  rounded-xl
+                  border border-slate-200
+                  bg-white
+                  px-4 py-3.5
+                  shadow-[0_1px_2px_rgba(15,23,42,0.025)]
+                "
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-700">
+                      Capture Completeness
+                    </p>
+
+                    <p className="mt-1 text-[11px] text-slate-500">
+                      TCP handshake and stream teardown
+                      availability
+                    </p>
+                  </div>
+
+                  <span
+                    className="
+                      shrink-0 rounded-lg
+                      border border-slate-200
+                      bg-slate-50
+                      px-2.5 py-1
+                      font-mono text-[11px]
+                      font-semibold text-slate-600
+                    "
+                  >
+                    {session.security
+                      ?.capture_completeness || 'UNKNOWN'}
                   </span>
                 </div>
-                <div className="sm:col-span-3 pt-1">
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Cipher Suite</span>
-                  <span className="text-slate-300 text-xs break-all">{session.tls.cipher_suite || 'None / Not Negotiated'}</span>
+              </div>
+            </div>
+          </section>
+
+          {/* TLS */}
+
+          <section className="space-y-3">
+            <SectionHeader
+              icon={Key}
+              title="TLS Parameters"
+              description="Negotiated cryptographic configuration"
+              color="sky"
+            />
+
+            {session.tls ? (
+              <div
+                className="
+                  rounded-xl
+                  border border-slate-200
+                  bg-gradient-to-br
+                  from-sky-500/[0.035]
+                  via-white
+                  to-white
+                  p-4
+                "
+              >
+                <div
+                  className="
+                    grid grid-cols-1 gap-5
+                    sm:grid-cols-3
+                  "
+                >
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      TLS Version
+                    </p>
+
+                    <p className="mt-1.5 font-mono text-sm font-semibold text-slate-700">
+                      {session.tls.version || 'UNKNOWN'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Forward Secrecy
+                    </p>
+
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      {session.tls.pfs === 'YES' ? (
+                        <CheckCircle2 className="h-3.5 w-3.5 text-yellow-500" />
+                      ) : (
+                        <HelpCircle className="h-3.5 w-3.5 text-slate-400" />
+                      )}
+
+                      <p
+                        className={`
+                          font-mono text-sm font-semibold
+                          ${session.tls.pfs === 'YES'
+                            ? 'text-yellow-600'
+                            : 'text-slate-600'
+                          }
+                        `}
+                      >
+                        {session.tls.pfs || 'UNKNOWN'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Cipher Suite
+                    </p>
+
+                    <p
+                      className="
+                        mt-1.5
+                        break-all font-mono
+                        text-xs leading-6 text-slate-600
+                      "
+                    >
+                      {session.tls.cipher_suite ||
+                        'None / Not Negotiated'}
+                    </p>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-400 italic">
-                No TLS cryptographic parameters observed in this session.
+              <div
+                className="
+                  rounded-xl
+                  border border-dashed border-slate-200
+                  bg-white/60
+                  px-4 py-5
+                  text-sm text-slate-500
+                "
+              >
+                No TLS cryptographic parameters were
+                observed in this session.
               </div>
             )}
-          </div>
+          </section>
 
-          {/* Certificate Information */}
-          <div className="space-y-2.5">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-purple-400 flex items-center gap-2">
-              <Award className="w-4 h-4" />
-              <span>X.509 Certificate Chain</span>
-            </h4>
-            {session.certificate?.visibility === 'NOT_OBSERVABLE' ? (
-              <div className="p-3.5 rounded-xl bg-purple-950/20 border border-purple-500/30 flex items-center gap-3 text-purple-300">
-                <EyeOff className="w-5 h-5 text-purple-400 shrink-0" />
+          {/* CERTIFICATE */}
+
+          <section className="space-y-3">
+            <SectionHeader
+              icon={Award}
+              title="Certificate Information"
+              description="Observed X.509 certificate details"
+              color="purple"
+            />
+
+            {session.certificate?.visibility ===
+              'NOT_OBSERVABLE' ? (
+              <div
+                className="
+                  flex items-start gap-3
+                  rounded-xl
+                  border border-violet-200
+                  bg-gradient-to-r
+                  from-violet-50
+                  to-white
+                  p-4
+                "
+              >
+                <div
+                  className="
+                    flex h-9 w-9 shrink-0
+                    items-center justify-center
+                    rounded-lg
+                    border border-violet-200
+                    bg-white
+                  "
+                >
+                  <EyeOff className="h-4 w-4 text-violet-600" />
+                </div>
+
                 <div>
-                  <p className="font-semibold">Certificate Visibility: NOT OBSERVABLE</p>
-                  <p className="text-[11px] text-purple-300/80 mt-0.5">
-                    TLS 1.3 encrypted handshake or packet capture began after the Certificate payload was delivered.
+                  <p className="text-sm font-semibold text-violet-800">
+                    Certificate Not Observable
+                  </p>
+
+                  <p className="mt-1 text-[11px] leading-5 text-violet-600/80">
+                    The certificate payload could not be
+                    inspected because the TLS handshake was
+                    encrypted or the capture began after
+                    certificate delivery.
                   </p>
                 </div>
               </div>
             ) : session.certificate?.subject ? (
-              <div className="p-3.5 rounded-xl bg-slate-800/30 border border-slate-800 space-y-2 font-mono">
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Subject</span>
-                  <span className="text-slate-200 text-xs break-all">{session.certificate.subject}</span>
-                </div>
-                <div>
-                  <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Issuer</span>
-                  <span className="text-slate-300 text-xs break-all">{session.certificate.issuer || 'UNKNOWN'}</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px]">
+              <div
+                className="
+                  rounded-xl
+                  border border-slate-200
+                  bg-white
+                  p-4
+                "
+              >
+                <div className="space-y-4">
                   <div>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Valid From</span>
-                    <span className="text-slate-300">{formatDate(session.certificate.valid_from)}</span>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Subject
+                    </p>
+
+                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-700">
+                      {session.certificate.subject}
+                    </p>
                   </div>
+
                   <div>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Valid Until</span>
-                    <span className="text-slate-300">{formatDate(session.certificate.valid_until)}</span>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                      Issuer
+                    </p>
+
+                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-600">
+                      {session.certificate.issuer ||
+                        'UNKNOWN'}
+                    </p>
                   </div>
-                  <div>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Key Algorithm</span>
-                    <span className="text-slate-300">{session.certificate.key_type || '—'} {session.certificate.key_size ? `(${session.certificate.key_size} bit)` : ''}</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Self-Signed</span>
-                    <span className={session.certificate.self_signed ? 'text-amber-400 font-semibold' : 'text-slate-300'}>
-                      {session.certificate.self_signed === null ? 'UNKNOWN' : session.certificate.self_signed ? 'YES' : 'NO'}
-                    </span>
+
+                  <div
+                    className="
+                      grid grid-cols-2 gap-4
+                      border-t border-slate-100
+                      pt-4
+                      sm:grid-cols-4
+                    "
+                  >
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        Valid From
+                      </p>
+
+                      <p className="mt-1 text-xs font-medium text-slate-600">
+                        {formatDate(
+                          session.certificate.valid_from
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        Valid Until
+                      </p>
+
+                      <p className="mt-1 text-xs font-medium text-slate-600">
+                        {formatDate(
+                          session.certificate.valid_until
+                        )}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        Key Algorithm
+                      </p>
+
+                      <p className="mt-1 text-xs font-medium text-slate-600">
+                        {session.certificate.key_type || '—'}
+
+                        {session.certificate.key_size
+                          ? ` (${session.certificate.key_size} bit)`
+                          : ''}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        Self-Signed
+                      </p>
+
+                      <p
+                        className={`
+                          mt-1 text-xs font-semibold
+                          ${session.certificate.self_signed
+                            ? 'text-amber-600'
+                            : 'text-slate-600'
+                          }
+                        `}
+                      >
+                        {session.certificate.self_signed === null
+                          ? 'UNKNOWN'
+                          : session.certificate.self_signed
+                            ? 'YES'
+                            : 'NO'}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="p-3 rounded-xl bg-slate-950/40 border border-slate-800 text-slate-400 italic">
-                No certificate payload captured for this session.
+              <div
+                className="
+                  rounded-xl
+                  border border-dashed border-slate-200
+                  bg-white/60
+                  px-4 py-5
+                  text-sm text-slate-500
+                "
+              >
+                No certificate payload was captured for this
+                session.
               </div>
             )}
-          </div>
+          </section>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/40 flex justify-end">
+        {/* FOOTER */}
+
+        <div
+          className="
+            flex justify-end
+            border-t border-slate-200
+            bg-white
+            px-6 py-4
+          "
+        >
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+            className="
+              rounded-xl
+              border border-slate-200
+              bg-white
+              px-4 py-2
+              text-xs font-semibold text-slate-600
+              transition-all
+              hover:border-slate-300
+              hover:bg-slate-50
+              hover:text-slate-800
+            "
           >
             Close Details
           </button>

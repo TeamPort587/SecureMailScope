@@ -26,8 +26,8 @@ async function createUser(email, passwordHash) {
       // Unique violation — duplicate email
       throw err; // Let controller handle this specifically
     }
-    logger.error('Database error creating user', { error: err.message });
-    throw new DatabaseError();
+    logger.error('Database error creating user', { error: err.message, code: err.code, detail: err.detail });
+throw new DatabaseError();
   }
 }
 
@@ -58,6 +58,14 @@ async function findUserByEmail(email) {
  * @returns {Promise<{id: string}>}
  */
 async function createAnalysis({ userId, filename, sha256, fileSizeBytes }) {
+    console.error('=== createAnalysis CALLED ===');
+  console.error('userId:', userId);
+  console.error('filename:', filename);
+  console.error('userIdType:', typeof userId);
+  console.error('userIdValid:', /^[0-9a-f-]{36}$/.test(userId));
+  console.error('DB config:', { host: process.env.DB_HOST, port: process.env.DB_PORT, database: process.env.DB_NAME, user: process.env.DB_USER });
+  console.error('userId:', userId);
+  console.error('filename:', filename);
   try {
     const result = await pool.query(
       `INSERT INTO analyses (user_id, filename, sha256, file_size_bytes, status)
@@ -67,7 +75,14 @@ async function createAnalysis({ userId, filename, sha256, fileSizeBytes }) {
     );
     return result.rows[0];
   } catch (err) {
-    logger.error('Database error creating analysis', { error: err.message });
+    console.error('=== createAnalysis ERROR ===');
+    console.error('message:', err.message);
+    console.error('code:', err.code);
+    console.error('detail:', err.detail);
+    console.error('constraint:', err.constraint);
+    console.error('table:', err.table);
+    console.error('column:', err.column);
+    console.error('===========================');
     throw new DatabaseError();
   }
 }
@@ -432,11 +447,13 @@ async function getFullAnalysis(analysisId) {
 
     // Findings
     const findingsResult = await pool.query(
-      `SELECT id AS finding_id, session_id, finding_type, severity,
-              title, description, confidence, evidence_json, created_at
-       FROM findings
-       WHERE analysis_id = $1
-       ORDER BY created_at ASC`,
+      `SELECT f.id AS finding_id, s.session_ref AS session_id,
+              f.finding_type, f.severity,
+              f.title, f.description, f.confidence, f.evidence_json, f.created_at
+       FROM findings f
+       LEFT JOIN sessions s ON s.id = f.session_id
+       WHERE f.analysis_id = $1
+       ORDER BY f.created_at ASC`,
       [analysisId]
     );
 
