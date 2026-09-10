@@ -44,8 +44,8 @@ const certificateSchema = z
 
 const tlsSchema = z
   .object({
-    version: z.string(),
-    cipher_suite: z.string(),
+    version: z.string().nullable().optional(),
+    cipher_suite: z.string().nullable().optional(),
     pfs: yesNoUnknown.optional(),
   })
   .nullable();
