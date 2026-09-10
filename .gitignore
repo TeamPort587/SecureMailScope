@@ -93,8 +93,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+Dockerfile
 
 # Frontend build outputs
+.vite/
 .next/
 out/
 .nuxt/
@@ -120,3 +122,10 @@ out/
 
 # --- ML Model Artifacts ---
 # Models and evaluation reports are committed for team sharing
+# VM1, VM2 & VM3 Traffic Generator deployment staging & local helper
+ssh_vm2.py
+vm1_deploy/
+vm2_deploy/
+vm3_deploy/
+captures/
+
