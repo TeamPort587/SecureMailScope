@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone
 
 from analysis.feature_extraction.models import PacketRecord
+from analysis.feature_extraction.tls import normalize_cipher_suite
 
 logger = logging.getLogger(__name__)
 
@@ -153,13 +154,20 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
                     elif "handshake.version" in k or "record.version" in k:
                         if not tls_version:
                             tls_version = str(v)
-                    elif "handshake.ciphersuite" in k and tls_cipher_suite is None:
-                        tls_cipher_suite = str(v)
+                    elif "handshake.ciphersuite" in k and not k.endswith("_tree") and tls_cipher_suite is None:
+                        norm = normalize_cipher_suite(v)
+                        if norm:
+                            tls_cipher_suite = norm
                     elif "handshake.ciphersuites" in k:
                         if isinstance(v, list):
-                            tls_ciphers_offered.extend(str(c) for c in v)
+                            for c in v:
+                                norm = normalize_cipher_suite(c)
+                                if norm:
+                                    tls_ciphers_offered.append(norm)
                         else:
-                            tls_ciphers_offered.append(str(v))
+                            norm = normalize_cipher_suite(v)
+                            if norm:
+                                tls_ciphers_offered.append(norm)
                     elif "server_name" in k and tls_server_name is None:
                         tls_server_name = str(v)
                     _extract_tls_fields(v)
