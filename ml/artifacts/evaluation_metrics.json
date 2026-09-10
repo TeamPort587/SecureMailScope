@@ -1,0 +1,72 @@
+{
+  "dataset_type": "MVP_CURATED_SYNTHETIC_PLUS_AVAILABLE_REAL",
+  "test_rows": 977,
+  "accuracy": 0.998,
+  "precision_macro": 0.9979,
+  "recall_macro": 0.9979,
+  "f1_macro": 0.9979,
+  "per_class": {
+    "CRITICAL": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 241
+    },
+    "HIGH": {
+      "precision": 1.0,
+      "recall": 0.9917,
+      "f1_score": 0.9958,
+      "support": 240
+    },
+    "LOW": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "support": 256
+    },
+    "MEDIUM": {
+      "precision": 0.9917,
+      "recall": 1.0,
+      "f1_score": 0.9959,
+      "support": 240
+    }
+  },
+  "confusion_matrix": [
+    [
+      241,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      238,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      256,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      240
+    ]
+  ],
+  "confusion_matrix_labels": [
+    "CRITICAL",
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "limitations": [
+    "Dataset contains curated synthetic security scenarios generated for MVP training and testing.",
+    "Model performance on synthetic data does not represent independent real-world validation.",
+    "High accuracy on synthetic scenarios is expected because the classifier learns domain scenario archetypes.",
+    "Real-world holdout evaluation is currently insufficient (INSUFFICIENT_REAL_HOLDOUT_DATA) pending large-scale capture collection."
+  ]
+}

@@ -1,0 +1,659 @@
+{
+  "dataset_total_rows": 4479,
+  "analyzed_feature_pairs_above_min_samples": 131,
+  "purity_threshold": 0.98,
+  "min_samples": 15,
+  "total_flagged_interactions": 54,
+  "legitimate_domain_rules_count": 32,
+  "suspicious_shortcuts_count": 22,
+  "flagged_interactions": [
+    {
+      "feature_1": "encryption_starttls",
+      "feature_2": "auth_before_tls",
+      "sample_count": 622,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 622
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "critical_count",
+      "sample_count": 620,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 620
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "medium_count",
+      "sample_count": 513,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 513
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "high_count",
+      "sample_count": 507,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 507
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "low_count",
+      "sample_count": 457,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 457
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "protocol_smtp",
+      "sample_count": 415,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 415
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "encryption_starttls",
+      "feature_2": "critical_count",
+      "sample_count": 378,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 378
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "auth_before_tls",
+      "sample_count": 361,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 361
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "protocol_imap",
+      "sample_count": 358,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 358
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "critical_count",
+      "feature_2": "medium_count",
+      "sample_count": 342,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 342
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "critical_count",
+      "feature_2": "high_count",
+      "sample_count": 329,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 329
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "critical_count",
+      "feature_2": "low_count",
+      "sample_count": 308,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 308
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "critical_count",
+      "sample_count": 277,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 277
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "protocol_smtp",
+      "feature_2": "critical_count",
+      "sample_count": 264,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 264
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "protocol_imap",
+      "feature_2": "critical_count",
+      "sample_count": 247,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 247
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "high_count",
+      "sample_count": 227,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 227
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "medium_count",
+      "sample_count": 227,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 227
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "protocol_pop3",
+      "sample_count": 210,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 210
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "low_count",
+      "sample_count": 204,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 204
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "protocol_imap",
+      "sample_count": 177,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 177
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "protocol_smtp",
+      "sample_count": 156,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 156
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "tls_upgrade_failed",
+      "sample_count": 149,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 149
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "high_count",
+      "sample_count": 146,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 146
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "weak_cipher",
+      "feature_2": "auth_before_tls",
+      "sample_count": 145,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 145
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "protocol_pop3",
+      "feature_2": "critical_count",
+      "sample_count": 144,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 144
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "weak_key",
+      "feature_2": "self_signed",
+      "sample_count": 128,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 128
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "pfs_missing",
+      "sample_count": 125,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 125
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "medium_count",
+      "sample_count": 116,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 116
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "low_count",
+      "sample_count": 111,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 111
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "encryption_starttls",
+      "feature_2": "expired_cert",
+      "sample_count": 108,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 108
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "encryption_plaintext",
+      "feature_2": "protocol_pop3",
+      "sample_count": 92,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 92
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Plaintext email transmission is fundamentally unencrypted (CRITICAL rule 1.3)"
+    },
+    {
+      "feature_1": "weak_cipher",
+      "feature_2": "weak_key",
+      "sample_count": 88,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 88
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "protocol_smtp",
+      "sample_count": 81,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 81
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "weak_cipher",
+      "feature_2": "critical_count",
+      "sample_count": 77,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 77
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "encryption_implicit",
+      "feature_2": "expired_cert",
+      "sample_count": 76,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 76
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "tls_upgrade_failed",
+      "feature_2": "critical_count",
+      "sample_count": 75,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 75
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "high_count",
+      "sample_count": 63,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 63
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "pfs_missing",
+      "feature_2": "critical_count",
+      "sample_count": 63,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 63
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "protocol_imap",
+      "sample_count": 60,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 60
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "low_count",
+      "sample_count": 58,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 58
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "deprecated_tls",
+      "feature_2": "auth_before_tls",
+      "sample_count": 57,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 57
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "medium_count",
+      "sample_count": 56,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 56
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "encryption_starttls",
+      "feature_2": "not_yet_valid_cert",
+      "sample_count": 55,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 55
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "self_signed",
+      "sample_count": 53,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 53
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "protocol_pop3",
+      "sample_count": 43,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 43
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "weak_key",
+      "sample_count": 41,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 41
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "encryption_implicit",
+      "feature_2": "not_yet_valid_cert",
+      "sample_count": 39,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 39
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "deprecated_tls",
+      "feature_2": "critical_count",
+      "sample_count": 35,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 35
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Active rule engine critical finding mandates CRITICAL (rule 1.1)"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "protocol_imap",
+      "sample_count": 35,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 35
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "protocol_smtp",
+      "sample_count": 34,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 34
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "expired_cert",
+      "feature_2": "pfs_missing",
+      "sample_count": 28,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 28
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "auth_before_tls",
+      "feature_2": "self_signed",
+      "sample_count": 28,
+      "purity": 1.0,
+      "dominant_class": "CRITICAL",
+      "class_breakdown": {
+        "CRITICAL": 28
+      },
+      "classification": "LEGITIMATE_DOMAIN_RULE",
+      "rationale": "Cleartext credential transmission prior to TLS handshake is inherently CRITICAL (rule 1.2)"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "protocol_pop3",
+      "sample_count": 25,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 25
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    },
+    {
+      "feature_1": "not_yet_valid_cert",
+      "feature_2": "pfs_missing",
+      "sample_count": 18,
+      "purity": 1.0,
+      "dominant_class": "HIGH",
+      "class_breakdown": {
+        "HIGH": 18
+      },
+      "classification": "SUSPICIOUS_SYNTHETIC_SHORTCUT",
+      "rationale": "Synthetic feature pairing with unexpectedly high purity; audit for shortcut"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "models": {
+    "DummyClassifier": {
+      "validation_macro_f1": 0.0991,
+      "validation_accuracy": 0.1,
+      "cross_validation_macro_f1": 0.2443,
+      "cross_validation_std": 0.0508,
+      "challenge_macro_f1": 0.2014,
+      "calibration_brier_score": 1.8,
+      "composite_score": 0.1532
+    },
+    "LogisticRegression": {
+      "validation_macro_f1": 0.6042,
+      "validation_accuracy": 0.825,
+      "cross_validation_macro_f1": 0.8995,
+      "cross_validation_std": 0.0318,
+      "challenge_macro_f1": 0.7073,
+      "calibration_brier_score": 0.288,
+      "composite_score": 0.7242
+    },
+    "RandomForestClassifier": {
+      "validation_macro_f1": 0.661,
+      "validation_accuracy": 0.9,
+      "cross_validation_macro_f1": 0.9019,
+      "cross_validation_std": 0.0649,
+      "challenge_macro_f1": 0.7899,
+      "calibration_brier_score": 0.2105,
+      "composite_score": 0.7719
+    },
+    "ExtraTreesClassifier": {
+      "validation_macro_f1": 0.661,
+      "validation_accuracy": 0.9,
+      "cross_validation_macro_f1": 0.9339,
+      "cross_validation_std": 0.0277,
+      "challenge_macro_f1": 0.8232,
+      "calibration_brier_score": 0.1734,
+      "composite_score": 0.7919
+    },
+    "HistGradientBoostingClassifier": {
+      "validation_macro_f1": 0.6856,
+      "validation_accuracy": 0.925,
+      "cross_validation_macro_f1": 0.8629,
+      "cross_validation_std": 0.0431,
+      "challenge_macro_f1": 0.7122,
+      "calibration_brier_score": 0.1473,
+      "composite_score": 0.7608
+    }
+  },
+  "selection_rationale": "RandomForestClassifier selected as primary production model for explainable tree feature importances and inference contract stability, achieving strong 5-fold CV F1 (0.9019) and test/challenge generalization, benchmarked against ExtraTreesClassifier.",
+  "selected_model": "RandomForestClassifier",
+  "top_scoring_candidate": "ExtraTreesClassifier"
+}
