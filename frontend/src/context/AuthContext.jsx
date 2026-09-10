@@ -6,7 +6,7 @@ const API_BASE = 'http://localhost:3000/api';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem('sms_token'));
+  const [token, setToken] = useState(() => localStorage.getItem('sms_auth_token'));
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
       throw new Error(data?.message || 'Invalid email or password.');
     }
 
-    localStorage.setItem('sms_token', data.token);
+    localStorage.setItem('sms_auth_token', data.token);
     setToken(data.token);
     setUser(data.user);
     const payload = JSON.parse(atob(data.token.split('.')[1]));
@@ -65,7 +65,7 @@ setTimeout(logout, msUntilExpiry);
   };
 
   const logout = () => {
-    localStorage.removeItem('sms_token');
+    localStorage.removeItem('sms_auth_token');
     setToken(null);
     setUser(null);
   };
