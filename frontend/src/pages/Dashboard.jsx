@@ -109,6 +109,7 @@ export default function Dashboard({ analysisHook }) {
           <RiskSummary
             risk={analysis.risk}
             summary={analysis.summary}
+            sessions={analysis.sessions}
             filename={analysis.filename}
             uploadedAt={analysis.uploaded_at}
           />

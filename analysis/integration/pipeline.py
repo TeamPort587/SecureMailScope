@@ -90,84 +90,36 @@ def build_recommendations(findings: List[Finding]) -> List[Dict[str, Any]]:
     return formatted
 
 
-def calculate_reconciled_risk(
-    session_dicts: List[Dict[str, Any]],
-    finding_dicts: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    """Calculate reconciled risk combining ML inference, Canonical Risk Aggregator, and Risk Guard."""
+def assign_session_risk_labels(
+    profiles: List[SecurityProfile],
+    all_findings: List[Finding],
+) -> None:
+    """Evaluate and assign risk_label directly to each SecurityProfile."""
     predictor = get_risk_predictor()
-    session_predictions: List[Dict[str, Any]] = []
 
-    for s in session_dicts:
-        s_id = s.get("session_id")
-        s_findings = [f for f in finding_dicts if f.get("session_id") == s_id]
+    for p in profiles:
+        s_id = p.session_id
+        s_dict = p.to_dict()
+        s_findings = [f.to_dict() for f in all_findings if f.session_id == s_id]
 
-        feature_vec = extract_session_features(s, s_findings)
+        feature_vec = extract_session_features(s_dict, s_findings)
 
         # 1. ML prediction
         if predictor is not None:
             try:
-                ml_pred = predictor.predict_session(s, s_findings)
+                ml_pred = predictor.predict_session(s_dict, s_findings)
                 ml_risk_level = ml_pred["risk"]["level"]
-                ml_confidence = ml_pred["risk"]["confidence"]
-                pred_quality = ml_pred["risk"].get("prediction_quality", "SUFFICIENT_EVIDENCE")
-                ev_quality = ml_pred.get("evidence_quality", "HIGH_EVIDENCE")
             except Exception as e:
                 logger.warning(f"Inference error for session {s_id}: {e}")
                 canonical_label, _ = calculate_session_risk(feature_vec)
                 ml_risk_level = canonical_label
-                ml_confidence = 0.90
-                pred_quality = "SUFFICIENT_EVIDENCE"
-                ev_quality = "HIGH_EVIDENCE"
         else:
             canonical_label, _ = calculate_session_risk(feature_vec)
             ml_risk_level = canonical_label
-            ml_confidence = 0.90
-            pred_quality = "SUFFICIENT_EVIDENCE"
-            ev_quality = "HIGH_EVIDENCE"
 
         # 2. Reconcile with Risk Guard (ML can NEVER downgrade mandatory critical rule findings)
         reconciled = calculate_final_risk(ml_risk_level, s_findings)
-        final_level = reconciled["final_risk_level"]
-
-        session_predictions.append({
-            "session_id": s_id,
-            "risk": {
-                "level": final_level,
-                "ml_level": ml_risk_level,
-                "confidence": ml_confidence,
-                "prediction_quality": pred_quality,
-                "evidence_quality": ev_quality,
-            },
-            "evidence_quality": ev_quality,
-        })
-
-    # PCAP-level aggregation
-    pcap_agg = aggregate_pcap_risk(session_predictions)
-    overall_level = pcap_agg.get("overall_risk_level", "LOW")
-    overall_conf = pcap_agg.get("overall_confidence", 0.90)
-
-    # Calculate calibrated numeric score
-    crit_count = sum(1 for f in finding_dicts if f.get("severity") == "CRITICAL")
-    high_count = sum(1 for f in finding_dicts if f.get("severity") == "HIGH")
-    med_count = sum(1 for f in finding_dicts if f.get("severity") == "MEDIUM")
-
-    if overall_level == "CRITICAL":
-        score = min(100, 85 + crit_count * 5)
-    elif overall_level == "HIGH":
-        score = min(84, 65 + high_count * 4)
-    elif overall_level == "MEDIUM":
-        score = min(64, 40 + med_count * 5)
-    else:
-        score = 15
-
-    return {
-        "score": score,
-        "level": overall_level,
-        "model_version": "rf-v1",
-        "method": "RULE_ENGINE_PLUS_ML",
-        "confidence": round(overall_conf, 2),
-    }
+        p.risk_label = reconciled["final_risk_level"]
 
 
 def analyze_pcap(
@@ -253,11 +205,8 @@ def analyze_pcap(
         "findings_count": len(all_findings),
     }
 
-    # 5. Reconciled Risk and Recommendations
-    session_dicts = [p.to_dict() for p in profiles]
-    finding_dicts = [f.to_dict() for f in all_findings]
-
-    risk = calculate_reconciled_risk(session_dicts, finding_dicts)
+    # 5. Assign Individual Session Risk Labels and Build Recommendations
+    assign_session_risk_labels(profiles, all_findings)
     recommendations = build_recommendations(all_findings)
 
     # 6. Build final contract response
@@ -272,7 +221,6 @@ def analyze_pcap(
         "summary": summary,
         "sessions": [p.to_dict() for p in profiles],
         "findings": [f.to_dict() for f in all_findings],
-        "risk": risk,
         "recommendations": recommendations,
     }
 

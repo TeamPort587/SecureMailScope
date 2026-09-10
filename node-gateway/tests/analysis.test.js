@@ -72,6 +72,7 @@ const MOCK_FULL_DATA = {
         key_size: 2048,
         self_signed: false,
       },
+      risk_label: 'LOW',
     },
   ],
   findings: [
@@ -86,13 +87,6 @@ const MOCK_FULL_DATA = {
       evidence: { protocol: 'SMTP' },
     },
   ],
-  risk: {
-    score: 78,
-    level: 'HIGH',
-    model_version: 'rf-v1',
-    method: 'RULE_ENGINE_PLUS_ML',
-    confidence: 0.91,
-  },
   recommendations: [
     {
       recommendation_id: 'rec-001',
@@ -217,8 +211,9 @@ describe('Analysis API', () => {
       expect(res.body.analysis_id).toBe(MOCK_ANALYSIS.id);
       expect(res.body.status).toBe('COMPLETED');
       expect(res.body.sessions).toHaveLength(1);
+      expect(res.body.sessions[0].risk_label).toBe('LOW');
       expect(res.body.findings).toHaveLength(1);
-      expect(res.body.risk).toBeDefined();
+      expect(res.body.risk).toBeUndefined();
       expect(res.body.recommendations).toHaveLength(1);
     });
 

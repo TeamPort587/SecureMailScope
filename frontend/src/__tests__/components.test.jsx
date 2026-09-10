@@ -66,10 +66,33 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
   // --- RiskSummary ---
   describe('RiskSummary', () => {
-    it('renders risk score, level, model version and summary counts', () => {
+    it('renders individual session risk posture and summary counts when collective risk is absent', () => {
       render(
         <RiskSummary
           risk={mockAnalysis.risk}
+          summary={mockAnalysis.summary}
+          sessions={mockAnalysis.sessions}
+          filename={mockAnalysis.filename}
+          uploadedAt={mockAnalysis.uploaded_at}
+        />
+      );
+
+      expect(screen.getByText(/Individual Session Risk Posture/i)).toBeInTheDocument();
+      expect(screen.getByText('4')).toBeInTheDocument(); // Total sessions
+      expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1); // Vulnerable sessions / counts
+    });
+
+    it('renders collective risk gauge when legacy risk object is provided', () => {
+      const legacyRisk = {
+        score: 78,
+        level: 'HIGH',
+        model_version: 'rf-v1',
+        method: 'RULE_ENGINE_PLUS_ML',
+        confidence: 0.91,
+      };
+      render(
+        <RiskSummary
+          risk={legacyRisk}
           summary={mockAnalysis.summary}
           filename={mockAnalysis.filename}
           uploadedAt={mockAnalysis.uploaded_at}
@@ -80,27 +103,26 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(screen.getByText('78')).toBeInTheDocument(); // Score
       expect(screen.getByText('rf-v1')).toBeInTheDocument(); // Model
       expect(screen.getByText('91%')).toBeInTheDocument(); // Confidence
-      expect(screen.getByText('4')).toBeInTheDocument(); // Total sessions
-      expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1); // Vulnerable sessions / counts
     });
 
     it('does not crash when optional fields are null', () => {
       render(<RiskSummary risk={null} summary={null} />);
-      expect(screen.getByText(/Overall Security Posture:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Individual Session Risk Posture/i)).toBeInTheDocument();
     });
   });
 
   // --- SessionTable & SessionDetails ---
   describe('SessionTable', () => {
-    it('displays multiple sessions with protocols and ports', () => {
+    it('displays multiple sessions with protocols, ports, and risk tier badges', () => {
       render(<SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />);
       expect(screen.getByText('smtp-001')).toBeInTheDocument();
       expect(screen.getByText('smtp-002')).toBeInTheDocument();
       expect(screen.getByText('imap-001')).toBeInTheDocument();
       expect(screen.getByText('pop3-001')).toBeInTheDocument();
+      expect(screen.getByText('Risk Tier')).toBeInTheDocument();
     });
 
-    it('opens session inspection modal with tri-state values when clicking inspect', () => {
+    it('opens session inspection modal with tri-state values and risk badge when clicking inspect', () => {
       render(<SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />);
       const inspectButtons = screen.getAllByRole('button', { name: /inspect/i });
       fireEvent.click(inspectButtons[0]);

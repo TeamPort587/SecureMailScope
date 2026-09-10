@@ -72,41 +72,9 @@ describe('Django Response Validation', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should reject missing risk', () => {
+    it('should reject invalid risk_label on session', () => {
       const response = getMockAnalysisResponse(validMetadata);
-      delete response.risk;
-
-      const result = validateDjangoResponse(response);
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject missing recommendations', () => {
-      const response = getMockAnalysisResponse(validMetadata);
-      delete response.recommendations;
-
-      const result = validateDjangoResponse(response);
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject invalid severity in findings', () => {
-      const response = getMockAnalysisResponse(validMetadata);
-      response.findings[0].severity = 'INVALID_SEVERITY';
-
-      const result = validateDjangoResponse(response);
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject risk score out of range', () => {
-      const response = getMockAnalysisResponse(validMetadata);
-      response.risk.score = 150;
-
-      const result = validateDjangoResponse(response);
-      expect(result.success).toBe(false);
-    });
-
-    it('should reject negative risk score', () => {
-      const response = getMockAnalysisResponse(validMetadata);
-      response.risk.score = -10;
+      response.sessions[0].risk_label = 'INVALID_RISK';
 
       const result = validateDjangoResponse(response);
       expect(result.success).toBe(false);

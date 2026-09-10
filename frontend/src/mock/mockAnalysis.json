@@ -44,7 +44,8 @@
         "key_type": "RSA",
         "key_size": 2048,
         "self_signed": false
-      }
+      },
+      "risk_label": "LOW"
     },
     {
       "session_id": "smtp-002",
@@ -63,7 +64,8 @@
         "capture_completeness": "COMPLETE"
       },
       "tls": null,
-      "certificate": null
+      "certificate": null,
+      "risk_label": "CRITICAL"
     },
     {
       "session_id": "imap-001",
@@ -82,7 +84,8 @@
         "capture_completeness": "COMPLETE"
       },
       "tls": null,
-      "certificate": null
+      "certificate": null,
+      "risk_label": "CRITICAL"
     },
     {
       "session_id": "pop3-001",
@@ -107,7 +110,8 @@
       },
       "certificate": {
         "visibility": "NOT_OBSERVABLE"
-      }
+      },
+      "risk_label": "LOW"
     }
   ],
   "findings": [
@@ -182,13 +186,6 @@
       }
     }
   ],
-  "risk": {
-    "score": 78,
-    "level": "HIGH",
-    "model_version": "rf-v1",
-    "method": "RULE_ENGINE_PLUS_ML",
-    "confidence": 0.91
-  },
   "recommendations": [
     {
       "recommendation_id": "rec-001",

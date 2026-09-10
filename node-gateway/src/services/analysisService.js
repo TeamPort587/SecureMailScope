@@ -123,7 +123,7 @@ function transformForPersistence(data) {
     dst_port: s.server_port,
     encryption_mode: s.security.encryption_mode,
     capture_completeness: s.security.capture_completeness,
-    risk_label: null, // Not in contract per-session
+    risk_label: s.risk_label || null,
     start_time: null,
     end_time: null,
 
@@ -163,13 +163,15 @@ function transformForPersistence(data) {
   }));
 
   // Map risk
-  const risk = {
-    risk_label: data.risk.level,
-    risk_score: data.risk.score,
-    model_version: data.risk.model_version,
-    method: data.risk.method || null,
-    confidence: data.risk.confidence || null,
-  };
+  const risk = data.risk
+    ? {
+        risk_label: data.risk.level,
+        risk_score: data.risk.score,
+        model_version: data.risk.model_version,
+        method: data.risk.method || null,
+        confidence: data.risk.confidence || null,
+      }
+    : null;
 
   // Map recommendations
   const recommendations = data.recommendations.map((r) => ({
@@ -210,7 +212,6 @@ function formatAnalysisResponse(analysis, fullData, summary) {
     },
     sessions: fullData.sessions,
     findings: fullData.findings,
-    risk: fullData.risk,
     recommendations: fullData.recommendations,
   };
 }

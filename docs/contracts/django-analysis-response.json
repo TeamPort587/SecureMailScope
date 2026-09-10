@@ -26,6 +26,7 @@
       "server_ip": "203.0.113.25",
       "client_port": 49152,
       "server_port": 587,
+      "risk_label": "LOW",
       "security": {
         "encryption_mode": "STARTTLS",
         "upgrade_advertised": "YES",
@@ -57,6 +58,7 @@
       "server_ip": "203.0.113.26",
       "client_port": 49153,
       "server_port": 587,
+      "risk_label": "CRITICAL",
       "security": {
         "encryption_mode": "STARTTLS",
         "upgrade_advertised": "YES",
@@ -76,6 +78,7 @@
       "server_ip": "203.0.113.30",
       "client_port": 49154,
       "server_port": 143,
+      "risk_label": "CRITICAL",
       "security": {
         "encryption_mode": "PLAINTEXT",
         "upgrade_advertised": "NO",
@@ -95,6 +98,7 @@
       "server_ip": "203.0.113.40",
       "client_port": 49155,
       "server_port": 995,
+      "risk_label": "LOW",
       "security": {
         "encryption_mode": "IMPLICIT_TLS",
         "upgrade_advertised": "UNKNOWN",
@@ -185,13 +189,6 @@
       }
     }
   ],
-  "risk": {
-    "score": 78,
-    "level": "HIGH",
-    "model_version": "rf-v1",
-    "method": "RULE_ENGINE_PLUS_ML",
-    "confidence": 0.91
-  },
   "recommendations": [
     {
       "recommendation_id": "rec-001",

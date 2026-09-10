@@ -74,6 +74,7 @@ const sessionSchema = z.object({
   security: securitySchema,
   tls: tlsSchema,
   certificate: certificateSchema,
+  risk_label: riskLevel.optional(),
 });
 
 // -- Finding schema ------------------------------------------------------------
@@ -141,7 +142,6 @@ const djangoAnalysisResponseSchema = z.object({
   summary: summarySchema,
   sessions: z.array(sessionSchema),
   findings: z.array(findingSchema),
-  risk: riskSchema,
   recommendations: z.array(recommendationSchema),
 });
 

@@ -258,8 +258,11 @@ def test_pipeline_contract_conformity(monkeypatch):
         assert summary["vulnerable_sessions"] >= 2
         assert summary["findings_count"] >= 4
 
-        # Check sessions array
+        # Check sessions array and individual risk labels
         assert len(res["sessions"]) == 4
+        for s in res["sessions"]:
+            assert "risk_label" in s
+            assert s["risk_label"] in ("CRITICAL", "HIGH", "MEDIUM", "LOW")
 
         # Check findings
         finding_types = [f["finding_type"] for f in res["findings"]]
@@ -268,12 +271,12 @@ def test_pipeline_contract_conformity(monkeypatch):
         assert "FAILED_STARTTLS" in finding_types
         assert "PFS" in finding_types
 
-        # Check risk and recommendations
-        assert "risk" in res
-        assert "score" in res["risk"]
-        assert "level" in res["risk"]
+        # Check recommendations
         assert "recommendations" in res
         assert len(res["recommendations"]) >= 2
+
+        # Verify no collective PCAP risk label
+        assert "risk" not in res
 
     finally:
         if os.path.exists(dummy_pcap_path):

@@ -477,6 +477,7 @@ async function getFullAnalysis(analysisId) {
         },
         tls: null,
         certificate: null,
+        risk_label: row.risk_label || null,
       };
 
       // Build TLS object if data exists

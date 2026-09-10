@@ -2,11 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { Layers, Shield, Search, Eye, Filter, ArrowUpDown } from 'lucide-react';
 import { formatEncryptionMode } from '../utils/formatters';
 import SessionDetails from './SessionDetails';
+import RiskBadge from './RiskBadge';
 
 export default function SessionTable({ sessions = [], findings = [] }) {
   const [selectedSession, setSelectedSession] = useState(null);
   const [protocolFilter, setProtocolFilter] = useState('ALL');
   const [encryptionFilter, setEncryptionFilter] = useState('ALL');
+  const [riskFilter, setRiskFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Map session IDs that have critical or high findings
@@ -25,6 +27,7 @@ export default function SessionTable({ sessions = [], findings = [] }) {
     return (sessions || []).filter((s) => {
       const matchProto = protocolFilter === 'ALL' || (s.protocol || '').toUpperCase() === protocolFilter;
       const matchEnc = encryptionFilter === 'ALL' || (s.security?.encryption_mode || '').toUpperCase() === encryptionFilter;
+      const matchRisk = riskFilter === 'ALL' || (s.risk_label || '').toUpperCase() === riskFilter;
       const q = searchQuery.toLowerCase();
       const matchQuery =
         !q ||
@@ -34,9 +37,9 @@ export default function SessionTable({ sessions = [], findings = [] }) {
         (s.protocol || '').toLowerCase().includes(q) ||
         (s.service || '').toLowerCase().includes(q);
 
-      return matchProto && matchEnc && matchQuery;
+      return matchProto && matchEnc && matchRisk && matchQuery;
     });
-  }, [sessions, protocolFilter, encryptionFilter, searchQuery]);
+  }, [sessions, protocolFilter, encryptionFilter, riskFilter, searchQuery]);
 
   return (
     <div className="w-full space-y-3">
@@ -67,6 +70,20 @@ export default function SessionTable({ sessions = [], findings = [] }) {
               className="pl-8 pr-3 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-brand-400 w-44"
             />
           </div>
+
+          {/* Risk Tier Selector */}
+          <select
+            value={riskFilter}
+            onChange={(e) => setRiskFilter(e.target.value)}
+            className="px-2.5 py-1.5 text-xs rounded-lg bg-slate-900 border border-slate-700 text-slate-300 focus:outline-none focus:border-brand-400"
+            aria-label="Filter by Risk Tier"
+          >
+            <option value="ALL">All Risk Tiers</option>
+            <option value="CRITICAL">Critical</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
 
           {/* Protocol Selector */}
           <select
@@ -103,6 +120,7 @@ export default function SessionTable({ sessions = [], findings = [] }) {
             <thead className="bg-slate-950/70 border-b border-slate-800 text-[11px] font-semibold text-slate-400 uppercase tracking-wider font-mono">
               <tr>
                 <th scope="col" className="py-3 px-3.5">Session ID</th>
+                <th scope="col" className="py-3 px-3">Risk Tier</th>
                 <th scope="col" className="py-3 px-3">Proto / Service</th>
                 <th scope="col" className="py-3 px-3">Client Endpoint</th>
                 <th scope="col" className="py-3 px-3">Server Endpoint</th>
@@ -131,6 +149,11 @@ export default function SessionTable({ sessions = [], findings = [] }) {
                       {/* Session ID */}
                       <td className="py-3 px-3.5 font-bold text-slate-200">
                         {session.session_id}
+                      </td>
+
+                      {/* Risk Tier */}
+                      <td className="py-3 px-3">
+                        <RiskBadge level={session.risk_label || 'LOW'} size="sm" />
                       </td>
 
                       {/* Protocol & Service */}

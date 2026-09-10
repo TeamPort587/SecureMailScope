@@ -46,15 +46,14 @@ def test_internal_analyze_success(api_client, monkeypatch):
             "vulnerable_sessions": 0,
             "findings_count": 0,
         },
-        "sessions": [],
+        "sessions": [
+            {
+                "session_id": "smtp-001",
+                "protocol": "SMTP",
+                "risk_label": "LOW",
+            }
+        ],
         "findings": [],
-        "risk": {
-            "score": 0,
-            "level": "LOW",
-            "model_version": "rf-v1",
-            "method": "RULE_ENGINE_PLUS_ML",
-            "confidence": 0.95,
-        },
         "recommendations": [],
     }
 
@@ -78,7 +77,9 @@ def test_internal_analyze_success(api_client, monkeypatch):
     assert res_data["file"]["analysis_id"] == "test-uuid-1234"
     assert res_data["file"]["filename"] == "smtp_sample.pcap"
     assert "summary" in res_data
-    assert "risk" in res_data
+    assert len(res_data["sessions"]) == 1
+    assert res_data["sessions"][0]["risk_label"] == "LOW"
+    assert "risk" not in res_data
 
 
 def test_internal_analyze_controlled_error(api_client, monkeypatch):

@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, Shield, Lock, Key, Award, AlertCircle, FileText, CheckCircle2, XCircle, HelpCircle, EyeOff } from 'lucide-react';
 import { formatTriState, formatEncryptionMode, formatDate } from '../utils/formatters';
+import RiskBadge from './RiskBadge';
 
 export default function SessionDetails({ session, onClose }) {
   if (!session) return null;
@@ -29,6 +30,7 @@ export default function SessionDetails({ session, onClose }) {
                 <span className={`text-[11px] px-2 py-0.5 rounded-full border font-mono ${enc.badge}`}>
                   {enc.label}
                 </span>
+                <RiskBadge level={session.risk_label || 'LOW'} size="sm" />
               </div>
               <p className="text-xs text-slate-400">
                 {session.protocol} ({session.service || 'email-service'}) • Stream Inspection

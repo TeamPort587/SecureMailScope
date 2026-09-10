@@ -46,8 +46,6 @@ async function getAnalysisById(req, res, next) {
 
     // Build summary from stored counts
     const summary = {
-      risk_label: analysis.overall_risk,
-      risk_score: analysis.risk_score ? parseFloat(analysis.risk_score) : null,
       session_count: fullData.sessions.length,
       finding_count: fullData.findings.length,
     };
@@ -67,7 +65,6 @@ async function getAnalysisById(req, res, next) {
       summary,
       sessions: fullData.sessions,
       findings: fullData.findings,
-      risk: fullData.risk,
       recommendations: fullData.recommendations,
     });
   } catch (err) {
@@ -108,15 +105,12 @@ async function exportAnalysis(req, res, next) {
         sha256: analysis.sha256,
         file_size_bytes: parseInt(analysis.file_size_bytes, 10),
         analysis_version: analysis.analysis_version,
-        overall_risk: analysis.overall_risk,
-        risk_score: analysis.risk_score ? parseFloat(analysis.risk_score) : null,
         created_at: analysis.created_at,
         completed_at: analysis.completed_at,
       },
 
       sessions: fullData.sessions,
       findings: fullData.findings,
-      risk: fullData.risk,
       recommendations: fullData.recommendations,
     };
 

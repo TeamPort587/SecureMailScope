@@ -150,6 +150,7 @@ class SecurityProfile:
     tcp_stream: int = 0
     frame_numbers: List[int] = field(default_factory=list)
     capture_reference_time: Optional[datetime] = None
+    risk_label: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         res: Dict[str, Any] = {
@@ -160,6 +161,7 @@ class SecurityProfile:
             "server_ip": self.server_ip,
             "client_port": self.client_port,
             "server_port": self.server_port,
+            "risk_label": self.risk_label,
             "security": self.security.to_dict(),
             "tls": self.tls.to_dict() if self.tls else None,
             "certificate": self.certificate.to_dict() if self.certificate else None,

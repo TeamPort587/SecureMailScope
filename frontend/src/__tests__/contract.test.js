@@ -17,17 +17,16 @@ describe('Shared Contract Compliance (node-react-analysis-response.json)', () =>
     expect(typeof data.summary.vulnerable_sessions).toBe('number');
     expect(typeof data.summary.findings_count).toBe('number');
 
-    // 3. Risk
-    expect(data).toHaveProperty('risk');
-    expect(typeof data.risk.score).toBe('number');
-    expect(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW', 'INFO']).toContain(data.risk.level);
-    expect(data.risk).toHaveProperty('model_version');
+    // 3. Risk - PCAP files do not have a collective risk label
+    expect(data.risk).toBeUndefined();
 
     // 4. Sessions array
     expect(Array.isArray(data.sessions)).toBe(true);
     data.sessions.forEach((s) => {
       expect(s).toHaveProperty('session_id');
       expect(s).toHaveProperty('protocol');
+      expect(s).toHaveProperty('risk_label');
+      expect(['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']).toContain(s.risk_label);
       expect(s).toHaveProperty('security');
       expect(s.security).toHaveProperty('encryption_mode');
       expect(s.security).toHaveProperty('upgrade_advertised');

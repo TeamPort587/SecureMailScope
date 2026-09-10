@@ -72,6 +72,7 @@ function getMockAnalysisResponse(metadata) {
           key_size: 2048,
           self_signed: false,
         },
+        risk_label: 'LOW',
       },
       {
         session_id: 'smtp-002',
@@ -91,6 +92,7 @@ function getMockAnalysisResponse(metadata) {
         },
         tls: null,
         certificate: null,
+        risk_label: 'CRITICAL',
       },
       {
         session_id: 'imap-001',
@@ -110,6 +112,7 @@ function getMockAnalysisResponse(metadata) {
         },
         tls: null,
         certificate: null,
+        risk_label: 'CRITICAL',
       },
       {
         session_id: 'pop3-001',
@@ -135,6 +138,7 @@ function getMockAnalysisResponse(metadata) {
         certificate: {
           visibility: 'NOT_OBSERVABLE',
         },
+        risk_label: 'LOW',
       },
     ],
 
@@ -155,28 +159,30 @@ function getMockAnalysisResponse(metadata) {
       },
       {
         finding_id: 'finding-002',
-        session_id: 'imap-001',
-        finding_type: 'PLAINTEXT',
-        severity: 'CRITICAL',
-        title: 'IMAP session was transmitted in plaintext',
-        description: 'The IMAP session did not use TLS protection.',
+        session_id: 'smtp-002',
+        finding_type: 'FAILED_STARTTLS',
+        severity: 'HIGH',
+        title: 'STARTTLS upgrade was not negotiated',
+        description: 'STARTTLS was advertised by the server but not requested by the client.',
         confidence: 'OBSERVED',
         evidence: {
-          protocol: 'IMAP',
-          server_port: 143,
-          encryption_mode: 'PLAINTEXT',
+          upgrade_advertised: 'YES',
+          upgrade_requested: 'NO',
+          upgrade_succeeded: 'NO',
         },
       },
       {
         finding_id: 'finding-003',
-        session_id: 'smtp-002',
-        finding_type: 'FAILED_STARTTLS',
-        severity: 'HIGH',
-        title: 'STARTTLS was advertised but not completed',
-        description: 'The server advertised STARTTLS but the session did not successfully upgrade to TLS.',
+        session_id: 'imap-001',
+        finding_type: 'PLAINTEXT',
+        severity: 'CRITICAL',
+        title: 'Email traffic transmitted in plaintext',
+        description: 'Plaintext IMAP session with authentication credentials observed.',
         confidence: 'OBSERVED',
         evidence: {
-          upgrade_advertised: 'YES',
+          protocol: 'IMAP',
+          server_port: 143,
+          upgrade_advertised: 'NO',
           upgrade_requested: 'NO',
           upgrade_succeeded: 'NO',
         },
@@ -210,14 +216,6 @@ function getMockAnalysisResponse(metadata) {
         },
       },
     ],
-
-    risk: {
-      score: 78,
-      level: 'HIGH',
-      model_version: 'rf-v1',
-      method: 'RULE_ENGINE_PLUS_ML',
-      confidence: 0.91,
-    },
 
     recommendations: [
       {

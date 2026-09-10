@@ -61,7 +61,8 @@ export const DEMO_PRESETS = [
             key_type: "EC",
             key_size: 256,
             self_signed: false
-          }
+          },
+          risk_label: "LOW"
         },
         {
           session_id: "sec-pop3-001",
@@ -92,7 +93,8 @@ export const DEMO_PRESETS = [
             key_type: "EC",
             key_size: 256,
             self_signed: false
-          }
+          },
+          risk_label: "LOW"
         }
       ],
       findings: [
@@ -125,13 +127,6 @@ export const DEMO_PRESETS = [
           }
         }
       ],
-      risk: {
-        score: 12,
-        level: "LOW",
-        model_version: "rf-v1",
-        method: "RULE_ENGINE_PLUS_ML",
-        confidence: 0.98
-      },
       recommendations: [
         {
           recommendation_id: "rec-sec-001",
@@ -195,7 +190,8 @@ export const DEMO_PRESETS = [
             key_type: "RSA",
             key_size: 2048,
             self_signed: false
-          }
+          },
+          risk_label: "MEDIUM"
         },
         {
           session_id: "imap-002",
@@ -220,7 +216,8 @@ export const DEMO_PRESETS = [
           },
           certificate: {
             visibility: "NOT_OBSERVABLE"
-          }
+          },
+          risk_label: "LOW"
         }
       ],
       findings: [
@@ -240,13 +237,6 @@ export const DEMO_PRESETS = [
           }
         }
       ],
-      risk: {
-        score: 84,
-        level: "CRITICAL",
-        model_version: "rf-v1",
-        method: "RULE_ENGINE_PLUS_ML",
-        confidence: 0.94
-      },
       recommendations: [
         ...baseMock.recommendations,
         {

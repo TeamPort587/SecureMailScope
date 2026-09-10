@@ -81,13 +81,15 @@ describe('Database Service — Data Transformation', () => {
       expect(pop3.security_info.certificate_subject).toBeNull();
     });
 
-    it('should map risk.level to risk_label and risk.score to risk_score', () => {
+    it('should map session risk_label to DB format', () => {
       const response = getMockAnalysisResponse(validMetadata);
       const mapped = transformForPersistence(response);
 
-      expect(mapped.risk.risk_label).toBe('HIGH');   // was risk.level
-      expect(mapped.risk.risk_score).toBe(78);        // was risk.score
-      expect(mapped.risk.model_version).toBe('rf-v1');
+      expect(mapped.sessions[0].risk_label).toBe('LOW');
+      expect(mapped.sessions[1].risk_label).toBe('CRITICAL');
+      expect(mapped.sessions[2].risk_label).toBe('CRITICAL');
+      expect(mapped.sessions[3].risk_label).toBe('LOW');
+      expect(mapped.risk).toBeNull();
     });
 
     it('should map finding evidence to evidence_json', () => {
