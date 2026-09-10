@@ -1,0 +1,482 @@
+{
+  "class_distribution": {
+    "TRAIN": {
+      "LOW": 1121,
+      "MEDIUM": 1120,
+      "HIGH": 1120,
+      "CRITICAL": 1121
+    },
+    "VALIDATION": {
+      "LOW": 225,
+      "MEDIUM": 240,
+      "HIGH": 240,
+      "CRITICAL": 240
+    },
+    "TEST": {
+      "LOW": 256,
+      "MEDIUM": 240,
+      "HIGH": 240,
+      "CRITICAL": 241
+    },
+    "CHALLENGE": {
+      "LOW": 66,
+      "MEDIUM": 108,
+      "HIGH": 209,
+      "CRITICAL": 117
+    }
+  },
+  "protocol_distribution": {
+    "TRAIN": {
+      "SMTP": 0.3965,
+      "IMAP": 0.3423,
+      "POP3": 0.2613
+    },
+    "VALIDATION": {
+      "SMTP": 0.3577,
+      "IMAP": 0.3333,
+      "POP3": 0.309
+    },
+    "TEST": {
+      "SMTP": 0.4074,
+      "IMAP": 0.3992,
+      "POP3": 0.1934
+    },
+    "CHALLENGE": {
+      "SMTP": 0.218,
+      "IMAP": 0.356,
+      "POP3": 0.426
+    }
+  },
+  "encryption_distribution": {
+    "TRAIN": {
+      "PLAINTEXT": 0.0964,
+      "STARTTLS": 0.5703,
+      "IMPLICIT_TLS": 0.3333
+    },
+    "VALIDATION": {
+      "PLAINTEXT": 0.1164,
+      "STARTTLS": 0.4529,
+      "IMPLICIT_TLS": 0.4307
+    },
+    "TEST": {
+      "PLAINTEXT": 0.1003,
+      "STARTTLS": 0.5077,
+      "IMPLICIT_TLS": 0.392
+    },
+    "CHALLENGE": {
+      "PLAINTEXT": 0.162,
+      "STARTTLS": 0.504,
+      "IMPLICIT_TLS": 0.334
+    }
+  },
+  "missingness_distribution": {
+    "TRAIN": {
+      "overall_missing_rate": 0.1156,
+      "feature_missing_rates": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.2298,
+        "weak_cipher": 0.2298,
+        "expired_cert": 0.3768,
+        "not_yet_valid_cert": 0.3768,
+        "weak_key": 0.3768,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 0.2298,
+        "self_signed": 0.3768,
+        "protocol_smtp": 0.0,
+        "protocol_imap": 0.0,
+        "protocol_pop3": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0,
+        "medium_count": 0.0,
+        "low_count": 0.0
+      }
+    },
+    "VALIDATION": {
+      "overall_missing_rate": 0.1155,
+      "feature_missing_rates": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.2487,
+        "weak_cipher": 0.2487,
+        "expired_cert": 0.3619,
+        "not_yet_valid_cert": 0.3619,
+        "weak_key": 0.3619,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 0.2487,
+        "self_signed": 0.3619,
+        "protocol_smtp": 0.0,
+        "protocol_imap": 0.0,
+        "protocol_pop3": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0,
+        "medium_count": 0.0,
+        "low_count": 0.0
+      }
+    },
+    "TEST": {
+      "overall_missing_rate": 0.1332,
+      "feature_missing_rates": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.3449,
+        "weak_cipher": 0.3449,
+        "expired_cert": 0.3736,
+        "not_yet_valid_cert": 0.3736,
+        "weak_key": 0.3736,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.001,
+        "pfs_missing": 0.3449,
+        "self_signed": 0.3736,
+        "protocol_smtp": 0.0,
+        "protocol_imap": 0.0,
+        "protocol_pop3": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0,
+        "medium_count": 0.0,
+        "low_count": 0.0
+      }
+    },
+    "CHALLENGE": {
+      "overall_missing_rate": 0.1111,
+      "feature_missing_rates": {
+        "encryption_plaintext": 0.0,
+        "encryption_starttls": 0.0,
+        "encryption_implicit": 0.0,
+        "deprecated_tls": 0.162,
+        "weak_cipher": 0.162,
+        "expired_cert": 0.406,
+        "not_yet_valid_cert": 0.406,
+        "weak_key": 0.406,
+        "auth_before_tls": 0.0,
+        "tls_upgrade_failed": 0.0,
+        "pfs_missing": 0.162,
+        "self_signed": 0.406,
+        "protocol_smtp": 0.0,
+        "protocol_imap": 0.0,
+        "protocol_pop3": 0.0,
+        "critical_count": 0.0,
+        "high_count": 0.0,
+        "medium_count": 0.0,
+        "low_count": 0.0
+      }
+    }
+  },
+  "capture_scenario_distribution": {
+    "TRAIN": {
+      "FULL_SESSION": 3224,
+      "MISSING_CERTIFICATE": 658,
+      "MISSING_SERVER_HELLO": 597
+    },
+    "VALIDATION": {
+      "FULL_SESSION": 713,
+      "MISSING_SERVER_HELLO": 125,
+      "MISSING_CERTIFICATE": 107
+    },
+    "TEST": {
+      "FULL_SESSION": 709,
+      "MISSING_SERVER_HELLO": 239,
+      "MISSING_CERTIFICATE": 28
+    },
+    "CHALLENGE": {
+      "CHALLENGE_BOUNDARY_LOW_MED_CERT_VISIBILITY": 28,
+      "CHALLENGE_BOUNDARY_LOW_MED_MIN_FINDINGS": 27,
+      "CHALLENGE_BOUNDARY_MED_HIGH_COMPOUNDING_MODERATE": 27,
+      "CHALLENGE_BOUNDARY_MED_HIGH_ISOLATED_WEAK_KEY": 27,
+      "CHALLENGE_BOUNDARY_HIGH_CRIT_ZERO_CRIT_PLAINTEXT": 27,
+      "CHALLENGE_BOUNDARY_HIGH_CRIT_EARLY_AUTH_WITH_TLS13": 27,
+      "CHALLENGE_PARTIAL_CAPTURE_UNOBSERVED_CERT_POP3": 27,
+      "CHALLENGE_PARTIAL_CAPTURE_UNOBSERVED_CERT_IMAP": 27,
+      "CHALLENGE_PARTIAL_CAPTURE_IMPLICIT_HIGH_NAN_CLEAN": 27,
+      "CHALLENGE_RARE_POP3_STARTTLS_LEGACY_CIPHER": 27,
+      "CHALLENGE_RARE_IMAP_DEPRECATED_TLS_WITH_PFS": 27,
+      "CHALLENGE_RARE_SMTP_WEAK_CIPHER_WITH_CLEAN_CERT": 27,
+      "CHALLENGE_RARE_NOT_YET_VALID_CERT_ISOLATED": 27,
+      "CHALLENGE_RARE_POP3_PLAINTEXT_HIGH_ACTIVITY": 27,
+      "CHALLENGE_ADVERSARIAL_MULTIPLE_HIGH_NO_CRIT_LABEL": 27,
+      "CHALLENGE_ADVERSARIAL_CRITICAL_WITH_ZERO_FINDINGS": 27,
+      "CHALLENGE_ADVERSARIAL_HIGH_WITH_ZERO_HIGH_COUNT": 27,
+      "CHALLENGE_ADVERSARIAL_MED_WITH_HIGH_LOW_COUNT": 27,
+      "CHALLENGE_PARTIAL_CAPTURE_STARTTLS_NEGOTIATION_TRUNCATED": 13
+    }
+  },
+  "feature_prevalence": {
+    "TRAIN": {
+      "encryption_plaintext": 0.0964,
+      "encryption_starttls": 0.5703,
+      "encryption_implicit": 0.3333,
+      "deprecated_tls": 0.0768,
+      "weak_cipher": 0.1029,
+      "expired_cert": 0.0344,
+      "not_yet_valid_cert": 0.0248,
+      "weak_key": 0.0937,
+      "auth_before_tls": 0.2193,
+      "tls_upgrade_failed": 0.0872,
+      "pfs_missing": 0.2733,
+      "self_signed": 0.1582,
+      "protocol_smtp": 0.3965,
+      "protocol_imap": 0.3423,
+      "protocol_pop3": 0.2613,
+      "critical_count": 0.1894,
+      "high_count": 0.4067,
+      "medium_count": 0.5741,
+      "low_count": 0.6865
+    },
+    "VALIDATION": {
+      "encryption_plaintext": 0.1164,
+      "encryption_starttls": 0.4529,
+      "encryption_implicit": 0.4307,
+      "deprecated_tls": 0.055,
+      "weak_cipher": 0.0931,
+      "expired_cert": 0.0603,
+      "not_yet_valid_cert": 0.0148,
+      "weak_key": 0.0857,
+      "auth_before_tls": 0.2243,
+      "tls_upgrade_failed": 0.0804,
+      "pfs_missing": 0.2698,
+      "self_signed": 0.1185,
+      "protocol_smtp": 0.3577,
+      "protocol_imap": 0.3333,
+      "protocol_pop3": 0.309,
+      "critical_count": 0.1968,
+      "high_count": 0.4381,
+      "medium_count": 0.5217,
+      "low_count": 0.764
+    },
+    "TEST": {
+      "encryption_plaintext": 0.1003,
+      "encryption_starttls": 0.5077,
+      "encryption_implicit": 0.392,
+      "deprecated_tls": 0.0768,
+      "weak_cipher": 0.0962,
+      "expired_cert": 0.0624,
+      "not_yet_valid_cert": 0.0154,
+      "weak_key": 0.0921,
+      "auth_before_tls": 0.2088,
+      "tls_upgrade_failed": 0.0676,
+      "pfs_missing": 0.2845,
+      "self_signed": 0.1392,
+      "protocol_smtp": 0.4074,
+      "protocol_imap": 0.3992,
+      "protocol_pop3": 0.1934,
+      "critical_count": 0.1832,
+      "high_count": 0.4156,
+      "medium_count": 0.5599,
+      "low_count": 0.8209
+    },
+    "CHALLENGE": {
+      "encryption_plaintext": 0.162,
+      "encryption_starttls": 0.504,
+      "encryption_implicit": 0.334,
+      "deprecated_tls": 0.216,
+      "weak_cipher": 0.108,
+      "expired_cert": 0.0,
+      "not_yet_valid_cert": 0.054,
+      "weak_key": 0.072,
+      "auth_before_tls": 0.144,
+      "tls_upgrade_failed": 0.026,
+      "pfs_missing": 0.302,
+      "self_signed": 0.118,
+      "protocol_smtp": 0.218,
+      "protocol_imap": 0.356,
+      "protocol_pop3": 0.426,
+      "critical_count": 0.124,
+      "high_count": 0.568,
+      "medium_count": 0.648,
+      "low_count": 0.794
+    }
+  },
+  "finding_count_distribution": {
+    "TRAIN": {
+      "critical_count": {
+        "mean": 0.1894,
+        "max": 2,
+        "zero_rate": 0.8481
+      },
+      "high_count": {
+        "mean": 0.4067,
+        "max": 3,
+        "zero_rate": 0.699
+      },
+      "medium_count": {
+        "mean": 0.5741,
+        "max": 3,
+        "zero_rate": 0.5602
+      },
+      "low_count": {
+        "mean": 0.6865,
+        "max": 3,
+        "zero_rate": 0.4741
+      }
+    },
+    "VALIDATION": {
+      "critical_count": {
+        "mean": 0.1968,
+        "max": 2,
+        "zero_rate": 0.8603
+      },
+      "high_count": {
+        "mean": 0.4381,
+        "max": 3,
+        "zero_rate": 0.654
+      },
+      "medium_count": {
+        "mean": 0.5217,
+        "max": 3,
+        "zero_rate": 0.5831
+      },
+      "low_count": {
+        "mean": 0.764,
+        "max": 2,
+        "zero_rate": 0.4328
+      }
+    },
+    "TEST": {
+      "critical_count": {
+        "mean": 0.1832,
+        "max": 2,
+        "zero_rate": 0.8639
+      },
+      "high_count": {
+        "mean": 0.4156,
+        "max": 3,
+        "zero_rate": 0.6929
+      },
+      "medium_count": {
+        "mean": 0.5599,
+        "max": 3,
+        "zero_rate": 0.5711
+      },
+      "low_count": {
+        "mean": 0.8209,
+        "max": 3,
+        "zero_rate": 0.4012
+      }
+    },
+    "CHALLENGE": {
+      "critical_count": {
+        "mean": 0.124,
+        "max": 3,
+        "zero_rate": 0.918
+      },
+      "high_count": {
+        "mean": 0.568,
+        "max": 3,
+        "zero_rate": 0.592
+      },
+      "medium_count": {
+        "mean": 0.648,
+        "max": 3,
+        "zero_rate": 0.504
+      },
+      "low_count": {
+        "mean": 0.794,
+        "max": 4,
+        "zero_rate": 0.482
+      }
+    }
+  },
+  "canonical_risk_trigger_prevalence": {
+    "TRAIN": {
+      "critical_count_gte_1": 0.1519,
+      "auth_before_tls": 0.2193,
+      "encryption_plaintext": 0.0964,
+      "deprecated_tls": 0.0768,
+      "weak_cipher": 0.1029,
+      "expired_cert": 0.0344
+    },
+    "VALIDATION": {
+      "critical_count_gte_1": 0.1397,
+      "auth_before_tls": 0.2243,
+      "encryption_plaintext": 0.1164,
+      "deprecated_tls": 0.055,
+      "weak_cipher": 0.0931,
+      "expired_cert": 0.0603
+    },
+    "TEST": {
+      "critical_count_gte_1": 0.1361,
+      "auth_before_tls": 0.2088,
+      "encryption_plaintext": 0.1003,
+      "deprecated_tls": 0.0768,
+      "weak_cipher": 0.0962,
+      "expired_cert": 0.0624
+    },
+    "CHALLENGE": {
+      "critical_count_gte_1": 0.082,
+      "auth_before_tls": 0.144,
+      "encryption_plaintext": 0.162,
+      "deprecated_tls": 0.216,
+      "weak_cipher": 0.108,
+      "expired_cert": 0.0
+    }
+  },
+  "feature_interaction_distribution": {
+    "TRAIN": {
+      "deprecated_tls_and_weak_cipher": 0.064,
+      "self_signed_and_missing_pfs": 0.0399,
+      "expired_cert_and_weak_key": 0.0105
+    },
+    "VALIDATION": {
+      "deprecated_tls_and_weak_cipher": 0.0487,
+      "self_signed_and_missing_pfs": 0.0254,
+      "expired_cert_and_weak_key": 0.0127
+    },
+    "TEST": {
+      "deprecated_tls_and_weak_cipher": 0.0563,
+      "self_signed_and_missing_pfs": 0.0328,
+      "expired_cert_and_weak_key": 0.0133
+    },
+    "CHALLENGE": {
+      "deprecated_tls_and_weak_cipher": 0.054,
+      "self_signed_and_missing_pfs": 0.088,
+      "expired_cert_and_weak_key": 0.0
+    }
+  },
+  "unique_signatures": {
+    "TRAIN": 1415,
+    "VALIDATION": 289,
+    "TEST": 324,
+    "CHALLENGE": 241
+  },
+  "signature_novelty": {
+    "TRAIN": 0.0,
+    "VALIDATION": 1.0,
+    "TEST": 1.0,
+    "CHALLENGE": 0.5934
+  },
+  "distance_from_training_signatures": {
+    "VALIDATION": {
+      "mean_distance_to_nearest_train": 1.2942,
+      "median_distance_to_nearest_train": 1.0,
+      "max_distance_to_nearest_train": 5.0,
+      "min_distance_to_nearest_train": 1.0
+    },
+    "TEST": {
+      "mean_distance_to_nearest_train": 1.2671,
+      "median_distance_to_nearest_train": 1.0,
+      "max_distance_to_nearest_train": 5.0,
+      "min_distance_to_nearest_train": 1.0
+    },
+    "CHALLENGE": {
+      "mean_distance_to_nearest_train": 1.22,
+      "median_distance_to_nearest_train": 1.0,
+      "max_distance_to_nearest_train": 5.0,
+      "min_distance_to_nearest_train": 0.0
+    }
+  },
+  "split_difficulty_verdict": {
+    "validation_difficulty_vs_test": "SIMILAR",
+    "metrics": {
+      "validation_mean_distance": 1.2942,
+      "test_mean_distance": 1.2671,
+      "validation_signature_novelty": 1.0,
+      "test_signature_novelty": 1.0
+    },
+    "explanation": "Validation distance (1.2942) is comparable to Test distance (1.2671) with 100% signature novelty in both splits due to signature-stratified grouping. Both validation and test splits present comparable structural generalization difficulty."
+  }
+}

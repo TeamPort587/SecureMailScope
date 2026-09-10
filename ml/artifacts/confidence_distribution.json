@@ -1,0 +1,49 @@
+{
+  "split_name": "test",
+  "sample_count": 977,
+  "accuracy": 0.998,
+  "macro_f1": 0.9979,
+  "mean_max_probability": 0.8879,
+  "median_max_probability": 0.9185,
+  "min_max_probability": 0.4619,
+  "low_confidence_rate_under_70": 0.0716,
+  "brier_score": 0.0404,
+  "calibration_bins": [
+    {
+      "bin_range": "0.4-0.5",
+      "sample_count": 2,
+      "mean_predicted_probability": 0.4737,
+      "actual_accuracy": 0.5
+    },
+    {
+      "bin_range": "0.5-0.6",
+      "sample_count": 44,
+      "mean_predicted_probability": 0.5672,
+      "actual_accuracy": 0.9773
+    },
+    {
+      "bin_range": "0.6-0.7",
+      "sample_count": 24,
+      "mean_predicted_probability": 0.6164,
+      "actual_accuracy": 1.0
+    },
+    {
+      "bin_range": "0.7-0.8",
+      "sample_count": 126,
+      "mean_predicted_probability": 0.7686,
+      "actual_accuracy": 1.0
+    },
+    {
+      "bin_range": "0.8-0.9",
+      "sample_count": 179,
+      "mean_predicted_probability": 0.8598,
+      "actual_accuracy": 1.0
+    },
+    {
+      "bin_range": "0.9-1.0",
+      "sample_count": 534,
+      "mean_predicted_probability": 0.9514,
+      "actual_accuracy": 1.0
+    }
+  ]
+}

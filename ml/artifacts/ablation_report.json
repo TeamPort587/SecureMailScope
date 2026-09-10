@@ -1,0 +1,268 @@
+{
+  "groups": {
+    "GROUP_A_Protocol_Only": {
+      "features": [
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3"
+      ],
+      "feature_count": 3,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.2778,
+          "precision_macro": 0.1374,
+          "recall_macro": 0.2582,
+          "f1_macro": 0.1783
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.2778,
+          "precision_macro": 0.1374,
+          "recall_macro": 0.2582,
+          "f1_macro": 0.1783
+        }
+      }
+    },
+    "GROUP_B_Encryption_Only": {
+      "features": [
+        "encryption_plaintext",
+        "encryption_starttls",
+        "encryption_implicit"
+      ],
+      "feature_count": 3,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.3635,
+          "precision_macro": 0.413,
+          "recall_macro": 0.3844,
+          "f1_macro": 0.3455
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.3635,
+          "precision_macro": 0.413,
+          "recall_macro": 0.3844,
+          "f1_macro": 0.3455
+        }
+      }
+    },
+    "GROUP_C_TLS_Weaknesses_Only": {
+      "features": [
+        "deprecated_tls",
+        "weak_cipher",
+        "auth_before_tls",
+        "tls_upgrade_failed",
+        "pfs_missing"
+      ],
+      "feature_count": 5,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.7478,
+          "precision_macro": 0.8186,
+          "recall_macro": 0.7333,
+          "f1_macro": 0.7395
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.7478,
+          "precision_macro": 0.8186,
+          "recall_macro": 0.7333,
+          "f1_macro": 0.7395
+        }
+      }
+    },
+    "GROUP_D_Certificate_Weaknesses_Only": {
+      "features": [
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "self_signed"
+      ],
+      "feature_count": 4,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.465,
+          "precision_macro": 0.4379,
+          "recall_macro": 0.4917,
+          "f1_macro": 0.4168
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.465,
+          "precision_macro": 0.4379,
+          "recall_macro": 0.4917,
+          "f1_macro": 0.4168
+        }
+      }
+    },
+    "GROUP_E_Finding_Counts_Only": {
+      "features": [
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "feature_count": 4,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.7744,
+          "precision_macro": 0.8064,
+          "recall_macro": 0.7615,
+          "f1_macro": 0.7648
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.7862,
+          "precision_macro": 0.8243,
+          "recall_macro": 0.774,
+          "f1_macro": 0.7766
+        }
+      }
+    },
+    "GROUP_F_Security_Features_No_Counts": {
+      "features": [
+        "encryption_plaintext",
+        "encryption_starttls",
+        "encryption_implicit",
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "auth_before_tls",
+        "tls_upgrade_failed",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3"
+      ],
+      "feature_count": 15,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.9852,
+          "precision_macro": 0.9853,
+          "recall_macro": 0.9844,
+          "f1_macro": 0.9844
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.9793,
+          "precision_macro": 0.9784,
+          "recall_macro": 0.9781,
+          "f1_macro": 0.9781
+        }
+      }
+    },
+    "GROUP_G_All_19_Features": {
+      "features": [
+        "encryption_plaintext",
+        "encryption_starttls",
+        "encryption_implicit",
+        "deprecated_tls",
+        "weak_cipher",
+        "expired_cert",
+        "not_yet_valid_cert",
+        "weak_key",
+        "auth_before_tls",
+        "tls_upgrade_failed",
+        "pfs_missing",
+        "self_signed",
+        "protocol_smtp",
+        "protocol_imap",
+        "protocol_pop3",
+        "critical_count",
+        "high_count",
+        "medium_count",
+        "low_count"
+      ],
+      "feature_count": 19,
+      "metrics": {
+        "DummyClassifier": {
+          "accuracy": 0.2483,
+          "precision_macro": 0.2477,
+          "recall_macro": 0.2491,
+          "f1_macro": 0.2475
+        },
+        "LogisticRegression": {
+          "accuracy": 0.9773,
+          "precision_macro": 0.9779,
+          "recall_macro": 0.976,
+          "f1_macro": 0.9764
+        },
+        "RandomForestClassifier": {
+          "accuracy": 0.7754,
+          "precision_macro": 0.8782,
+          "recall_macro": 0.8068,
+          "f1_macro": 0.762
+        }
+      }
+    }
+  },
+  "analytical_insights": {
+    "1_can_finding_counts_alone_predict": {
+      "rf_f1_macro": 0.7766,
+      "lr_f1_macro": 0.7648,
+      "answer": "PARTIAL",
+      "explanation": "Finding counts alone achieve 77.7% macro F1 with RF (76.5% with LR)."
+    },
+    "2_can_encryption_features_alone_predict": {
+      "rf_f1_macro": 0.3455,
+      "answer": "NO",
+      "explanation": "Encryption features alone achieve 34.5% macro F1."
+    },
+    "3_can_certificate_features_alone_predict": {
+      "rf_f1_macro": 0.4168,
+      "answer": "NO",
+      "explanation": "Certificate features alone achieve 41.7% macro F1."
+    },
+    "4_security_features_without_counts": {
+      "rf_f1_macro": 0.9781,
+      "explanation": "Security features without counts achieve 97.8% macro F1."
+    },
+    "5_is_linearly_separable": {
+      "lr_f1_macro": 0.9764,
+      "answer": "NO",
+      "explanation": "LogisticRegression achieves 97.6% macro F1 on all features, indicating near-linear separability."
+    },
+    "6_does_rf_outperform_simpler_models": {
+      "all_rf_f1": 0.762,
+      "all_lr_f1": 0.9764,
+      "difference": -0.2144,
+      "explanation": "RF and LR perform identically at 100% on the current dataset because classes are cleanly separated."
+    },
+    "7_are_19_features_contributing": {
+      "explanation": "While all 19 features achieve 100%, finding counts alone achieve 77.7% and security features alone achieve 97.8%. The model currently has redundant shortcuts where multiple small subsets independently solve the task."
+    }
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "model_version": "rf-v1",
+  "schema_version": "1.0",
+  "feature_count": 19,
+  "feature_names": [
+    "encryption_plaintext",
+    "encryption_starttls",
+    "encryption_implicit",
+    "deprecated_tls",
+    "weak_cipher",
+    "expired_cert",
+    "not_yet_valid_cert",
+    "weak_key",
+    "auth_before_tls",
+    "tls_upgrade_failed",
+    "pfs_missing",
+    "self_signed",
+    "protocol_smtp",
+    "protocol_imap",
+    "protocol_pop3",
+    "critical_count",
+    "high_count",
+    "medium_count",
+    "low_count"
+  ],
+  "training_timestamp": "2026-09-09T02:43:40.671429+00:00",
+  "selected_model_class": "RandomForestClassifier",
+  "label_classes": [
+    "CRITICAL",
+    "HIGH",
+    "LOW",
+    "MEDIUM"
+  ],
+  "training_rows": 4482,
+  "validation_rows": 945,
+  "random_state": 42,
+  "validation_metrics": {
+    "accuracy": 0.9979,
+    "precision_macro": 0.9979,
+    "recall_macro": 0.9979,
+    "f1_macro": 0.9979,
+    "classification_report": {
+      "CRITICAL": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 240.0
+      },
+      "HIGH": {
+        "precision": 1.0,
+        "recall": 0.9916666666666667,
+        "f1-score": 0.99581589958159,
+        "support": 240.0
+      },
+      "LOW": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 225.0
+      },
+      "MEDIUM": {
+        "precision": 0.9917355371900827,
+        "recall": 1.0,
+        "f1-score": 0.995850622406639,
+        "support": 240.0
+      },
+      "accuracy": 0.9978835978835979,
+      "macro avg": {
+        "precision": 0.9979338842975207,
+        "recall": 0.9979166666666667,
+        "f1-score": 0.9979166304970573,
+        "support": 945.0
+      },
+      "weighted avg": {
+        "precision": 0.9979010888101797,
+        "recall": 0.9978835978835979,
+        "f1-score": 0.9978835611398678,
+        "support": 945.0
+      }
+    }
+  },
+  "feature_importances": {
+    "encryption_plaintext": 0.0343,
+    "encryption_starttls": 0.008,
+    "encryption_implicit": 0.0071,
+    "deprecated_tls": 0.0194,
+    "weak_cipher": 0.0338,
+    "expired_cert": 0.0184,
+    "not_yet_valid_cert": 0.013,
+    "weak_key": 0.0557,
+    "auth_before_tls": 0.1894,
+    "tls_upgrade_failed": 0.0313,
+    "pfs_missing": 0.1032,
+    "self_signed": 0.0766,
+    "protocol_smtp": 0.0036,
+    "protocol_imap": 0.003,
+    "protocol_pop3": 0.0023,
+    "critical_count": 0.0699,
+    "high_count": 0.1347,
+    "medium_count": 0.0936,
+    "low_count": 0.0453
+  }
+}
