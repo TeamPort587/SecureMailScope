@@ -76,6 +76,7 @@ def build_recommendations(findings: List[Finding]) -> List[Dict[str, Any]]:
             "priority": r.get("priority", "HIGH"),
             "title": r.get("title", "Security Recommendation"),
             "description": r.get("description", ""),
+            "affected_sessions": r.get("affected_sessions", []),
         })
 
     # If no findings, provide positive guidance
@@ -85,6 +86,7 @@ def build_recommendations(findings: List[Finding]) -> List[Dict[str, Any]]:
             "priority": "LOW",
             "title": "Maintain modern encryption hygiene",
             "description": "All inspected email sessions utilized valid, modern TLS protection with no observed security weaknesses.",
+            "affected_sessions": [],
         })
 
     return formatted

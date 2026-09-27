@@ -1,10 +1,13 @@
 import React from 'react';
 import RiskBadge from './RiskBadge';
 import EmptyState from './EmptyState';
-import { Lightbulb, CheckCircle2 } from 'lucide-react';
+import { Lightbulb, CheckCircle2, Network } from 'lucide-react';
 
 export default function Recommendations({
   recommendations = [],
+  findings = [],
+  sessions = [],
+  onSelectSession,
 }) {
   if (!recommendations || recommendations.length === 0) {
     return (
@@ -34,6 +37,9 @@ export default function Recommendations({
               `recommendation-${index}`
             }
             recommendation={recommendation}
+            findings={findings}
+            sessions={sessions}
+            onSelectSession={onSelectSession}
           />
         ))}
       </div>
@@ -77,10 +83,17 @@ function SectionHeader() {
    Recommendation Card
 --------------------------------------------------------- */
 
-function RecommendationCard({ recommendation }) {
+function RecommendationCard({
+  recommendation,
+  findings = [],
+  sessions = [],
+  onSelectSession,
+}) {
   const priority = (
     recommendation?.priority || 'INFO'
   ).toUpperCase();
+
+  const affectedSessions = getAffectedSessions(recommendation, findings);
 
   const styles = {
     CRITICAL: {
@@ -113,7 +126,7 @@ function RecommendationCard({ recommendation }) {
       actionLabel: 'text-amber-700',
     },
 
-      LOW: {
+    LOW: {
       accent: 'bg-yellow-500',
       tint: 'from-yellow-50/25 via-white to-white',
 
@@ -215,6 +228,73 @@ function RecommendationCard({ recommendation }) {
           </p>
         )}
 
+        {/* Affected / Target Sessions */}
+        <div className="mt-4 pt-3.5 border-t border-slate-200/60">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+              <Network className="h-3.5 w-3.5 text-slate-400" />
+              Impacted Sessions
+            </span>
+            {affectedSessions.length > 0 && (
+              <span className="text-[11px] font-medium text-slate-400">
+                {affectedSessions.length === 1
+                  ? '1 session affected'
+                  : `${affectedSessions.length} sessions affected`}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            {affectedSessions.length > 0 ? (
+              affectedSessions.map((sessionId) => {
+                const sessionObj = sessions.find((s) => s.session_id === sessionId);
+                const proto =
+                  sessionObj?.protocol ||
+                  (sessionId.toLowerCase().startsWith('smtp')
+                    ? 'SMTP'
+                    : sessionId.toLowerCase().startsWith('imap')
+                    ? 'IMAP'
+                    : sessionId.toLowerCase().startsWith('pop')
+                    ? 'POP3'
+                    : 'TCP');
+
+                return (
+                  <button
+                    key={sessionId}
+                    type="button"
+                    onClick={() => onSelectSession?.(sessionId)}
+                    className="
+                      group/chip inline-flex items-center gap-1.5
+                      rounded-lg
+                      border border-slate-200/90
+                      bg-white
+                      px-2.5 py-1
+                      font-mono
+                      text-[11px]
+                      font-medium
+                      text-slate-700
+                      shadow-xs
+                      hover:border-brand-400 hover:bg-brand-50/70 hover:text-brand-700
+                      transition-all
+                    "
+                    title={`Click to inspect session ${sessionId}`}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500 group-hover/chip:bg-brand-500 transition-colors" />
+                    <span className="font-semibold text-[10px] text-slate-400 group-hover/chip:text-brand-600 font-sans uppercase">
+                      {proto}
+                    </span>
+                    <span>{sessionId}</span>
+                  </button>
+                );
+              })
+            ) : (
+              <span className="inline-flex items-center gap-1 text-xs text-slate-400 italic">
+                General hygiene policy (applies across all sessions)
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Required action */}
         <RequiredAction
           style={style}
@@ -223,6 +303,51 @@ function RecommendationCard({ recommendation }) {
       </div>
     </article>
   );
+}
+
+/* ---------------------------------------------------------
+   Helper: Extract or correlate affected session IDs
+--------------------------------------------------------- */
+export function getAffectedSessions(recommendation, findings = []) {
+  if (Array.isArray(recommendation?.affected_sessions) && recommendation.affected_sessions.length > 0) {
+    return recommendation.affected_sessions;
+  }
+
+  const recId = (recommendation?.recommendation_id || '').toUpperCase();
+  const title = (recommendation?.title || '').toLowerCase();
+  const desc = (recommendation?.description || '').toLowerCase();
+
+  const matched = new Set();
+  for (const f of findings) {
+    const fType = (f?.finding_type || '').toUpperCase();
+    const fTitle = (f?.title || '').toLowerCase();
+    const fDesc = (f?.description || '').toLowerCase();
+
+    const isMatch =
+      // By recommendation ID
+      (recId.includes('AUTH') && (fType.includes('AUTH') || fTitle.includes('auth'))) ||
+      (recId.includes('PLAIN') && (fType.includes('PLAIN') || fTitle.includes('plain'))) ||
+      (recId.includes('STARTTLS') && (fType.includes('STARTTLS') || fTitle.includes('starttls'))) ||
+      (recId.includes('WEAK-TLS') && (fType.includes('DEPRECATED_TLS') || fType.includes('WEAK_TLS') || fTitle.includes('tls'))) ||
+      (recId.includes('PFS') && (fType.includes('PFS') || fTitle.includes('forward secrecy'))) ||
+      (recId.includes('CERT') && (fType.includes('CERT') || fTitle.includes('cert'))) ||
+      (recId.includes('CIPHER') && (fType.includes('CIPHER') || fTitle.includes('cipher'))) ||
+      (recId.includes('KEY') && (fType.includes('KEY') || fTitle.includes('key'))) ||
+      // By title keywords
+      (title.includes('authentication') && (fTitle.includes('auth') || fDesc.includes('auth'))) ||
+      (title.includes('plaintext') && (fTitle.includes('plaintext') || fDesc.includes('plaintext'))) ||
+      (title.includes('starttls') && (fTitle.includes('starttls') || fDesc.includes('starttls'))) ||
+      (title.includes('cipher') && (fTitle.includes('cipher') || fDesc.includes('cipher'))) ||
+      (title.includes('certificate') && (fTitle.includes('cert') || fDesc.includes('cert'))) ||
+      (title.includes('forward secrecy') && (fTitle.includes('forward secrecy') || fDesc.includes('pfs'))) ||
+      (title.includes('renegotiation') && (fTitle.includes('renegotiation') || fDesc.includes('renegotiation')));
+
+    if (isMatch && f.session_id) {
+      matched.add(f.session_id);
+    }
+  }
+
+  return Array.from(matched);
 }
 
 /* ---------------------------------------------------------

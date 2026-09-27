@@ -1,0 +1,204 @@
+{
+  "overall_samples": 1200,
+  "overall_accuracy": 0.9458,
+  "overall_macro_f1": 0.9256,
+  "mean_confidence": 0.8693,
+  "scenarios": {
+    "ASYMMETRIC_CAPTURE": {
+      "samples": 100,
+      "accuracy": 0.99,
+      "macro_f1": 0.9845,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 1.0,
+        "HIGH": 0.9855,
+        "CRITICAL": 0.9524
+      },
+      "mean_confidence": 0.8456,
+      "prediction_stability": 0.7523,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 98,
+        "LOW_EVIDENCE": 2
+      }
+    },
+    "AUTH_NOT_OBSERVED": {
+      "samples": 100,
+      "accuracy": 0.93,
+      "macro_f1": 0.877,
+      "per_class_f1": {
+        "LOW": 0.9836,
+        "MEDIUM": 1.0,
+        "HIGH": 0.8929,
+        "CRITICAL": 0.6316
+      },
+      "mean_confidence": 0.9253,
+      "prediction_stability": 0.8685,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 95,
+        "LOW_EVIDENCE": 5
+      }
+    },
+    "FULL_SESSION": {
+      "samples": 100,
+      "accuracy": 0.94,
+      "macro_f1": 0.8833,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 1.0,
+        "HIGH": 0.8333,
+        "CRITICAL": 0.7
+      },
+      "mean_confidence": 0.9371,
+      "prediction_stability": 0.8924,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "MISSING_CERTIFICATE": {
+      "samples": 100,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 1.0,
+        "HIGH": 1.0,
+        "CRITICAL": 1.0
+      },
+      "mean_confidence": 0.8078,
+      "prediction_stability": 0.6974,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "MISSING_CLIENT_HELLO": {
+      "samples": 100,
+      "accuracy": 0.89,
+      "macro_f1": 0.8771,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 0.9388,
+        "HIGH": 0.8197,
+        "CRITICAL": 0.75
+      },
+      "mean_confidence": 0.9059,
+      "prediction_stability": 0.843,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "MISSING_SERVER_HELLO": {
+      "samples": 100,
+      "accuracy": 0.9,
+      "macro_f1": 0.9109,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 0.7826,
+        "HIGH": 0.8611,
+        "CRITICAL": 1.0
+      },
+      "mean_confidence": 0.706,
+      "prediction_stability": 0.5619,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "MISSING_TLS_FINISHED": {
+      "samples": 100,
+      "accuracy": 1.0,
+      "macro_f1": 1.0,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 1.0,
+        "HIGH": 1.0,
+        "CRITICAL": 1.0
+      },
+      "mean_confidence": 0.8582,
+      "prediction_stability": 0.7744,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "PACKET_LOSS_SIMULATION": {
+      "samples": 100,
+      "accuracy": 0.95,
+      "macro_f1": 0.9542,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 0.9286,
+        "HIGH": 0.9254,
+        "CRITICAL": 0.963
+      },
+      "mean_confidence": 0.8464,
+      "prediction_stability": 0.7605,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "STARTTLS_NOT_OBSERVED": {
+      "samples": 100,
+      "accuracy": 0.96,
+      "macro_f1": 0.937,
+      "per_class_f1": {
+        "LOW": 0.9863,
+        "MEDIUM": 1.0,
+        "HIGH": 0.9434,
+        "CRITICAL": 0.8182
+      },
+      "mean_confidence": 0.9322,
+      "prediction_stability": 0.8837,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "START_AFTER_STARTTLS": {
+      "samples": 100,
+      "accuracy": 0.97,
+      "macro_f1": 0.9182,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 1.0,
+        "HIGH": 0.9455,
+        "CRITICAL": 0.7273
+      },
+      "mean_confidence": 0.9312,
+      "prediction_stability": 0.8863,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 100
+      }
+    },
+    "START_MID_SESSION": {
+      "samples": 100,
+      "accuracy": 0.9,
+      "macro_f1": 0.8819,
+      "per_class_f1": {
+        "LOW": 1.0,
+        "MEDIUM": 0.8636,
+        "HIGH": 0.8864,
+        "CRITICAL": 0.7778
+      },
+      "mean_confidence": 0.8071,
+      "prediction_stability": 0.7022,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 97,
+        "LOW_EVIDENCE": 3
+      }
+    },
+    "TRUNCATED_SESSION": {
+      "samples": 100,
+      "accuracy": 0.92,
+      "macro_f1": 0.8859,
+      "per_class_f1": {
+        "LOW": 0.9714,
+        "MEDIUM": 1.0,
+        "HIGH": 0.88,
+        "CRITICAL": 0.6923
+      },
+      "mean_confidence": 0.9287,
+      "prediction_stability": 0.8754,
+      "evidence_quality_distribution": {
+        "SUFFICIENT_EVIDENCE": 98,
+        "LOW_EVIDENCE": 2
+      }
+    }
+  }
+}

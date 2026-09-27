@@ -11,6 +11,8 @@ import FindingCard from '../components/FindingCard';
 import EvidencePanel from '../components/EvidencePanel';
 import Recommendations from '../components/Recommendations';
 import HistoryTable from '../components/HistoryTable';
+import CopilotChat from '../components/CopilotChat';
+import { copilotApi } from '../api/copilotApi';
 
 import mockAnalysis from '../mock/mockAnalysis.json';
 
@@ -19,8 +21,8 @@ describe('Frontend Component Unit & Integration Tests', () => {
   describe('UploadForm', () => {
     it('renders upload prompt', () => {
       render(<UploadForm onUpload={vi.fn()} />);
-      expect(screen.getByText(/click to upload/i)).toBeInTheDocument();
-      expect(screen.getByText('.pcap')).toBeInTheDocument();
+      expect(screen.getByText(/choose a pcap file/i)).toBeInTheDocument();
+      expect(screen.getByText('PCAP')).toBeInTheDocument();
     });
 
     it('rejects invalid file extension', () => {
@@ -29,7 +31,7 @@ describe('Frontend Component Unit & Integration Tests', () => {
       const badFile = new File(['dummy'], 'malware.exe', { type: 'application/octet-stream' });
 
       fireEvent.change(input, { target: { files: [badFile] } });
-      expect(screen.getByText(/invalid file extension/i)).toBeInTheDocument();
+      expect(screen.getByText(/please select a valid \.pcap or \.pcapng/i)).toBeInTheDocument();
     });
 
     it('accepts valid .pcap file and calls onUpload upon submit', () => {
@@ -76,17 +78,17 @@ describe('Frontend Component Unit & Integration Tests', () => {
         />
       );
 
-      expect(screen.getByText(/Overall Security Posture:/i)).toBeInTheDocument();
+      expect(screen.getByText('High-risk security posture')).toBeInTheDocument();
       expect(screen.getByText('78')).toBeInTheDocument(); // Score
       expect(screen.getByText('rf-v1')).toBeInTheDocument(); // Model
       expect(screen.getByText('91%')).toBeInTheDocument(); // Confidence
-      expect(screen.getByText('4')).toBeInTheDocument(); // Total sessions
+      expect(screen.getAllByText('4').length).toBeGreaterThanOrEqual(1); // Total sessions
       expect(screen.getAllByText('2').length).toBeGreaterThanOrEqual(1); // Vulnerable sessions / counts
     });
 
     it('does not crash when optional fields are null', () => {
       render(<RiskSummary risk={null} summary={null} />);
-      expect(screen.getByText(/Overall Security Posture:/i)).toBeInTheDocument();
+      expect(screen.getByText('Security posture looks healthy')).toBeInTheDocument();
     });
   });
 
@@ -107,7 +109,7 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       // Verify Session details modal opens
       expect(screen.getByRole('dialog')).toBeInTheDocument();
-      expect(screen.getByText('Protocol Handshake & Upgrade Controls')).toBeInTheDocument();
+      expect(screen.getByText('Protocol Handshake')).toBeInTheDocument();
       expect(screen.getByText('Upgrade Advertised')).toBeInTheDocument();
     });
   });
@@ -120,19 +122,19 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       expect(screen.getByText(finding.title)).toBeInTheDocument();
       expect(screen.getByText(finding.description)).toBeInTheDocument();
-      expect(screen.getByText(`Type: ${finding.finding_type}`)).toBeInTheDocument();
-      expect(screen.getByText(`Session: ${finding.session_id}`)).toBeInTheDocument();
+      expect(screen.getByText(finding.finding_type)).toBeInTheDocument();
+      expect(screen.getByText(finding.session_id)).toBeInTheDocument();
     });
 
     it('toggles evidence panel visibility', () => {
       const finding = mockAnalysis.findings[0];
       render(<FindingCard finding={finding} />);
 
-      const evidenceBtn = screen.getByRole('button', { name: /evidence/i });
+      const evidenceBtn = screen.getAllByRole('button', { name: /evidence/i })[0];
       fireEvent.click(evidenceBtn);
 
-      expect(screen.getByText(/packet dissector evidence/i)).toBeInTheDocument();
-      expect(screen.getByText(/authentication before tls/i)).toBeInTheDocument();
+      expect(screen.getByText(/supporting evidence/i)).toBeInTheDocument();
+      expect(screen.getByText(/server port/i)).toBeInTheDocument();
     });
   });
 
@@ -173,6 +175,58 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
       expect(screen.getByText('test_traffic.pcap')).toBeInTheDocument();
       expect(screen.getByText('completed')).toBeInTheDocument();
+    });
+  });
+
+  // --- CopilotChat ---
+  describe('CopilotChat', () => {
+    it('renders header, initial welcome message, and suggested questions', async () => {
+      vi.spyOn(copilotApi, 'getStatus').mockResolvedValue({
+        status: 'online',
+        model: 'mailscope-sec:3b',
+        model_available: true,
+      });
+
+      vi.spyOn(copilotApi, 'getSuggestions').mockResolvedValue([
+        'What are the risks of plaintext email authentication observed here?',
+        'How can I enforce modern TLS (v1.3) and strong ciphers in my mail server?',
+      ]);
+
+      render(<CopilotChat analysis={mockAnalysis} />);
+
+      expect(screen.getByText('Agent SMS')).toBeInTheDocument();
+      expect(screen.getByText('OLLAMA')).toBeInTheDocument();
+      expect(await screen.findByText(/What are the risks of plaintext/i)).toBeInTheDocument();
+      expect(screen.getByText(/How can I enforce modern TLS/i)).toBeInTheDocument();
+    });
+
+    it('submits a question and displays assistant response with source metadata', async () => {
+      vi.spyOn(copilotApi, 'getStatus').mockResolvedValue({
+        status: 'online',
+        model: 'mailscope-sec:3b',
+        model_available: true,
+      });
+
+      vi.spyOn(copilotApi, 'getSuggestions').mockResolvedValue([]);
+      vi.spyOn(copilotApi, 'chat').mockResolvedValue({
+        response: 'Enforce STARTTLS and reject plaintext AUTH commands.',
+        model: 'mailscope-sec:3b',
+        source: 'ollama',
+      });
+
+      render(<CopilotChat analysis={mockAnalysis} />);
+
+      expect(await screen.findByText(/Agent SMS/i)).toBeInTheDocument();
+
+      const input = screen.getByPlaceholderText(/Ask about security findings/i);
+      fireEvent.change(input, { target: { value: 'How to fix plaintext auth?' } });
+
+      const sendButton = screen.getByTitle('Send message');
+      fireEvent.click(sendButton);
+
+      expect(screen.getByText('How to fix plaintext auth?')).toBeInTheDocument();
+      expect(await screen.findByText(/Enforce STARTTLS and reject plaintext/i)).toBeInTheDocument();
+      expect(screen.getAllByText(/source: ollama/i).length).toBeGreaterThanOrEqual(1);
     });
   });
 });

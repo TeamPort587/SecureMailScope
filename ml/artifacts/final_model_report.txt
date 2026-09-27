@@ -1,0 +1,31 @@
+==================================================================
+SECUREMAILSCOPE FINAL MODEL AUDIT & ROBUSTNESS UPGRADE REPORT
+==================================================================
+Selected Model:          RandomForestClassifier
+Final Verdict:           READY_WITH_LIMITATIONS
+Dataset Size:            4482 train + 945 val + 977 test
+Partial Capture Dataset: 1200 samples across 12 scenarios
+Unique Signatures:       2028
+Train-Test Overlap:      0.00%
+
+--- METRICS SUMMARY ---
+  Test Accuracy:         0.9980
+  Test Macro F1:         0.9979
+  Challenge Macro F1:    0.9625
+  Partial Capture F1:    0.9256
+  Perturbation Acc:      0.8093 (up from 0.3255)
+
+--- MODEL SUITABILITY SCORECARD ---
+  RandomForestClassifier           | Suitability: 0.9568 | Partial F1: 0.8793 | CV F1: 0.9964
+  ExtraTreesClassifier             | Suitability: 0.9287 | Partial F1: 0.7750 | CV F1: 0.9989
+  HistGradientBoostingClassifier   | Suitability: 0.9507 | Partial F1: 0.9039 | CV F1: 0.9998
+  LogisticRegression               | Suitability: 0.8813 | Partial F1: 0.7021 | CV F1: 0.9661
+  DummyClassifier                  | Suitability: 0.4203 | Partial F1: 0.2679 | CV F1: 0.2303
+
+Selection Justification: RandomForestClassifier achieved the top production suitability score (0.9568), demonstrating 100% domain correctness under risk reconciliation, high partial capture robustness (0.8793), superior probability calibration, and full explainability via native tree feature importances.
+
+--- KNOWN LIMITATIONS ---
+  * Dataset is primarily composed of validated scenario archetypes rather than live production captures.
+  * Real-world holdout evaluation is currently designated INSUFFICIENT_REAL_HOLDOUT_DATA (4 curated demo captures).
+  * In incomplete PCAP sessions where TLS handshake and certificates are entirely unobserved, predictions are marked LOW_EVIDENCE / PARTIAL_EVIDENCE.
+  * Continuous model calibration and field PCAP verification is recommended as network traffic diversity increases.

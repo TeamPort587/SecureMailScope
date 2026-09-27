@@ -94,6 +94,12 @@ class DuplicateEmailError extends AppError {
   }
 }
 
+class CopilotUnavailableError extends AppError {
+  constructor(message = 'The AI copilot service is currently unavailable.') {
+    super(message, 503, 'COPILOT_UNAVAILABLE');
+  }
+}
+
 module.exports = {
   AppError,
   InvalidFileError,
@@ -108,4 +114,5 @@ module.exports = {
   AnalysisTimeoutError,
   ValidationError,
   DuplicateEmailError,
+  CopilotUnavailableError,
 };

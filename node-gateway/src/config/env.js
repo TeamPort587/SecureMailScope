@@ -28,6 +28,10 @@ const envSchema = z.object({
 
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().positive().default(900000),
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().positive().default(100),
+
+  OLLAMA_BASE_URL: z.string().url().default('http://localhost:11434'),
+  OLLAMA_MODEL: z.string().default('mailscope-sec:3b'),
+  OLLAMA_TIMEOUT_MS: z.coerce.number().int().positive().default(60000),
 });
 
 let env;

@@ -25,6 +25,7 @@ import argparse
 import json
 import math
 import sys
+import warnings
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -50,7 +51,9 @@ from ml.feature_engineering.schema import (
     SCHEMA_VERSION,
 )
 from ml.feature_engineering.validator import validate_analysis_strict
-from ml.training.train import METADATA_FILENAME, MODEL_FILENAME
+
+MODEL_FILENAME: str = "risk_model.joblib"
+METADATA_FILENAME: str = "model_metadata.json"
 
 
 # ── Exceptions ─────────────────────────────────────────────────────
@@ -243,7 +246,18 @@ class RiskPredictor:
                 f"Model: {model_features}, Schema: {ALL_FEATURES}"
             )
 
-        self.pipeline = joblib.load(model_path)
+        with warnings.catch_warnings():
+            try:
+                from sklearn.exceptions import InconsistentVersionWarning
+                warnings.simplefilter("ignore", InconsistentVersionWarning)
+            except ImportError:
+                pass
+            self.pipeline = joblib.load(model_path)
+        # Compatibility safeguard across scikit-learn versions
+        if hasattr(self.pipeline, "named_steps") and "imputer" in self.pipeline.named_steps:
+            imp = self.pipeline.named_steps["imputer"]
+            if not hasattr(imp, "_fill_dtype") and hasattr(imp, "_fit_dtype"):
+                imp._fill_dtype = imp._fit_dtype
 
     def predict_session(
         self,

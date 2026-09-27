@@ -1,0 +1,46 @@
+==================================================================
+SECUREMAILSCOPE ML DATASET QUALITY REPORT
+==================================================================
+Total Samples: 6404
+
+--- CLASS DISTRIBUTION ---
+  LOW       : 1602
+  CRITICAL  : 1602
+  MEDIUM    : 1600
+  HIGH      : 1600
+Note: The class distribution is intentionally approximately balanced for MVP model training and does not represent real-world security risk prevalence.
+
+--- PROTOCOL DISTRIBUTION ---
+  SMTP      : 2513
+  IMAP      : 2239
+  POP3      : 1652
+
+--- ENCRYPTION MODE DISTRIBUTION ---
+  PLAINTEXT      : 640
+  STARTTLS       : 3480
+  IMPLICIT_TLS   : 2284
+
+--- DATA SOURCE DISTRIBUTION ---
+  CURATED_SYNTHETIC   : 6400
+  DEMO                : 4
+
+--- FEATURE DIVERSITY & VALIDATION ---
+  Unique Feature Signatures:        2028
+  Duplicate Feature Signature Rate: 68.33%
+  Validated Sound Rows:            6404
+  Validation Failures:             0
+
+--- FINDING COUNTS VS RISK LABEL ---
+  LOW      -> Crit: 0.0, High: 0.0, Med: 0.0, Low: 0.7
+  MEDIUM   -> Crit: 0.0, High: 0.0, Med: 0.7, Low: 0.9
+  HIGH     -> Crit: 0.0, High: 0.9, Med: 0.9, Low: 0.7
+  CRITICAL -> Crit: 0.8, High: 0.7, Med: 0.7, Low: 0.6
+
+--- SCENARIO LEAKAGE & SPLIT REPORT ---
+  Strategy: group_aware_stratified_by_feature_signature
+  Train/Val Overlap Families:  34
+  Train/Test Overlap Families: 35
+  Real Holdout Status:         INSUFFICIENT_REAL_HOLDOUT_DATA
+  Note: Group-aware stratified splitting isolates distinct feature signatures into individual splits, reducing exact signature leakage to 0% while preserving class balance.
+
+==================================================================

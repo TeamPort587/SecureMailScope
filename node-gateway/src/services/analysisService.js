@@ -177,6 +177,7 @@ function transformForPersistence(data) {
     priority: r.priority,
     title: r.title,
     recommendation_text: r.description,
+    affected_sessions: r.affected_sessions || [],
   }));
 
   return {

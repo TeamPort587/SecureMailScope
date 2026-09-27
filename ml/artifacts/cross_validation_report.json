@@ -1,0 +1,41 @@
+{
+  "n_splits": 5,
+  "random_state": 42,
+  "train_samples": 4479,
+  "models": {
+    "LogisticRegression": {
+      "accuracy_mean": 0.9714,
+      "accuracy_std": 0.004,
+      "macro_f1_mean": 0.9713,
+      "macro_f1_std": 0.0041,
+      "precision_macro_mean": 0.9724,
+      "precision_macro_std": 0.0037,
+      "recall_macro_mean": 0.9714,
+      "recall_macro_std": 0.004,
+      "fold_f1_scores": [
+        0.9663,
+        0.9731,
+        0.9676,
+        0.9777,
+        0.9719
+      ]
+    },
+    "RandomForestClassifier": {
+      "accuracy_mean": 0.9935,
+      "accuracy_std": 0.0028,
+      "macro_f1_mean": 0.9935,
+      "macro_f1_std": 0.0028,
+      "precision_macro_mean": 0.9936,
+      "precision_macro_std": 0.0027,
+      "recall_macro_mean": 0.9935,
+      "recall_macro_std": 0.0028,
+      "fold_f1_scores": [
+        0.9921,
+        0.9933,
+        0.9989,
+        0.991,
+        0.9922
+      ]
+    }
+  }
+}

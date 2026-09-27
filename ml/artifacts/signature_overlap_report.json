@@ -1,8 +1,8 @@
 {
   "strategy": "group_aware_stratified_by_feature_signature",
-  "unique_signatures_train": 658,
-  "unique_signatures_validation": 147,
-  "unique_signatures_test": 138,
+  "unique_signatures_train": 1415,
+  "unique_signatures_validation": 289,
+  "unique_signatures_test": 324,
   "train_validation_signature_overlap_count": 0,
   "train_validation_signature_overlap_rate": 0.0,
   "train_test_signature_overlap_count": 0,
@@ -47,10 +47,12 @@
   ],
   "train_validation_overlap_count": 34,
   "train_test_overlap_families": [
+    "DEMO_CAPTURE",
     "POSTURE_BOUNDARY_HIGH_CRIT_MULTIPLE_HIGH_FINDINGS",
     "POSTURE_BOUNDARY_HIGH_CRIT_STARTTLS_FAIL_OBSCURED",
     "POSTURE_BOUNDARY_LOW_MED_MINOR_LOW_FINDINGS",
     "POSTURE_BOUNDARY_LOW_MED_SELF_SIGNED_CLEAN_CIPHER",
+    "POSTURE_BOUNDARY_LOW_MED_UNOBSERVED_HANDSHAKE",
     "POSTURE_BOUNDARY_MED_HIGH_PFS_AND_SELF_SIGNED",
     "POSTURE_BOUNDARY_MED_HIGH_WEAK_KEY_ISOLATED",
     "POSTURE_COMPOUNDING_FAILURES_NO_CRIT_COUNT",
@@ -81,12 +83,13 @@
     "POSTURE_STARTTLS_EARLY_AUTH_WEAK_CIPHER",
     "POSTURE_WEAK_KEY_AND_EXPIRED_CERT"
   ],
-  "train_test_overlap_count": 33,
+  "train_test_overlap_count": 35,
   "validation_test_overlap_families": [
     "POSTURE_BOUNDARY_HIGH_CRIT_MULTIPLE_HIGH_FINDINGS",
     "POSTURE_BOUNDARY_HIGH_CRIT_STARTTLS_FAIL_OBSCURED",
     "POSTURE_BOUNDARY_LOW_MED_MINOR_LOW_FINDINGS",
     "POSTURE_BOUNDARY_LOW_MED_SELF_SIGNED_CLEAN_CIPHER",
+    "POSTURE_BOUNDARY_LOW_MED_UNOBSERVED_HANDSHAKE",
     "POSTURE_BOUNDARY_MED_HIGH_PFS_AND_SELF_SIGNED",
     "POSTURE_BOUNDARY_MED_HIGH_WEAK_KEY_ISOLATED",
     "POSTURE_COMPOUNDING_FAILURES_NO_CRIT_COUNT",
@@ -117,17 +120,19 @@
     "POSTURE_STARTTLS_EARLY_AUTH_WEAK_CIPHER",
     "POSTURE_WEAK_KEY_AND_EXPIRED_CERT"
   ],
-  "validation_test_overlap_count": 33,
+  "validation_test_overlap_count": 34,
   "note": "Group-aware stratified splitting isolates distinct feature signatures into individual splits, reducing exact signature leakage to 0% while preserving class balance.",
   "data_source_distribution_per_split": {
     "train": {
-      "CURATED_SYNTHETIC": 1400
+      "CURATED_SYNTHETIC": 4479,
+      "DEMO": 3
     },
     "validation": {
-      "CURATED_SYNTHETIC": 296
+      "CURATED_SYNTHETIC": 945
     },
     "test": {
-      "CURATED_SYNTHETIC": 304
+      "CURATED_SYNTHETIC": 976,
+      "DEMO": 1
     }
   },
   "real_holdout_status": "INSUFFICIENT_REAL_HOLDOUT_DATA"

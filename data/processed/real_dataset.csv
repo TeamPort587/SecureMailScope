@@ -1,0 +1,5 @@
+analysis_id,session_id,scenario_id,scenario_family,data_source,encryption_plaintext,encryption_starttls,encryption_implicit,deprecated_tls,weak_cipher,expired_cert,not_yet_valid_cert,weak_key,auth_before_tls,tls_upgrade_failed,pfs_missing,self_signed,protocol_smtp,protocol_imap,protocol_pop3,critical_count,high_count,medium_count,low_count,risk_label
+demo-001,smtp-001,demo-001_smtp-001,DEMO_CAPTURE,DEMO,0,1,0,0.0,0.0,0.0,0.0,0.0,0,0.0,0.0,0.0,1,0,0,0,0,0,0,LOW
+demo-001,smtp-002,demo-001_smtp-002,DEMO_CAPTURE,DEMO,0,1,0,,,,,,1,1.0,,,1,0,0,1,1,0,0,CRITICAL
+demo-001,imap-001,demo-001_imap-001,DEMO_CAPTURE,DEMO,1,0,0,,,,,,1,,,,0,1,0,2,0,0,0,CRITICAL
+demo-001,pop3-001,demo-001_pop3-001,DEMO_CAPTURE,DEMO,0,0,1,0.0,0.0,,,,0,0.0,0.0,,0,0,1,0,0,0,0,LOW

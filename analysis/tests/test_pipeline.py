@@ -127,6 +127,17 @@ def test_pipeline_contract_conformity(monkeypatch):
         ),
         PacketRecord(
             frame_number=12,
+            timestamp=1788949810.15,
+            src_ip="10.0.1.20",
+            src_port=49153,
+            dst_ip="203.0.113.26",
+            dst_port=587,
+            tcp_stream=1,
+            protocol="SMTP",
+            application_data="STARTTLS",
+        ),
+        PacketRecord(
+            frame_number=13,
             timestamp=1788949810.2,
             src_ip="10.0.1.20",
             src_port=49153,

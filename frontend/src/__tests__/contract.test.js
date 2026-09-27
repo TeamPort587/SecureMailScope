@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import mockAnalysis from '../mock/mockAnalysis.json';
 import { DEMO_PRESETS } from '../mock/demoCaptures';
+import { analysisApi } from '../api/analysisApi';
 
 describe('Shared Contract Compliance (node-react-analysis-response.json)', () => {
   function validateAnalysisContract(data) {
@@ -79,5 +80,13 @@ describe('Shared Contract Compliance (node-react-analysis-response.json)', () =>
     DEMO_PRESETS.forEach((preset) => {
       validateAnalysisContract(preset.data);
     });
+  });
+
+  it('resolves all demo presets via analysisApi.getAnalysis()', async () => {
+    for (const preset of DEMO_PRESETS) {
+      const data = await analysisApi.getAnalysis(preset.data.analysis_id);
+      expect(data).toBeDefined();
+      expect(data.analysis_id).toBe(preset.data.analysis_id);
+    }
   });
 });

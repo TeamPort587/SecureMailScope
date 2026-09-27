@@ -1,0 +1,40 @@
+{
+  "baseline_accuracy": 0.998,
+  "baseline_macro_f1": 0.9979,
+  "missing_evidence_accuracy": 0.9889,
+  "missing_evidence_stability": 0.8401,
+  "partial_capture_accuracy": 0.8093,
+  "boundary_accuracy": 1.0,
+  "boundary_macro_f1": 1.0,
+  "rare_combination_accuracy": 1.0,
+  "rare_combination_macro_f1": 1.0,
+  "prediction_stability": 0.8401,
+  "overall_robustness_score": 0.9585,
+  "details": {
+    "missing_evidence": {
+      "samples_evaluated": 813,
+      "prediction_stability": 0.8401,
+      "accuracy_against_derived_ground_truth": 0.9889,
+      "accuracy_against_original_label": 0.8376
+    },
+    "partial_capture": {
+      "samples_evaluated": 813,
+      "accuracy_against_derived_ground_truth": 0.8093
+    },
+    "boundary": {
+      "samples_evaluated": 374,
+      "boundary_accuracy": 1.0,
+      "boundary_macro_f1": 1.0
+    },
+    "rare_combinations": {
+      "samples_evaluated": 135,
+      "rare_combination_accuracy": 1.0,
+      "rare_combination_macro_f1": 1.0
+    }
+  },
+  "partial_capture_challenge_metrics": {
+    "overall_accuracy": 0.9458,
+    "overall_macro_f1": 0.9256,
+    "mean_confidence": 0.8693
+  }
+}

@@ -79,19 +79,14 @@ def analyze_email_security(
         upgrade_advertised = "UNKNOWN"
         upgrade_requested = "UNKNOWN"
         upgrade_succeeded = "YES" if has_tls else "NO"
-    elif upgrade_advertised == "YES" or upgrade_requested == "YES":
+    elif upgrade_requested == "YES":
         encryption_mode = "STARTTLS"
-        if has_tls and upgrade_requested == "YES":
-            upgrade_succeeded = "YES"
-        else:
-            upgrade_succeeded = "NO"
+        upgrade_succeeded = "YES" if has_tls else "NO"
     elif has_tls:
-        encryption_mode = "IMPLICIT_TLS"
+        encryption_mode = "STARTTLS" if upgrade_advertised == "YES" else "IMPLICIT_TLS"
         upgrade_succeeded = "YES"
     elif len(packets) >= 2 and protocol in ("SMTP", "IMAP", "POP3"):
         encryption_mode = "PLAINTEXT"
-        upgrade_advertised = "NO"
-        upgrade_requested = "NO"
         upgrade_succeeded = "NO"
     else:
         encryption_mode = "UNKNOWN"

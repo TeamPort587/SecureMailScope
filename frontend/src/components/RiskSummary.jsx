@@ -183,6 +183,14 @@ export default function RiskSummary({
                     value={confidence}
                   />
 
+                  {risk?.model_version && (
+                    <MetadataItem
+                      label="Model"
+                      value={risk.model_version}
+                      mono
+                    />
+                  )}
+
                   {filename && (
                     <MetadataItem
                       label="Capture"

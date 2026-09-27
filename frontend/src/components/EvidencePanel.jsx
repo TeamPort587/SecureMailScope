@@ -7,10 +7,18 @@ import {
   XCircle,
 } from 'lucide-react';
 
+const ACRONYMS = new Set(['PFS', 'TLS', 'SSL', 'IP', 'TCP', 'UDP', 'DNS', 'SMTP', 'IMAP', 'POP3']);
+
 function formatKey(key) {
   return key
     .replace(/_/g, ' ')
-    .replace(/\b\w/g, (char) => char.toUpperCase());
+    .replace(/\b\w+/g, (word) => {
+      const upper = word.toUpperCase();
+      if (ACRONYMS.has(upper)) {
+        return upper;
+      }
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
 }
 
 function formatValue(value) {

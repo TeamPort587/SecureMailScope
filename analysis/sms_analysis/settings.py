@@ -19,7 +19,6 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    "django.contrib.contenttypes",
     "rest_framework",
     "analysis.api",
 ]

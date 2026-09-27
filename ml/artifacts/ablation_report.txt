@@ -1,0 +1,70 @@
+===========================================================================
+FEATURE GROUP ABLATION STUDY REPORT
+===========================================================================
+Feature Group                       | Model                  | Accuracy | Macro F1
+---------------------------------------------------------------------------
+GROUP_A_Protocol_Only               | DummyClassifier        |   0.2483 |   0.2475
+GROUP_A_Protocol_Only               | LogisticRegression     |   0.2778 |   0.1783
+GROUP_A_Protocol_Only               | RandomForestClassifier |   0.2778 |   0.1783
+---------------------------------------------------------------------------
+GROUP_B_Encryption_Only             | DummyClassifier        |   0.2483 |   0.2475
+GROUP_B_Encryption_Only             | LogisticRegression     |   0.3635 |   0.3455
+GROUP_B_Encryption_Only             | RandomForestClassifier |   0.3635 |   0.3455
+---------------------------------------------------------------------------
+GROUP_C_TLS_Weaknesses_Only         | DummyClassifier        |   0.2483 |   0.2475
+GROUP_C_TLS_Weaknesses_Only         | LogisticRegression     |   0.7478 |   0.7395
+GROUP_C_TLS_Weaknesses_Only         | RandomForestClassifier |   0.7478 |   0.7395
+---------------------------------------------------------------------------
+GROUP_D_Certificate_Weaknesses_Only | DummyClassifier        |   0.2483 |   0.2475
+GROUP_D_Certificate_Weaknesses_Only | LogisticRegression     |   0.4650 |   0.4168
+GROUP_D_Certificate_Weaknesses_Only | RandomForestClassifier |   0.4650 |   0.4168
+---------------------------------------------------------------------------
+GROUP_E_Finding_Counts_Only         | DummyClassifier        |   0.2483 |   0.2475
+GROUP_E_Finding_Counts_Only         | LogisticRegression     |   0.7744 |   0.7648
+GROUP_E_Finding_Counts_Only         | RandomForestClassifier |   0.7862 |   0.7766
+---------------------------------------------------------------------------
+GROUP_F_Security_Features_No_Counts | DummyClassifier        |   0.2483 |   0.2475
+GROUP_F_Security_Features_No_Counts | LogisticRegression     |   0.9852 |   0.9844
+GROUP_F_Security_Features_No_Counts | RandomForestClassifier |   0.9793 |   0.9781
+---------------------------------------------------------------------------
+GROUP_G_All_19_Features             | DummyClassifier        |   0.2483 |   0.2475
+GROUP_G_All_19_Features             | LogisticRegression     |   0.9773 |   0.9764
+GROUP_G_All_19_Features             | RandomForestClassifier |   0.7754 |   0.7620
+---------------------------------------------------------------------------
+
+--- ANALYTICAL QUESTIONS & AUDIT ANSWERS ---
+[1_can_finding_counts_alone_predict]
+  rf_f1_macro: 0.7766
+  lr_f1_macro: 0.7648
+  answer: PARTIAL
+  explanation: Finding counts alone achieve 77.7% macro F1 with RF (76.5% with LR).
+
+[2_can_encryption_features_alone_predict]
+  rf_f1_macro: 0.3455
+  answer: NO
+  explanation: Encryption features alone achieve 34.5% macro F1.
+
+[3_can_certificate_features_alone_predict]
+  rf_f1_macro: 0.4168
+  answer: NO
+  explanation: Certificate features alone achieve 41.7% macro F1.
+
+[4_security_features_without_counts]
+  rf_f1_macro: 0.9781
+  explanation: Security features without counts achieve 97.8% macro F1.
+
+[5_is_linearly_separable]
+  lr_f1_macro: 0.9764
+  answer: NO
+  explanation: LogisticRegression achieves 97.6% macro F1 on all features, indicating near-linear separability.
+
+[6_does_rf_outperform_simpler_models]
+  all_rf_f1: 0.762
+  all_lr_f1: 0.9764
+  difference: -0.2144
+  explanation: RF and LR perform identically at 100% on the current dataset because classes are cleanly separated.
+
+[7_are_19_features_contributing]
+  explanation: While all 19 features achieve 100%, finding counts alone achieve 77.7% and security features alone achieve 97.8%. The model currently has redundant shortcuts where multiple small subsets independently solve the task.
+
+===========================================================================

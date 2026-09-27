@@ -12,7 +12,7 @@ from analysis.rule_engine.severity import Confidence, Severity
 class FailedSTARTTLSRule:
     def evaluate(self, profile: SecurityProfile, finding_id: str) -> Optional[Finding]:
         sec = profile.security
-        if sec.upgrade_advertised == "YES" and sec.upgrade_succeeded == "NO":
+        if sec.upgrade_requested == "YES" and sec.upgrade_succeeded == "NO":
             evidence = {
                 "upgrade_advertised": sec.upgrade_advertised,
                 "upgrade_requested": sec.upgrade_requested,

@@ -1,0 +1,82 @@
+======================================================================
+FEATURE-TO-LABEL LEAKAGE AUDIT REPORT
+======================================================================
+Total Samples Analyzed: 6404
+Leakage Purity Threshold: 95%
+Flagged Potential Leakage Patterns: 7
+
+--- FLAGGED POTENTIAL LABEL LEAKAGES ---
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'encryption_plaintext' = 1 -> 100% indicates 'CRITICAL' (purity: 100.0%, count: 640)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'expired_cert' = 1 -> 100% indicates 'HIGH' (purity: 100.0%, count: 270)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'not_yet_valid_cert' = 1 -> 100% indicates 'HIGH' (purity: 100.0%, count: 132)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'auth_before_tls' = 1 -> 100% indicates 'CRITICAL' (purity: 100.0%, count: 1410)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'critical_count' = 1 -> 100% indicates 'CRITICAL' (purity: 100.0%, count: 660)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'critical_count' = 2 -> 100% indicates 'CRITICAL' (purity: 100.0%, count: 248)
+  [POTENTIAL_LABEL_LEAKAGE] Feature 'medium_count' = 3 -> 100% indicates 'HIGH' (purity: 100.0%, count: 18)
+
+--- DETAILED FEATURE-BY-FEATURE SUMMARY ---
+Feature: encryption_plaintext (Risk: HIGH, Missing: 0.0%)
+   -> Value 1 is exclusive to class CRITICAL (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.0, CRITICAL: avg 0.4
+
+Feature: encryption_starttls (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.533, MEDIUM: avg 0.439, HIGH: avg 0.635, CRITICAL: avg 0.566
+
+Feature: encryption_implicit (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.467, MEDIUM: avg 0.561, HIGH: avg 0.365, CRITICAL: avg 0.035
+
+Feature: deprecated_tls (Risk: LOW, Missing: 18.2%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.256, CRITICAL: avg 0.251
+
+Feature: weak_cipher (Risk: LOW, Missing: 18.2%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.269, CRITICAL: avg 0.434
+
+Feature: expired_cert (Risk: HIGH, Missing: 35.9%)
+   -> Value 1 is exclusive to class HIGH (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.221, CRITICAL: avg 0.0
+
+Feature: not_yet_valid_cert (Risk: HIGH, Missing: 35.9%)
+   -> Value 1 is exclusive to class HIGH (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.108, CRITICAL: avg 0.0
+
+Feature: weak_key (Risk: LOW, Missing: 35.9%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.363, CRITICAL: avg 0.188
+
+Feature: auth_before_tls (Risk: HIGH, Missing: 0.0%)
+   -> Value 1 is exclusive to class CRITICAL (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.0, CRITICAL: avg 0.88
+
+Feature: tls_upgrade_failed (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.194, CRITICAL: avg 0.133
+
+Feature: pfs_missing (Risk: LOW, Missing: 18.2%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.642, HIGH: avg 0.385, CRITICAL: avg 0.343
+
+Feature: self_signed (Risk: LOW, Missing: 35.9%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.422, HIGH: avg 0.307, CRITICAL: avg 0.063
+
+Feature: protocol_smtp (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.418, MEDIUM: avg 0.388, HIGH: avg 0.387, CRITICAL: avg 0.404
+
+Feature: protocol_imap (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.328, MEDIUM: avg 0.347, HIGH: avg 0.346, CRITICAL: avg 0.348
+
+Feature: protocol_pop3 (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.254, MEDIUM: avg 0.265, HIGH: avg 0.268, CRITICAL: avg 0.248
+
+Feature: critical_count (Risk: HIGH, Missing: 0.0%)
+   -> Value 1 is exclusive to class CRITICAL (100.0%)
+   -> Value 2 is exclusive to class CRITICAL (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.0, CRITICAL: avg 0.722
+
+Feature: high_count (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.0, HIGH: avg 0.958, CRITICAL: avg 0.759
+
+Feature: medium_count (Risk: HIGH, Missing: 0.0%)
+   -> Value 3 is exclusive to class HIGH (100.0%)
+   -> Numeric Means: LOW: avg 0.0, MEDIUM: avg 0.703, HIGH: avg 0.909, CRITICAL: avg 0.698
+
+Feature: low_count (Risk: LOW, Missing: 0.0%)
+   -> Numeric Means: LOW: avg 0.747, MEDIUM: avg 0.875, HIGH: avg 0.724, CRITICAL: avg 0.628
+
+======================================================================
