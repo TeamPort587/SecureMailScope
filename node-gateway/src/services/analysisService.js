@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const env = require('../config/env');
 const { calculateSHA256 } = require('../utils/hash');
 const { analyzeFile } = require('./djangoClient');
 const { validateDjangoResponse } = require('../validators/analysisSchema');
@@ -19,7 +20,7 @@ const {
  * 3. Call Django
  * 4. Validate response
  * 5. Transform & persist in transaction
- * 6. Cleanup temp file
+ * 6. Retain capture file for session export & cleanup upload temp
  * 7. Return result
  */
 async function processUpload(userId, file) {
@@ -72,8 +73,8 @@ async function processUpload(userId, file) {
     // Step 6: Persist in transaction
     await db.persistAnalysisResult(analysisId, mappedData);
 
-    // Step 7: Cleanup temp file
-    cleanupFile(filePath);
+    // Step 7: Retain capture file for session extraction
+    retainCaptureFile(filePath, analysisId, originalFilename);
 
     // Step 8: Retrieve and return the complete stored analysis
     const storedAnalysis = await db.getAnalysisById(analysisId, userId);
@@ -113,7 +114,7 @@ function transformForPersistence(data) {
   // Map sessions
   const sessions = data.sessions.map((s) => ({
     session_ref: s.session_id,
-    tcp_stream: null, // Not in contract
+    tcp_stream: s.tcp_stream !== undefined && s.tcp_stream !== null ? s.tcp_stream : null,
     protocol: s.protocol,
     service: s.service || null,
     service_port: s.server_port,
@@ -123,9 +124,9 @@ function transformForPersistence(data) {
     dst_port: s.server_port,
     encryption_mode: s.security.encryption_mode,
     capture_completeness: s.security.capture_completeness,
-    risk_label: null, // Not in contract per-session
-    start_time: null,
-    end_time: null,
+    risk_label: s.risk?.level || null,
+    start_time: s.start_time || null,
+    end_time: s.end_time || null,
 
     // Flattened security_info
     security_info: {
@@ -208,12 +209,36 @@ function formatAnalysisResponse(analysis, fullData, summary) {
       implicit_tls_sessions: summary.implicit_tls_sessions || 0,
       vulnerable_sessions: summary.vulnerable_sessions || 0,
       findings_count: summary.findings_count,
+      severity_counts: summary.severity_counts || {},
+      protocol_counts: summary.protocol_counts || {},
+      encryption_mode_counts: summary.encryption_mode_counts || {},
+      critical_sessions: summary.critical_sessions || 0,
+      high_risk_sessions: summary.high_risk_sessions || 0,
     },
     sessions: fullData.sessions,
     findings: fullData.findings,
     risk: fullData.risk,
     recommendations: fullData.recommendations,
   };
+}
+
+/**
+ * Retain capture file in uploads directory named by analysisId for later session packet export.
+ */
+function retainCaptureFile(filePath, analysisId, originalFilename) {
+  try {
+    const ext = path.extname(originalFilename || filePath).toLowerCase() || '.pcap';
+    const uploadDir = path.resolve(env.UPLOAD_DIR);
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    const retainedPath = path.join(uploadDir, `${analysisId}${ext}`);
+    fs.copyFileSync(filePath, retainedPath);
+    cleanupFile(filePath);
+    logger.debug('Retained capture file for session extraction', { analysisId, retainedPath });
+  } catch (err) {
+    logger.warn('Failed to retain capture file', { analysisId, error: err.message });
+  }
 }
 
 /**

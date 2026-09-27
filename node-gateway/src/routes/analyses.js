@@ -5,6 +5,8 @@ const {
   getAnalyses,
   getAnalysisById,
   exportAnalysis,
+  downloadSessionPcap,
+  getSessionProvenance,
 } = require('../controllers/analysisController');
 
 /**
@@ -25,4 +27,17 @@ router.get('/:analysisId', authenticate, getAnalysisById);
  */
 router.get('/:analysisId/export', authenticate, exportAnalysis);
 
+/**
+ * GET /api/analyses/:analysisId/sessions/:sessionId/pcap
+ * Download exact original packets for an individual session in PCAP format.
+ */
+router.get('/:analysisId/sessions/:sessionId/pcap', authenticate, downloadSessionPcap);
+
+/**
+ * GET /api/analyses/:analysisId/sessions/:sessionId/provenance
+ * Get evidence provenance metadata linking session to source capture.
+ */
+router.get('/:analysisId/sessions/:sessionId/provenance', authenticate, getSessionProvenance);
+
 module.exports = router;
+

@@ -590,6 +590,7 @@ export default function Dashboard({ analysisHook }) {
                 <SessionTable
                   sessions={analysis.sessions}
                   findings={analysis.findings}
+                  analysisId={analysis.analysis_id}
                 />
 
               </section>

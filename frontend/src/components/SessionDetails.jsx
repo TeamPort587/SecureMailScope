@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   X,
   Shield,
@@ -9,19 +9,82 @@ import {
   CheckCircle2,
   XCircle,
   HelpCircle,
+  Download,
+  Copy,
+  Check,
+  AlertTriangle,
+  FileCode,
+  Terminal,
+  ShieldAlert,
 } from 'lucide-react';
+import { analysisApi } from '../api/analysisApi';
 
 import {
   formatTriState,
   formatEncryptionMode,
   formatDate,
 } from '../utils/formatters';
+import StandardsContextSection from './standards/StandardsContextSection';
 
-export default function SessionDetails({ session, onClose }) {
+export default function SessionDetails({
+  session,
+  onClose,
+  analysisId = null,
+  findings = [],
+}) {
   if (!session) return null;
+
+  const [copiedFilter, setCopiedFilter] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState(null);
 
   const enc = formatEncryptionMode(
     session?.security?.encryption_mode
+  );
+
+  const wiresharkFilter =
+    session.wireshark_filter ||
+    (session.tcp_stream !== null && session.tcp_stream !== undefined
+      ? `tcp.stream == ${session.tcp_stream}`
+      : null);
+
+  const handleCopyFilter = async () => {
+    if (!wiresharkFilter) return;
+    try {
+      await navigator.clipboard.writeText(wiresharkFilter);
+      setCopiedFilter(true);
+      setTimeout(() => setCopiedFilter(false), 2000);
+    } catch (_) {}
+  };
+
+  const handleDownloadPcap = async () => {
+    if (!analysisId) return;
+    setIsDownloading(true);
+    setDownloadError(null);
+    try {
+      const blob = await analysisApi.downloadSessionPcap(analysisId, session.session_id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${session.session_id || 'session'}_stream_${session.tcp_stream ?? 0}.pcap`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (err) {
+      setDownloadError(err.message || 'Failed to download session capture.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  const sessionRiskLevel = session.risk?.level || session.risk_label || 'LOW';
+  const sessionRiskScore = session.risk?.score ?? (sessionRiskLevel === 'CRITICAL' ? 95 : sessionRiskLevel === 'HIGH' ? 80 : sessionRiskLevel === 'MEDIUM' ? 50 : 15);
+  const sessionConfidence = session.risk?.confidence ?? 0.95;
+  const isPartial = session.security?.capture_completeness === 'PARTIAL';
+
+  const sessionFindings = findings.filter(
+    (f) => String(f.session_id) === String(session.session_id)
   );
 
   const TriStateBadge = ({ value, vulnerable = false }) => {
@@ -220,6 +283,12 @@ export default function SessionDetails({ session, onClose }) {
                 >
                   {enc.label}
                 </span>
+
+                {session.tcp_stream !== null && session.tcp_stream !== undefined && (
+                  <span className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-mono font-semibold text-slate-600">
+                    Stream #{session.tcp_stream}
+                  </span>
+                )}
               </div>
 
               <p className="mt-1 text-xs text-slate-500">
@@ -259,6 +328,123 @@ export default function SessionDetails({ session, onClose }) {
             space-y-8
           "
         >
+          {/* SESSION RISK & FORENSIC PROFILE */}
+          <section className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <SectionHeader
+                icon={ShieldAlert}
+                title="Session Risk Assessment"
+                description="Authoritative verdict derived strictly from this session's evidence"
+                color={sessionRiskLevel === 'CRITICAL' || sessionRiskLevel === 'HIGH' ? 'purple' : 'brand'}
+              />
+
+              <div className="flex items-center gap-2">
+                <span
+                  className={`inline-flex items-center rounded-lg border px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider ${
+                    sessionRiskLevel === 'CRITICAL'
+                      ? 'border-red-300 bg-red-50 text-red-700'
+                      : sessionRiskLevel === 'HIGH'
+                      ? 'border-orange-300 bg-orange-50 text-orange-700'
+                      : sessionRiskLevel === 'MEDIUM'
+                      ? 'border-amber-300 bg-amber-50 text-amber-700'
+                      : 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                  }`}
+                >
+                  {sessionRiskLevel}
+                </span>
+
+                <span className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs font-semibold text-slate-700">
+                  Score: {sessionRiskScore}/100
+                </span>
+
+                <span className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs text-slate-500">
+                  Conf: {Math.round(sessionConfidence * 100)}%
+                </span>
+              </div>
+            </div>
+
+            {/* PARTIAL CAPTURE WARNING */}
+            {isPartial && (
+              <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 text-amber-800">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                <div className="text-xs leading-5">
+                  <span className="font-semibold">Completeness: PARTIAL</span> — The capture does not contain the complete session. Some security properties cannot be established from the available evidence. Missing evidence is not converted into a negative security verdict.
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* FORENSIC PCAP EXTRACTION & WIRESHARK VERIFICATION */}
+          <section className="space-y-3">
+            <SectionHeader
+              icon={Terminal}
+              title="Forensic Evidence & Wireshark Filter"
+              description="Traceable network evidence verifiable directly in Wireshark"
+              color="sky"
+            />
+
+            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                      Wireshark Display Filter:
+                    </span>
+                    <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                      {wiresharkFilter || 'N/A'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-500">
+                    TCP Stream Index:{' '}
+                    <span className="font-mono font-semibold text-slate-700">
+                      {session.tcp_stream !== null && session.tcp_stream !== undefined ? `#${session.tcp_stream}` : 'None'}
+                    </span>
+                    {session.packet_count ? ` · ${session.packet_count} packets captured` : ''}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {wiresharkFilter && (
+                    <button
+                      type="button"
+                      onClick={handleCopyFilter}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                      title="Copy Wireshark filter to clipboard"
+                    >
+                      {copiedFilter ? (
+                        <>
+                          <Check className="h-3.5 w-3.5 text-emerald-600" />
+                          <span className="text-emerald-700">Copied!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="h-3.5 w-3.5 text-slate-500" />
+                          <span>Copy Filter</span>
+                        </>
+                      )}
+                    </button>
+                  )}
+
+                  {analysisId && (
+                    <button
+                      type="button"
+                      onClick={handleDownloadPcap}
+                      disabled={isDownloading}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-brand-600 bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-700 disabled:opacity-50 transition-colors shadow-sm"
+                      title="Download isolated packets belonging to this stream"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      {isDownloading ? 'Extracting...' : 'Download Session PCAP'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {downloadError && (
+                <p className="mt-2 text-xs text-red-600">{downloadError}</p>
+              )}
+            </div>
+          </section>
           {/* CONNECTION */}
 
           <section className="space-y-3">
@@ -697,6 +883,76 @@ export default function SessionDetails({ session, onClose }) {
               >
                 No certificate payload was captured for this
                 session.
+              </div>
+            )}
+          </section>
+
+          {/* STANDARDS CONTEXT & CONFIGURATION COMPARISON */}
+          <StandardsContextSection
+            standardsContext={session.standards_context}
+            session={session}
+          />
+
+          {/* FINDINGS & EVIDENCE TRACEABILITY */}
+          <section className="space-y-3">
+            <SectionHeader
+              icon={FileCode}
+              title={`Session Findings (${sessionFindings.length})`}
+              description="Independently verifiable security findings mapped to this session's packets"
+              color={sessionFindings.length > 0 ? 'purple' : 'brand'}
+            />
+
+            {sessionFindings.length > 0 ? (
+              <div className="space-y-3">
+                {sessionFindings.map((finding) => (
+                  <div
+                    key={finding.finding_id || finding.id}
+                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-2"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`inline-flex rounded-md border px-2 py-0.5 font-mono text-[10px] font-bold ${
+                            finding.severity === 'CRITICAL'
+                              ? 'border-red-200 bg-red-50 text-red-700'
+                              : finding.severity === 'HIGH'
+                              ? 'border-orange-200 bg-orange-50 text-orange-700'
+                              : finding.severity === 'MEDIUM'
+                              ? 'border-amber-200 bg-amber-50 text-amber-700'
+                              : 'border-blue-200 bg-blue-50 text-blue-700'
+                          }`}
+                        >
+                          {finding.severity}
+                        </span>
+                        <h5 className="text-xs font-bold text-slate-800">
+                          {finding.title}
+                        </h5>
+                      </div>
+                      <span className="font-mono text-[10px] text-slate-400">
+                        Confidence: {finding.confidence || 'OBSERVED'}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-slate-600 leading-relaxed">
+                      {finding.description}
+                    </p>
+
+                    {finding.evidence && (
+                      <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 p-2.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                          Packet Evidence Trace:
+                        </p>
+                        <pre className="font-mono text-[11px] text-slate-700 whitespace-pre-wrap overflow-x-auto">
+                          {JSON.stringify(finding.evidence, null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-xl border border-slate-200 bg-white p-4 text-center text-xs text-slate-500">
+                No security findings or policy violations detected for this session.
               </div>
             )}
           </section>

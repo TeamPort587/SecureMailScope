@@ -100,6 +100,24 @@ class CopilotUnavailableError extends AppError {
   }
 }
 
+class SessionNotFoundError extends AppError {
+  constructor(message = 'The requested session was not found.') {
+    super(message, 404, 'SESSION_NOT_FOUND');
+  }
+}
+
+class SessionExportError extends AppError {
+  constructor(message = 'Failed to export session capture.') {
+    super(message, 500, 'SESSION_EXPORT_FAILED');
+  }
+}
+
+class SourceFileNotFoundError extends AppError {
+  constructor(message = 'The source capture file is no longer available on disk.') {
+    super(message, 404, 'SOURCE_FILE_NOT_FOUND');
+  }
+}
+
 module.exports = {
   AppError,
   InvalidFileError,
@@ -107,6 +125,9 @@ module.exports = {
   UnauthorizedError,
   ForbiddenError,
   AnalysisNotFoundError,
+  SessionNotFoundError,
+  SessionExportError,
+  SourceFileNotFoundError,
   DjangoUnavailableError,
   AnalysisFailedError,
   InvalidAnalysisResponseError,
@@ -116,3 +137,4 @@ module.exports = {
   DuplicateEmailError,
   CopilotUnavailableError,
 };
+

@@ -46,14 +46,18 @@ beforeAll(() => {
 
 afterAll(() => {
   // Cleanup fixtures
-  if (fs.existsSync(TEST_FILES_DIR)) {
-    fs.rmSync(TEST_FILES_DIR, { recursive: true, force: true });
-  }
+  try {
+    if (fs.existsSync(TEST_FILES_DIR)) {
+      fs.rmSync(TEST_FILES_DIR, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    }
+  } catch (_) {}
   // Cleanup test uploads
-  const uploadDir = path.resolve(process.env.UPLOAD_DIR || './test-uploads');
-  if (fs.existsSync(uploadDir)) {
-    fs.rmSync(uploadDir, { recursive: true, force: true });
-  }
+  try {
+    const uploadDir = path.resolve(process.env.UPLOAD_DIR || './test-uploads');
+    if (fs.existsSync(uploadDir)) {
+      fs.rmSync(uploadDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
+    }
+  } catch (_) {}
 });
 
 describe('File Upload', () => {

@@ -40,7 +40,9 @@ echo.
 
 REM Step 3: Build custom model
 echo [3/4] Building mailscope-sec:3b from Modelfile...
-ollama create mailscope-sec:3b -f "%~dp0Modelfile"
+copy /y "%~dp0Modelfile" "%TEMP%\Modelfile_mailscope" >nul
+ollama create mailscope-sec:3b -f "%TEMP%\Modelfile_mailscope"
+del "%TEMP%\Modelfile_mailscope" >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo.
     echo ERROR: Failed to create custom model. Check the Modelfile.

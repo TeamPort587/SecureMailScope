@@ -150,10 +150,18 @@ class SecurityProfile:
     tcp_stream: int = 0
     frame_numbers: List[int] = field(default_factory=list)
     capture_reference_time: Optional[datetime] = None
+    risk: Optional[Dict[str, Any]] = None
+    wireshark_filter: Optional[str] = None
+    packet_count: int = 0
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    source_pcap_sha256: Optional[str] = None
+    standards_context: Optional[List[Dict[str, Any]]] = None
 
     def to_dict(self) -> Dict[str, Any]:
         res: Dict[str, Any] = {
             "session_id": self.session_id,
+            "tcp_stream": self.tcp_stream,
             "protocol": self.protocol,
             "service": self.service,
             "client_ip": self.client_ip,
@@ -163,7 +171,19 @@ class SecurityProfile:
             "security": self.security.to_dict(),
             "tls": self.tls.to_dict() if self.tls else None,
             "certificate": self.certificate.to_dict() if self.certificate else None,
+            "wireshark_filter": self.wireshark_filter or f"tcp.stream == {self.tcp_stream}",
+            "packet_count": self.packet_count or len(self.frame_numbers),
         }
+        if self.risk is not None:
+            res["risk"] = self.risk
+        if self.standards_context is not None:
+            res["standards_context"] = self.standards_context
+        if self.start_time is not None:
+            res["start_time"] = self.start_time
+        if self.end_time is not None:
+            res["end_time"] = self.end_time
+        if self.source_pcap_sha256 is not None:
+            res["source_pcap_sha256"] = self.source_pcap_sha256
         return res
 
 

@@ -11,7 +11,7 @@ from analysis.rule_engine.severity import Confidence, Severity
 
 
 class WeakKeyRule:
-    def evaluate(self, profile: SecurityProfile, finding_id: str) -> Optional[Finding]:
+    def evaluate(self, profile: SecurityProfile, finding_id: str = "finding-001") -> Optional[Finding]:
         if not profile.certificate or profile.certificate.visibility != "OBSERVED":
             return None
 
@@ -37,6 +37,7 @@ class WeakKeyRule:
                 "key_size": key_size,
                 "subject": profile.certificate.subject,
                 "tcp_stream": profile.tcp_stream,
+                "wireshark_filter": f"tcp.stream == {profile.tcp_stream}",
             }
             return Finding(
                 finding_id=finding_id,
