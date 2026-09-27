@@ -127,15 +127,37 @@ python -m ml.inference.predictor --analysis data/curated/demo-001.json --model-d
 
 ---
 
-## 7. Model Limitations & Future Expansion Plan
+## 7. Isolation Forest Baseline Datasets & Anomaly Scenarios
+
+While the Random Forest model is trained on supervised risk tiers (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`), the **Isolation Forest** behavioral model requires an unsupervised baseline of **normal** operational email communications.
+
+- **Baseline Generator**: `analysis/anomaly_detection/dataset_generator.py`
+- **Training Baseline**: 2,000 normal protocol-compliant sessions across SMTP (60%), IMAP (25%), and POP3 (15%) with modern TLS 1.2/1.3, valid certificates, standard cipher suites, and realistic bidirectional flow dynamics.
+- **Evaluation Scenarios**: 300 held-out normal sessions and 500 controlled behavioral anomaly sessions (flood traffic, sudden RST disconnects, incomplete TLS handshakes, deprecated ciphers, and unusual packet balances).
+- **Artifacts**: Serialized in `analysis/anomaly_detection/artifacts/`:
+  - `isolation_forest.joblib`
+  - `if_preprocessor.joblib`
+  - `if_metadata.json`
+  - `if_baseline_stats.json`
+
+### CLI Command:
+```powershell
+python analysis/anomaly_detection/train_model.py
+```
+
+---
+
+## 8. Model Limitations & Future Expansion Plan
 
 ### Limitations:
 - The current model was trained predominantly on curated synthetic scenarios.
 - The high evaluation accuracy reflects the model learning structured security archetypes, not real-world edge cases.
 - Real-world holdout validation remains insufficient (`INSUFFICIENT_REAL_HOLDOUT_DATA`).
+- Isolation Forest anomaly scores denote statistical outliers, not confirmed security attacks.
 
 ### Future Plan:
 1. **PCAP Collection**: Continuously capture anonymized SMTP/IMAP/POP3 captures in enterprise test environments.
 2. **Independent Label Review**: Use multi-analyst consensus to label real PCAP sessions.
 3. **Real Holdout Benchmark**: Evaluate the trained model exclusively against `>= 100` real sessions without synthetic data.
 4. **Active Learning**: Identify low-confidence or high-entropy real sessions and add them to the training dataset.
+

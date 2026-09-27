@@ -1,0 +1,88 @@
+{
+  "schema_version": "if-features-v1",
+  "description": "Isolation Forest 30-feature vector for unsupervised session-level behavioral anomaly detection.",
+  "feature_count": 30,
+
+  "example": {
+    "session_id": "smtp-001",
+    "features": {
+      "if_protocol_smtp": 1.0,
+      "if_protocol_imap": 0.0,
+      "if_protocol_pop3": 0.0,
+      "if_encryption_plaintext": 0.0,
+      "if_encryption_starttls": 1.0,
+      "if_encryption_implicit": 0.0,
+      "if_upgrade_advertised": 1.0,
+      "if_upgrade_requested": 1.0,
+      "if_upgrade_succeeded": 1.0,
+      "if_auth_before_tls": 0.0,
+
+      "if_tls_version_numeric": 4.0,
+      "if_cipher_strength": 2.0,
+      "if_pfs_present": 1.0,
+      "if_tls_handshake_incomplete": 0.0,
+
+      "if_cert_visible": 1.0,
+      "if_cert_key_size": 2048.0,
+      "if_cert_self_signed": 0.0,
+      "if_cert_validity_days": 365.0,
+      "if_cert_key_algo_rsa": 1.0,
+      "if_cert_key_algo_ec": 0.0,
+
+      "if_packet_count": 24.0,
+      "if_session_duration": 1.85,
+      "if_client_packet_count": 12.0,
+      "if_server_packet_count": 12.0,
+      "if_packet_ratio": 0.5,
+      "if_tcp_reset_count": 0.0,
+      "if_session_complete": 1.0,
+
+      "if_finding_count": 0.0,
+      "if_high_sev_count": 0.0,
+      "if_medium_sev_count": 0.0
+    }
+  },
+
+  "feature_definitions": {
+    "if_protocol_smtp":          { "type": "binary",  "description": "1.0 if session protocol is SMTP" },
+    "if_protocol_imap":          { "type": "binary",  "description": "1.0 if session protocol is IMAP" },
+    "if_protocol_pop3":          { "type": "binary",  "description": "1.0 if session protocol is POP3" },
+    "if_encryption_plaintext":   { "type": "binary",  "description": "1.0 if encryption mode is PLAINTEXT" },
+    "if_encryption_starttls":    { "type": "binary",  "description": "1.0 if encryption mode is STARTTLS or STLS" },
+    "if_encryption_implicit":    { "type": "binary",  "description": "1.0 if encryption mode is IMPLICIT_TLS" },
+    "if_upgrade_advertised":     { "type": "binary",  "description": "1.0 if STARTTLS/STLS upgrade was advertised" },
+    "if_upgrade_requested":      { "type": "binary",  "description": "1.0 if STARTTLS/STLS upgrade was requested" },
+    "if_upgrade_succeeded":      { "type": "binary",  "description": "1.0 if STARTTLS/STLS upgrade succeeded" },
+    "if_auth_before_tls":        { "type": "binary",  "description": "1.0 if client authentication occurred before TLS establishment" },
+
+    "if_tls_version_numeric":    { "type": "ordinal", "description": "Encoded TLS version: 0=SSLv2, 1=SSLv3, 2=TLS1.0, 3=TLS1.1, 4=TLS1.2, 5=TLS1.3, NaN=unobserved" },
+    "if_cipher_strength":        { "type": "ordinal", "description": "Cipher strength tier: 0=weak (RC4/3DES/DES/NULL/MD5), 1=moderate (CBC), 2=strong (GCM/CHACHA20), NaN=unknown" },
+    "if_pfs_present":            { "type": "binary",  "description": "1.0 if cipher provides Perfect Forward Secrecy (DHE/ECDHE), 0.0 if not, NaN if unknown" },
+    "if_tls_handshake_incomplete": { "type": "binary", "description": "1.0 if TLS handshake was initiated but not completed, 0.0 if completed or plaintext" },
+
+    "if_cert_visible":           { "type": "binary",  "description": "1.0 if certificate data was observable in capture, 0.0 otherwise" },
+    "if_cert_key_size":          { "type": "numeric", "description": "Public key size in bits (e.g. 2048, 4096), NaN if unobserved" },
+    "if_cert_self_signed":       { "type": "binary",  "description": "1.0 if certificate is self-signed, 0.0 otherwise, NaN if unobserved" },
+    "if_cert_validity_days":     { "type": "numeric", "description": "Certificate validity window in days (valid_until - valid_from), NaN if unobserved" },
+    "if_cert_key_algo_rsa":      { "type": "binary",  "description": "1.0 if certificate key algorithm is RSA, NaN if unobserved" },
+    "if_cert_key_algo_ec":       { "type": "binary",  "description": "1.0 if certificate key algorithm is ECDSA/EC, NaN if unobserved" },
+
+    "if_packet_count":           { "type": "numeric", "description": "Total number of TCP packets observed in the session" },
+    "if_session_duration":       { "type": "numeric", "description": "Elapsed duration between first and last packet in seconds" },
+    "if_client_packet_count":    { "type": "numeric", "description": "Number of packets originating from client" },
+    "if_server_packet_count":    { "type": "numeric", "description": "Number of packets originating from server" },
+    "if_packet_ratio":           { "type": "numeric", "description": "Ratio of client packets to total packets (0.0 - 1.0)" },
+    "if_tcp_reset_count":        { "type": "numeric", "description": "Count of TCP RST flags observed in the session" },
+    "if_session_complete":       { "type": "binary",  "description": "1.0 if session capture is COMPLETE (clean SYN/FIN or full payload), 0.0 if PARTIAL" },
+
+    "if_finding_count":          { "type": "numeric", "description": "Total number of deterministic findings associated with session" },
+    "if_high_sev_count":         { "type": "numeric", "description": "Count of CRITICAL or HIGH severity findings (context only, not target label)" },
+    "if_medium_sev_count":       { "type": "numeric", "description": "Count of MEDIUM severity findings (context only, not target label)" }
+  },
+
+  "unknown_policy": {
+    "description": "UNKNOWN and NOT_OBSERVABLE values are represented as NaN in raw extraction. The fitted preprocessor imputes medians and scales via RobustScaler (IQR) before feeding to Isolation Forest.",
+    "categorical_values": "Explicit 0.0 / 1.0 flags or ordinal mapping with NaN for unobserved",
+    "numerical_values": "Actual observed values or NaN if unobserved; never defaulted to 0 at extraction stage"
+  }
+}

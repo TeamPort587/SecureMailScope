@@ -146,3 +146,44 @@ def test_ml_risk_result_schema(contract_ml_risk_result):
     assert risk["model_version"] == "rf-v1"
     assert "features_used" in res
     assert len(res["features_used"]) == 19
+
+
+@pytest.fixture
+def contract_if_feature_vector():
+    with open(CONTRACTS_DIR / "isolation-forest-feature-vector.json", "r") as f:
+        return json.load(f)
+
+
+@pytest.fixture
+def contract_if_result():
+    with open(CONTRACTS_DIR / "isolation-forest-result.json", "r") as f:
+        return json.load(f)
+
+
+def test_isolation_forest_feature_vector_schema(contract_if_feature_vector):
+    """Verify Isolation Forest feature vector contract has 30 features."""
+    assert contract_if_feature_vector["feature_count"] == 30
+    assert contract_if_feature_vector["schema_version"] == "if-features-v1"
+    features = contract_if_feature_vector["example"]["features"]
+    assert len(features) == 30
+    assert "if_protocol_smtp" in features
+    assert "if_tls_version_numeric" in features
+    assert "if_packet_count" in features
+    assert "if_finding_count" in features
+
+
+def test_isolation_forest_result_schema(contract_if_result):
+    """Verify Isolation Forest result contract structure."""
+    example = contract_if_result["example"]
+    assert "session_id" in example
+    assert "anomaly" in example
+    anom = example["anomaly"]
+    assert anom["status"] in ["COMPLETE", "INSUFFICIENT_EVIDENCE", "MODEL_UNAVAILABLE", "ANALYSIS_ERROR"]
+    assert anom["classification"] in ["ANOMALOUS", "WITHIN_BASELINE", "INSUFFICIENT_EVIDENCE", "MODEL_UNAVAILABLE", "ANALYSIS_ERROR"]
+    assert isinstance(anom["is_anomalous"], bool)
+    assert "raw_score" in anom
+    assert "decision_score" in anom
+    assert "model_version" in anom
+    assert "explanation" in anom
+    assert "deviations" in anom["explanation"]
+

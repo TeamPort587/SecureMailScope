@@ -30,6 +30,7 @@ import {
   ArrowUpRight,
   FileWarning,
   Sparkles,
+  Cpu,
 } from 'lucide-react';
 
 import { useAnalysis } from '../hooks/useAnalysis';
@@ -37,6 +38,7 @@ import { useAnalysis } from '../hooks/useAnalysis';
 import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
 import Recommendations, { getAffectedSessions } from '../components/Recommendations';
+import AnomalyDetectionCard from '../components/AnomalyDetectionCard';
 import CopilotChat from '../components/CopilotChat';
 import LoadingState from '../components/LoadingState';
 import ErrorState from '../components/ErrorState';
@@ -1249,6 +1251,14 @@ export default function Analysis() {
             />
 
             <AnalysisTab
+              active={activeTab === 'anomalies'}
+              onClick={() => setActiveTab('anomalies')}
+              icon={<Cpu className="h-3.5 w-3.5" />}
+              label="Anomalies"
+              count={analysis?.anomaly_assessment?.anomalous_count ?? 0}
+            />
+
+            <AnalysisTab
               active={
                 activeTab === 'ai-assistance'
               }
@@ -1346,6 +1356,13 @@ export default function Analysis() {
 
           </div>
 
+          {/* ISOLATION FOREST BEHAVIORAL ANOMALY CARD */}
+          <AnomalyDetectionCard
+            anomalyAssessment={analysis?.anomaly_assessment}
+            sessions={sessions}
+            findings={findings}
+            onSelectSession={() => setActiveTab('sessions')}
+          />
 
           {/* SECURITY HIGHLIGHTS */}
 
@@ -1739,6 +1756,20 @@ export default function Analysis() {
 
         </div>
 
+      )}
+
+
+      {/* ========================================================
+          ANOMALIES TAB
+      ======================================================== */}
+
+      {activeTab === 'anomalies' && (
+        <AnomalyDetectionCard
+          anomalyAssessment={analysis?.anomaly_assessment}
+          sessions={sessions}
+          findings={findings}
+          onSelectSession={() => setActiveTab('sessions')}
+        />
       )}
 
 

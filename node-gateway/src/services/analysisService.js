@@ -148,6 +148,8 @@ function transformForPersistence(data) {
       certificate_key_size: s.certificate?.key_size || null,
       self_signed: s.certificate?.self_signed ?? null,
     },
+
+    anomaly: s.anomaly || null,
   }));
 
   // Map findings
@@ -186,6 +188,7 @@ function transformForPersistence(data) {
     findings,
     risk,
     recommendations,
+    anomaly_assessment: data.anomaly_assessment || null,
   };
 }
 
@@ -213,6 +216,7 @@ function formatAnalysisResponse(analysis, fullData, summary) {
     findings: fullData.findings,
     risk: fullData.risk,
     recommendations: fullData.recommendations,
+    anomaly_assessment: fullData.anomaly_assessment || null,
   };
 }
 

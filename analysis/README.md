@@ -41,7 +41,16 @@ Findings + Evidence
 ## Directory Structure
 
 ```text
-analysis/
+├── anomaly_detection/     # Isolation Forest behavioral anomaly detection
+│   ├── feature_schema.py   # 30-feature vector schema definition (if-features-v1)
+│   ├── feature_extractor.py# Extracts protocol, TLS, cert & TCP flow metrics
+│   ├── preprocessing.py    # RobustScaler & median imputation pipeline
+│   ├── dataset_generator.py# Offline protocol-aware normal baseline & anomaly generator
+│   ├── train_model.py      # Offline model training & evaluation script
+│   ├── inference.py        # AnomalyPredictor runtime inference
+│   ├── explanation.py      # Baseline quantile deviations & finding cross-references
+│   ├── service.py          # Process-level singleton, session analysis & failure shielding
+│   └── artifacts/          # Model bundles, fitted scalers & baseline stats
 ├── api/                    # Django REST Framework internal endpoints
 │   ├── urls.py             # Route /internal/analyze and /health
 │   └── views.py            # Multipart PCAP upload handler & error mapping
@@ -122,12 +131,32 @@ Execute the complete pytest suite:
 .\.venv\Scripts\pytest.exe analysis/tests -v
 ```
 
-All 53 unit and integration tests validate:
+All unit and integration tests validate:
 - Table-driven rule execution across positive, negative, and unknown/incomplete cases.
 - TCP session stream separation and completeness categorization.
 - Command extraction and authentication-before-TLS detection.
 - End-to-end pipeline contract conformity against `docs/contracts/django-analysis-response.json`.
 - Django REST API file upload validation, controlled error responses, and cleanup.
+- Isolation Forest 30-feature extraction, preprocessing, inference, failure isolation, and pipeline integration.
+
+---
+
+## Isolation Forest Offline Training
+
+The Isolation Forest behavioral anomaly detection model can be trained offline using the dedicated training pipeline:
+
+```powershell
+# From workspace root:
+python analysis/anomaly_detection/train_model.py
+```
+
+This command:
+1. Generates 2,000 protocol-aware normal baseline email communication sessions (SMTP, IMAP, POP3).
+2. Generates held-out evaluation scenarios (300 normal, 500 controlled anomalies).
+3. Fits the imputation and `RobustScaler` pipeline exclusively on normal training data.
+4. Trains an `IsolationForest(n_estimators=200, contamination=0.05, random_state=42)`.
+5. Computes ROC-AUC, precision, recall, confusion matrix, and false-positive rates on the held-out set.
+6. Serializes model artifacts and baseline quantile statistics to `analysis/anomaly_detection/artifacts/`.
 
 ---
 
@@ -145,4 +174,5 @@ Start the internal analysis server:
   - Returns `200 OK` with `{"status": "healthy", "service": "sms-analysis-engine"}`
 - **Analyze Capture**: `POST /internal/analyze`
   - Consumes: `multipart/form-data` with `file=<PCAP_FILE>` (optional: `analysis_id`, `filename`)
-  - Returns: JSON response strictly matching `docs/contracts/django-analysis-response.json`
+  - Returns: JSON response strictly matching `docs/contracts/django-analysis-response.json` (includes `anomaly_assessment` and per-session `anomaly`)
+

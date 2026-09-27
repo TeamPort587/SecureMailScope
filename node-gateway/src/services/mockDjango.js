@@ -72,6 +72,23 @@ function getMockAnalysisResponse(metadata) {
           key_size: 2048,
           self_signed: false,
         },
+        anomaly: {
+          status: 'COMPLETE',
+          classification: 'WITHIN_BASELINE',
+          is_anomalous: false,
+          raw_score: 0.1245,
+          decision_score: -0.1245,
+          threshold: 0.0,
+          model_version: 'if-v1',
+          feature_schema_version: 'if-features-v1',
+          warnings: [],
+          explanation: {
+            summary: 'Session traffic aligns with normal baseline behavior for SMTP with STARTTLS.',
+            deviations: [],
+            related_findings: [],
+            limitations: [],
+          },
+        },
       },
       {
         session_id: 'smtp-002',
@@ -91,6 +108,30 @@ function getMockAnalysisResponse(metadata) {
         },
         tls: null,
         certificate: null,
+        anomaly: {
+          status: 'COMPLETE',
+          classification: 'ANOMALOUS',
+          is_anomalous: true,
+          raw_score: -0.1872,
+          decision_score: 0.1872,
+          threshold: 0.0,
+          model_version: 'if-v1',
+          feature_schema_version: 'if-features-v1',
+          warnings: [],
+          explanation: {
+            summary: 'High behavioral anomaly detected: authentication occurred before TLS establishment, with unexpected TCP packet distribution.',
+            deviations: [
+              {
+                feature: 'if_auth_before_tls',
+                observed: 1.0,
+                baseline_mean: 0.02,
+                description: 'Authentication before TLS observed',
+              },
+            ],
+            related_findings: ['finding-001', 'finding-003'],
+            limitations: [],
+          },
+        },
       },
       {
         session_id: 'imap-001',
@@ -110,6 +151,30 @@ function getMockAnalysisResponse(metadata) {
         },
         tls: null,
         certificate: null,
+        anomaly: {
+          status: 'COMPLETE',
+          classification: 'ANOMALOUS',
+          is_anomalous: true,
+          raw_score: -0.2214,
+          decision_score: 0.2214,
+          threshold: 0.0,
+          model_version: 'if-v1',
+          feature_schema_version: 'if-features-v1',
+          warnings: [],
+          explanation: {
+            summary: 'Behavioral anomaly detected: plaintext IMAP transmission with no TLS layer.',
+            deviations: [
+              {
+                feature: 'if_encryption_plaintext',
+                observed: 1.0,
+                baseline_mean: 0.05,
+                description: 'Plaintext encryption mode',
+              },
+            ],
+            related_findings: ['finding-002'],
+            limitations: [],
+          },
+        },
       },
       {
         session_id: 'pop3-001',
@@ -235,6 +300,17 @@ function getMockAnalysisResponse(metadata) {
           'Use IMAPS or successfully negotiate STARTTLS before authentication.',
       },
     ],
+
+    anomaly_assessment: {
+      overall_status: 'ANOMALIES_DETECTED',
+      total_sessions: 4,
+      anomalous_count: 2,
+      within_baseline_count: 2,
+      insufficient_evidence_count: 0,
+      unavailable_count: 0,
+      error_count: 0,
+      anomalous_session_ids: ['smtp-002', 'imap-001'],
+    },
   };
 }
 

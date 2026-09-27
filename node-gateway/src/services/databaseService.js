@@ -285,6 +285,46 @@ async function persistAnalysisResult(analysisId, data) {
       );
     }
 
+    // -- Anomaly Results (Isolation Forest) -------------------------------------
+    if (Array.isArray(data.sessions)) {
+      for (const session of data.sessions) {
+        if (session.anomaly) {
+          const sessionDbId = sessionIdMap[session.session_ref] || null;
+          const a = session.anomaly;
+          try {
+            await client.query('SAVEPOINT anom_sp');
+            await client.query(
+              `INSERT INTO anomaly_results
+                 (analysis_id, session_id, status, classification, is_anomalous,
+                  raw_score, decision_score, threshold, model_version,
+                  feature_schema_version, warnings_json, explanation_json)
+               VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
+              [
+                analysisId,
+                sessionDbId,
+                a.status || 'COMPLETE',
+                a.classification || null,
+                a.is_anomalous ?? null,
+                a.raw_score ?? null,
+                a.decision_score ?? null,
+                a.threshold ?? null,
+                a.model_version || null,
+                a.feature_schema_version || null,
+                JSON.stringify(a.warnings || []),
+                JSON.stringify(a.explanation || {}),
+              ]
+            );
+            await client.query('RELEASE SAVEPOINT anom_sp');
+          } catch (anomErr) {
+            await client.query('ROLLBACK TO SAVEPOINT anom_sp');
+            logger.warn('Skipping anomaly persistence (table may not exist yet)', {
+              error: anomErr.message,
+            });
+          }
+        }
+      }
+    }
+
     // -- Update analysis status -------------------------------------------------
     await updateAnalysisStatus(client, analysisId, {
       status: 'COMPLETED',
@@ -475,6 +515,40 @@ async function getFullAnalysis(analysisId) {
       [analysisId]
     );
 
+    // Anomaly results (Isolation Forest)
+    let anomalyResults = [];
+    try {
+      const anomRes = await pool.query(
+        `SELECT session_id, status, classification, is_anomalous,
+                raw_score, decision_score, threshold, model_version,
+                feature_schema_version, warnings_json, explanation_json
+         FROM anomaly_results
+         WHERE analysis_id = $1`,
+        [analysisId]
+      );
+      anomalyResults = anomRes.rows;
+    } catch (e) {
+      logger.debug('Could not query anomaly_results table', { error: e.message });
+    }
+
+    const anomalyBySessionId = {};
+    for (const ar of anomalyResults) {
+      if (ar.session_id) {
+        anomalyBySessionId[ar.session_id] = {
+          status: ar.status,
+          classification: ar.classification,
+          is_anomalous: ar.is_anomalous,
+          raw_score: ar.raw_score !== null ? parseFloat(ar.raw_score) : null,
+          decision_score: ar.decision_score !== null ? parseFloat(ar.decision_score) : null,
+          threshold: ar.threshold !== null ? parseFloat(ar.threshold) : null,
+          model_version: ar.model_version,
+          feature_schema_version: ar.feature_schema_version,
+          warnings: typeof ar.warnings_json === 'string' ? JSON.parse(ar.warnings_json) : (ar.warnings_json || []),
+          explanation: typeof ar.explanation_json === 'string' ? JSON.parse(ar.explanation_json) : (ar.explanation_json || {}),
+        };
+      }
+    }
+
     // Build sessions with nested security/tls/certificate like the contract
     const sessions = sessionsResult.rows.map((row) => {
       const session = {
@@ -495,6 +569,7 @@ async function getFullAnalysis(analysisId) {
         },
         tls: null,
         certificate: null,
+        anomaly: anomalyBySessionId[row.session_id] || null,
       };
 
       // Build TLS object if data exists
@@ -561,7 +636,22 @@ async function getFullAnalysis(analysisId) {
             : []),
     }));
 
-    return { sessions, findings, risk, recommendations };
+    let anomaly_assessment = null;
+    if (anomalyResults.length > 0) {
+      const total = anomalyResults.length;
+      const anomalous = anomalyResults.filter((r) => r.is_anomalous).length;
+      const baseline = anomalyResults.filter((r) => r.is_anomalous === false).length;
+      const anomalous_ids = sessions.filter((s) => s.anomaly?.is_anomalous).map((s) => s.session_id);
+      anomaly_assessment = {
+        overall_status: anomalous > 0 ? 'ANOMALIES_DETECTED' : 'ALL_WITHIN_BASELINE',
+        total_sessions: total,
+        anomalous_count: anomalous,
+        within_baseline_count: baseline,
+        anomalous_session_ids: anomalous_ids,
+      };
+    }
+
+    return { sessions, findings, risk, recommendations, anomaly_assessment };
   } catch (err) {
     logger.error('Database error fetching full analysis', { error: err.message });
     throw new DatabaseError();
