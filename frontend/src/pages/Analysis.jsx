@@ -597,9 +597,9 @@ export default function Analysis() {
 
 
   const formattedDate =
-    analysis?.uploaded_at
+    (analysis?.uploaded_at || analysis?.created_at)
       ? new Date(
-          analysis.uploaded_at
+          analysis.uploaded_at || analysis.created_at
         ).toLocaleString()
       : 'Not available';
 
@@ -1670,6 +1670,7 @@ export default function Analysis() {
             <SessionTable
               sessions={sessions}
               findings={findings}
+              analysisId={analysis?.analysis_id || id}
             />
 
           </div>

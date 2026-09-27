@@ -41,6 +41,7 @@ from ml.risk.risk_aggregator import calculate_session_risk
 from recommendation.engine import generate_recommendations as rec_engine_generate
 from recommendation.priority import sort_recommendations
 from recommendation.risk_guard import calculate_final_risk
+from analysis.standards import evaluate_session_standards
 
 logger = logging.getLogger(__name__)
 
@@ -95,10 +96,15 @@ def build_recommendations(findings: List[Finding]) -> List[Dict[str, Any]]:
 def calculate_reconciled_risk(
     session_dicts: List[Dict[str, Any]],
     finding_dicts: List[Dict[str, Any]],
-) -> Dict[str, Any]:
-    """Calculate reconciled risk combining ML inference, Canonical Risk Aggregator, and Risk Guard."""
+) -> Tuple[Dict[str, Any], Dict[str, Dict[str, Any]]]:
+    """Calculate reconciled risk combining ML inference, Canonical Risk Aggregator, and Risk Guard.
+
+    Returns:
+        (pcap_risk, session_risk_map)
+    """
     predictor = get_risk_predictor()
     session_predictions: List[Dict[str, Any]] = []
+    session_risk_map: Dict[str, Dict[str, Any]] = {}
 
     for s in session_dicts:
         s_id = s.get("session_id")
@@ -132,6 +138,37 @@ def calculate_reconciled_risk(
         reconciled = calculate_final_risk(ml_risk_level, s_findings)
         final_level = reconciled["final_risk_level"]
 
+        crit_count = sum(1 for f in s_findings if f.get("severity") == "CRITICAL")
+        high_count = sum(1 for f in s_findings if f.get("severity") == "HIGH")
+        med_count = sum(1 for f in s_findings if f.get("severity") == "MEDIUM")
+        low_count = sum(1 for f in s_findings if f.get("severity") == "LOW")
+
+        if final_level == "CRITICAL":
+            s_score = min(100, 85 + crit_count * 5)
+        elif final_level == "HIGH":
+            s_score = min(84, 65 + high_count * 4)
+        elif final_level == "MEDIUM":
+            s_score = min(64, 40 + med_count * 5)
+        else:
+            s_score = 15
+
+        session_risk_data = {
+            "level": final_level,
+            "score": s_score,
+            "model_version": "rf-v1",
+            "method": "SESSION_RISK_GUARD",
+            "confidence": round(ml_confidence, 2),
+            "severity": final_level,
+            "prediction_quality": pred_quality,
+            "evidence_quality": ev_quality,
+            "findings_count": len(s_findings),
+            "critical_count": crit_count,
+            "high_count": high_count,
+            "medium_count": med_count,
+            "low_count": low_count,
+        }
+        session_risk_map[s_id] = session_risk_data
+
         session_predictions.append({
             "session_id": s_id,
             "risk": {
@@ -149,7 +186,7 @@ def calculate_reconciled_risk(
     overall_level = pcap_agg.get("overall_risk_level", "LOW")
     overall_conf = pcap_agg.get("overall_confidence", 0.90)
 
-    # Calculate calibrated numeric score
+    # Calculate calibrated numeric score based on session risks
     crit_count = sum(1 for f in finding_dicts if f.get("severity") == "CRITICAL")
     high_count = sum(1 for f in finding_dicts if f.get("severity") == "HIGH")
     med_count = sum(1 for f in finding_dicts if f.get("severity") == "MEDIUM")
@@ -163,13 +200,15 @@ def calculate_reconciled_risk(
     else:
         score = 15
 
-    return {
+    pcap_risk = {
         "score": score,
         "level": overall_level,
         "model_version": "rf-v1",
-        "method": "RULE_ENGINE_PLUS_ML",
+        "method": "SESSION_AGGREGATE_PLUS_RULE_ENGINE",
         "confidence": round(overall_conf, 2),
     }
+
+    return pcap_risk, session_risk_map
 
 
 def analyze_pcap(
@@ -234,7 +273,20 @@ def analyze_pcap(
             if f.severity in ("HIGH", "CRITICAL"):
                 vulnerable_session_ids.add(s.session_id)
 
-    # 4. Summary counts
+    # 4. Summary counts & Session Risk calculation
+    session_dicts = [p.to_dict() for p in profiles]
+    finding_dicts = [f.to_dict() for f in all_findings]
+
+    risk, session_risk_map = calculate_reconciled_risk(session_dicts, finding_dicts)
+
+    # Attach session risk and provenance directly to each profile
+    for p in profiles:
+        p.risk = session_risk_map.get(p.session_id)
+        p.source_pcap_sha256 = sha256_hash
+        p.wireshark_filter = f"tcp.stream == {p.tcp_stream}"
+        p.packet_count = len(p.frame_numbers)
+        p.standards_context = evaluate_session_standards(p)
+
     smtp_count = sum(1 for p in profiles if p.protocol == "SMTP")
     imap_count = sum(1 for p in profiles if p.protocol == "IMAP")
     pop3_count = sum(1 for p in profiles if p.protocol == "POP3")
@@ -242,6 +294,13 @@ def analyze_pcap(
     plaintext_count = sum(1 for p in profiles if p.security.encryption_mode == "PLAINTEXT")
     starttls_count = sum(1 for p in profiles if p.security.encryption_mode == "STARTTLS")
     implicit_tls_count = sum(1 for p in profiles if p.security.encryption_mode == "IMPLICIT_TLS")
+
+    session_severity_counts = {
+        "CRITICAL": sum(1 for p in profiles if p.risk and p.risk.get("level") == "CRITICAL"),
+        "HIGH": sum(1 for p in profiles if p.risk and p.risk.get("level") == "HIGH"),
+        "MEDIUM": sum(1 for p in profiles if p.risk and p.risk.get("level") == "MEDIUM"),
+        "LOW": sum(1 for p in profiles if p.risk and p.risk.get("level") == "LOW"),
+    }
 
     summary = {
         "total_sessions": len(profiles),
@@ -253,16 +312,22 @@ def analyze_pcap(
         "implicit_tls_sessions": implicit_tls_count,
         "vulnerable_sessions": len(vulnerable_session_ids),
         "findings_count": len(all_findings),
+        "severity_counts": session_severity_counts,
+        "protocol_counts": {
+            "SMTP": smtp_count,
+            "IMAP": imap_count,
+            "POP3": pop3_count,
+        },
+        "encryption_mode_counts": {
+            "PLAINTEXT": plaintext_count,
+            "STARTTLS": starttls_count,
+            "IMPLICIT_TLS": implicit_tls_count,
+        },
     }
 
-    # 5. Reconciled Risk and Recommendations
-    session_dicts = [p.to_dict() for p in profiles]
-    finding_dicts = [f.to_dict() for f in all_findings]
-
-    risk = calculate_reconciled_risk(session_dicts, finding_dicts)
     recommendations = build_recommendations(all_findings)
 
-    # 6. Build final contract response
+    # 5. Build final contract response
     response_payload: Dict[str, Any] = {
         "analysis_version": "1.0.0",
         "file": {

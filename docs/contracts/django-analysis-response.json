@@ -15,11 +15,35 @@
     "starttls_sessions": 2,
     "implicit_tls_sessions": 1,
     "vulnerable_sessions": 2,
-    "findings_count": 5
+    "findings_count": 5,
+    "severity_counts": {
+      "CRITICAL": 2,
+      "HIGH": 1,
+      "MEDIUM": 0,
+      "LOW": 1
+    },
+    "protocol_counts": {
+      "SMTP": 2,
+      "IMAP": 1,
+      "POP3": 1
+    },
+    "encryption_mode_counts": {
+      "STARTTLS": 2,
+      "PLAINTEXT": 1,
+      "IMPLICIT_TLS": 1
+    }
   },
   "sessions": [
     {
       "session_id": "smtp-001",
+      "tcp_stream": 0,
+      "wireshark_filter": "tcp.stream == 0",
+      "packet_count": 34,
+      "risk": {
+        "score": 15,
+        "level": "LOW",
+        "confidence": 0.95
+      },
       "protocol": "SMTP",
       "service": "submission",
       "client_ip": "10.0.1.15",
@@ -47,7 +71,35 @@
         "key_type": "RSA",
         "key_size": 2048,
         "self_signed": false
-      }
+      },
+      "standards_context": [
+        {
+          "field": "tls_version",
+          "label": "TLS Protocol Version",
+          "observed": "TLS 1.2",
+          "status": "ACCEPTABLE",
+          "preferred": ["TLS 1.3"],
+          "visualization": "ordered_spectrum",
+          "profile": "ietf-modern-tls",
+          "profile_name": "IETF Modern TLS (RFC 9325)",
+          "rationale": "TLS 1.2 is an acceptable baseline when combined with secure AEAD cipher suites and PFS, but TLS 1.3 is preferred.",
+          "options": [
+            { "value": "TLS 1.0", "label": "TLS 1.0", "status": "DEPRECATED" },
+            { "value": "TLS 1.1", "label": "TLS 1.1", "status": "DEPRECATED" },
+            { "value": "TLS 1.2", "label": "TLS 1.2", "status": "ACCEPTABLE" },
+            { "value": "TLS 1.3", "label": "TLS 1.3", "status": "PREFERRED" }
+          ],
+          "sources": [
+            {
+              "name": "RFC 9325",
+              "title": "Recommendations for Secure Use of Transport Layer Security (TLS) and Datagram Transport Layer Security (DTLS)",
+              "section": "Section 2.1 (Protocol Versions)",
+              "url": "https://datatracker.ietf.org/doc/html/rfc9325#section-2.1",
+              "effective_status": "CURRENT"
+            }
+          ]
+        }
+      ]
     },
     {
       "session_id": "smtp-002",

@@ -12,7 +12,7 @@ WEAK_CIPHER_KEYWORDS = ["RC4", "DES", "3DES", "NULL", "EXPORT", "MD5", "Anon"]
 
 
 class WeakCipherRule:
-    def evaluate(self, profile: SecurityProfile, finding_id: str) -> Optional[Finding]:
+    def evaluate(self, profile: SecurityProfile, finding_id: str = "finding-001") -> Optional[Finding]:
         if not profile.tls or not profile.tls.cipher_suite:
             return None
 
@@ -23,6 +23,7 @@ class WeakCipherRule:
             evidence = {
                 "cipher_suite": profile.tls.cipher_suite,
                 "tcp_stream": profile.tcp_stream,
+                "wireshark_filter": f"tcp.stream == {profile.tcp_stream}",
             }
             if profile.frame_numbers:
                 evidence["frame_numbers"] = profile.frame_numbers[:5]

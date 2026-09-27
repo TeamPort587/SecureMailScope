@@ -7,11 +7,11 @@ from typing import Optional
 from analysis.feature_extraction.models import Finding, SecurityProfile
 from analysis.rule_engine.severity import Confidence, Severity
 
-DEPRECATED_VERSIONS = {"SSLv3", "TLS 1.0", "TLS 1.1"}
+DEPRECATED_VERSIONS = {"SSLv2", "SSL 2.0", "SSLv3", "SSL 3.0", "TLS 1.0", "TLS 1.1"}
 
 
 class DeprecatedTLSRule:
-    def evaluate(self, profile: SecurityProfile, finding_id: str) -> Optional[Finding]:
+    def evaluate(self, profile: SecurityProfile, finding_id: str = "finding-001") -> Optional[Finding]:
         if not profile.tls or not profile.tls.version:
             return None
 
@@ -20,6 +20,7 @@ class DeprecatedTLSRule:
             evidence = {
                 "tls_version": version,
                 "tcp_stream": profile.tcp_stream,
+                "wireshark_filter": f"tcp.stream == {profile.tcp_stream}",
             }
             if profile.frame_numbers:
                 evidence["frame_numbers"] = profile.frame_numbers[:5]

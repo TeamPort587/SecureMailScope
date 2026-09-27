@@ -1,6 +1,7 @@
 const { pool } = require('../config/database');
 const { DatabaseError } = require('../utils/errors');
 const logger = require('../utils/logger');
+const standardsService = require('./standardsService');
 
 // ==============================================================================
 // USER OPERATIONS
@@ -479,6 +480,15 @@ async function getFullAnalysis(analysisId) {
     const sessions = sessionsResult.rows.map((row) => {
       const session = {
         session_id: row.session_ref || row.session_id,
+        tcp_stream: row.tcp_stream !== undefined && row.tcp_stream !== null ? row.tcp_stream : null,
+        wireshark_filter: row.tcp_stream !== undefined && row.tcp_stream !== null ? `tcp.stream == ${row.tcp_stream}` : null,
+        risk: row.risk_label ? {
+          level: row.risk_label,
+          severity: row.risk_label,
+          score: row.risk_label === 'CRITICAL' ? 95 : row.risk_label === 'HIGH' ? 80 : row.risk_label === 'MEDIUM' ? 50 : 15,
+          confidence: 0.95,
+        } : null,
+        risk_label: row.risk_label || null,
         protocol: row.protocol,
         service: row.service,
         client_ip: row.src_ip,
@@ -522,6 +532,9 @@ async function getFullAnalysis(analysisId) {
           };
         }
       }
+
+      // Attach standards context
+      session.standards_context = standardsService.evaluateSessionStandards(session);
 
       return session;
     });
@@ -568,6 +581,42 @@ async function getFullAnalysis(analysisId) {
   }
 }
 
+/**
+ * Retrieve an individual session by reference or UUID for a given analysis.
+ */
+async function getSessionByRef(analysisId, sessionRef) {
+  try {
+    const result = await pool.query(
+      `SELECT
+         s.id AS db_id,
+         s.analysis_id,
+         s.session_ref,
+         s.tcp_stream,
+         s.protocol,
+         s.service,
+         s.service_port,
+         s.src_ip,
+         s.src_port,
+         s.dst_ip,
+         s.dst_port,
+         s.encryption_mode,
+         s.capture_completeness,
+         s.risk_label,
+         s.start_time,
+         s.end_time
+       FROM sessions s
+       WHERE s.analysis_id = $1 AND (s.session_ref = $2 OR s.id::text = $2)
+       LIMIT 1`,
+      [analysisId, sessionRef]
+    );
+
+    return result.rows[0] || null;
+  } catch (err) {
+    logger.error('Database error fetching session by ref', { analysisId, sessionRef, error: err.message });
+    throw new DatabaseError();
+  }
+}
+
 module.exports = {
   createUser,
   findUserByEmail,
@@ -578,4 +627,5 @@ module.exports = {
   getAnalysesByUser,
   getAnalysisById,
   getFullAnalysis,
+  getSessionByRef,
 };

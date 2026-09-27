@@ -15,10 +15,12 @@ import SessionDetails from './SessionDetails';
 export default function SessionTable({
   sessions = [],
   findings = [],
+  analysisId = null,
 }) {
   const [selectedSession, setSelectedSession] = useState(null);
   const [protocolFilter, setProtocolFilter] = useState('ALL');
   const [encryptionFilter, setEncryptionFilter] = useState('ALL');
+  const [riskFilter, setRiskFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
 
   /* =============================================================
@@ -58,6 +60,12 @@ export default function SessionTable({
         session.security?.encryption_mode || ''
       ).toUpperCase();
 
+      const sessionRisk = (
+        session.risk?.level ||
+        session.risk_label ||
+        (vulnerableSessionMap.has(session.session_id) ? 'HIGH' : 'LOW')
+      ).toUpperCase();
+
       const matchProtocol =
         protocolFilter === 'ALL' ||
         protocol === protocolFilter;
@@ -65,6 +73,10 @@ export default function SessionTable({
       const matchEncryption =
         encryptionFilter === 'ALL' ||
         encryption === encryptionFilter;
+
+      const matchRisk =
+        riskFilter === 'ALL' ||
+        sessionRisk === riskFilter;
 
       const matchSearch =
         !query ||
@@ -87,6 +99,7 @@ export default function SessionTable({
       return (
         matchProtocol &&
         matchEncryption &&
+        matchRisk &&
         matchSearch
       );
     });
@@ -94,17 +107,21 @@ export default function SessionTable({
     sessions,
     protocolFilter,
     encryptionFilter,
+    riskFilter,
     searchQuery,
+    vulnerableSessionMap,
   ]);
 
   const hasActiveFilters =
     protocolFilter !== 'ALL' ||
     encryptionFilter !== 'ALL' ||
+    riskFilter !== 'ALL' ||
     searchQuery.trim() !== '';
 
   const clearFilters = () => {
     setProtocolFilter('ALL');
     setEncryptionFilter('ALL');
+    setRiskFilter('ALL');
     setSearchQuery('');
   };
 
@@ -233,6 +250,19 @@ export default function SessionTable({
             </option>
           </select>
 
+          {/* RISK */}
+          <select
+            value={riskFilter}
+            onChange={(e) => setRiskFilter(e.target.value)}
+            className="ui-input min-w-[130px] text-xs"
+            aria-label="Filter by risk"
+          >
+            <option value="ALL">All risk levels</option>
+            <option value="CRITICAL">Critical</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
 
           {hasActiveFilters && (
             <button
@@ -303,6 +333,10 @@ export default function SessionTable({
                 </TableHeader>
 
                 <TableHeader>
+                  Risk
+                </TableHeader>
+
+                <TableHeader>
                   Protocol
                 </TableHeader>
 
@@ -320,6 +354,10 @@ export default function SessionTable({
 
                 <TableHeader>
                   PFS
+                </TableHeader>
+
+                <TableHeader>
+                  Completeness
                 </TableHeader>
 
                 <TableHeader>
@@ -376,7 +414,7 @@ export default function SessionTable({
                 <tr>
 
                   <td
-                    colSpan="8"
+                    colSpan="10"
                     className="px-6 py-14 text-center"
                   >
 
@@ -451,6 +489,8 @@ export default function SessionTable({
       {selectedSession && (
         <SessionDetails
           session={selectedSession}
+          analysisId={analysisId}
+          findings={findings}
           onClose={() =>
             setSelectedSession(null)
           }
@@ -495,6 +535,14 @@ function SessionRow({
   isVulnerable,
   onInspect,
 }) {
+  const riskLevel =
+    session.risk?.level ||
+    session.risk_label ||
+    (isVulnerable ? 'HIGH' : 'LOW');
+
+  const completeness =
+    session.security?.capture_completeness || 'COMPLETE';
+
   return (
     <tr
       onClick={onInspect}
@@ -509,9 +557,9 @@ function SessionRow({
 
           <span
             className={`h-2 w-2 shrink-0 rounded-full ${
-              isVulnerable
+              riskLevel === 'CRITICAL' || riskLevel === 'HIGH' || isVulnerable
                 ? 'bg-red-500'
-                : 'bg-yellow-500'
+                : 'bg-emerald-500'
             }`}
           />
 
@@ -524,13 +572,36 @@ function SessionRow({
               {session.session_id || '—'}
             </p>
 
-            <p className="mt-0.5 text-[10px] text-slate-400">
-              Click to inspect
+            <p className="mt-0.5 text-[10px] text-slate-400 font-mono">
+              {session.tcp_stream !== null && session.tcp_stream !== undefined
+                ? `Stream #${session.tcp_stream}`
+                : 'Click to inspect'}
             </p>
 
           </div>
 
         </div>
+
+      </td>
+
+
+      {/* RISK */}
+
+      <td className="px-4 py-4">
+
+        <span
+          className={`inline-flex rounded-md border px-2 py-0.5 font-mono text-[10px] font-bold ${
+            riskLevel === 'CRITICAL'
+              ? 'border-red-200 bg-red-50 text-red-700'
+              : riskLevel === 'HIGH'
+              ? 'border-orange-200 bg-orange-50 text-orange-700'
+              : riskLevel === 'MEDIUM'
+              ? 'border-amber-200 bg-amber-50 text-amber-700'
+              : 'border-emerald-200 bg-emerald-50 text-emerald-700'
+          }`}
+        >
+          {riskLevel}
+        </span>
 
       </td>
 
@@ -638,6 +709,25 @@ function SessionRow({
           </span>
 
         )}
+
+      </td>
+
+
+      {/* COMPLETENESS */}
+
+      <td className="px-4 py-4">
+
+        <span
+          className={`inline-flex rounded-md border px-2 py-0.5 font-mono text-[10px] font-semibold ${
+            completeness === 'PARTIAL'
+              ? 'border-amber-200 bg-amber-50 text-amber-700'
+              : completeness === 'COMPLETE'
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+              : 'border-slate-200 bg-slate-50 text-slate-600'
+          }`}
+        >
+          {completeness}
+        </span>
 
       </td>
 

@@ -23,14 +23,14 @@ def test_parse_validation_01():
     assert any(proto in protocols for proto in ["SMTP", "IMAP", "POP3", "TLS", "TCP"])
 
 
-def test_parse_validation_02_certificates():
-    """Verify parsing validation_02.pcap extracts X.509 certificate metadata."""
-    assert VAL_PCAP_2.exists(), f"Missing {VAL_PCAP_2}"
-    packets = parse_pcap(str(VAL_PCAP_2), backend="tshark")
+def test_parse_validation_certificates():
+    """Verify parsing validation_01.pcap extracts X.509 certificate metadata."""
+    assert VAL_PCAP_1.exists(), f"Missing {VAL_PCAP_1}"
+    packets = parse_pcap(str(VAL_PCAP_1), backend="tshark")
     assert len(packets) > 0
 
     cert_packets = [p for p in packets if p.tls_cert_info is not None]
-    assert len(cert_packets) > 0, "Expected at least one packet with extracted certificate info in validation_02"
+    assert len(cert_packets) > 0, "Expected at least one packet with extracted certificate info in validation_01"
     cert = cert_packets[0].tls_cert_info
     assert "subject" in cert
     assert "CN=mail.lab.local" in cert["subject"] or "issuer" in cert
