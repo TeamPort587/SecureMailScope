@@ -20,7 +20,7 @@ def _parse_iso(iso_str: str) -> Optional[datetime]:
 
 
 class ExpiredCertificateRule:
-    def evaluate(self, profile: SecurityProfile, finding_id: str) -> Optional[Finding]:
+    def evaluate(self, profile: SecurityProfile, finding_id: str = "finding-001") -> Optional[Finding]:
         if not profile.certificate or profile.certificate.visibility != "OBSERVED":
             return None
         if not profile.certificate.valid_until:
@@ -30,7 +30,12 @@ class ExpiredCertificateRule:
         if not valid_until_dt:
             return None
 
-        ref_time = profile.capture_reference_time or datetime.now(timezone.utc)
+        ref_time = profile.capture_reference_time
+        if ref_time is None and profile.start_time:
+            ref_time = _parse_iso(profile.start_time)
+        if ref_time is None:
+            ref_time = datetime.now(timezone.utc)
+
         if ref_time.tzinfo is None:
             ref_time = ref_time.replace(tzinfo=timezone.utc)
 
@@ -38,8 +43,10 @@ class ExpiredCertificateRule:
             evidence = {
                 "valid_until": profile.certificate.valid_until,
                 "reference_time": ref_time.isoformat(),
+                "capture_reference_time": ref_time.isoformat(),
                 "subject": profile.certificate.subject,
                 "tcp_stream": profile.tcp_stream,
+                "wireshark_filter": f"tcp.stream == {profile.tcp_stream}",
             }
             return Finding(
                 finding_id=finding_id,

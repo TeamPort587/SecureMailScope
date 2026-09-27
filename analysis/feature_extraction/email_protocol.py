@@ -4,6 +4,53 @@ from typing import List, Tuple
 from analysis.feature_extraction.models import PacketRecord, SecurityInfo
 
 
+def _scan_for_keywords(
+    packet_list: List[PacketRecord],
+    keywords: Tuple[str, ...],
+) -> Tuple[bool, List[int]]:
+    """Scan for keywords across packets, handling commands segmented across packets."""
+    matched_frames: List[int] = []
+
+    # 1. Direct packet inspection
+    for p in packet_list:
+        text = p.application_data.upper()
+        if not text:
+            continue
+        if any(w in text for w in keywords):
+            matched_frames.append(p.frame_number)
+
+    if matched_frames:
+        return True, matched_frames
+
+    # 2. Segmented stream inspection
+    # Sort packets chronologically by timestamp / frame_number
+    sorted_pkts = sorted(packet_list, key=lambda p: (p.timestamp, p.frame_number))
+    char_frames: List[int] = []
+    stream_chars: List[str] = []
+
+    for p in sorted_pkts:
+        txt = p.application_data.upper()
+        for ch in txt:
+            stream_chars.append(ch)
+            char_frames.append(p.frame_number)
+
+    stream_text = "".join(stream_chars)
+    for kw in keywords:
+        pos = 0
+        while True:
+            idx = stream_text.find(kw, pos)
+            if idx == -1:
+                break
+            span = set(char_frames[idx : idx + len(kw)])
+            matched_frames.extend(span)
+            pos = idx + len(kw)
+
+    if matched_frames:
+        return True, sorted(set(matched_frames))
+
+    return False, []
+
+
 def analyze_email_security(
     packets: List[PacketRecord],
     client_packets: List[PacketRecord],
@@ -24,54 +71,44 @@ def analyze_email_security(
     has_tls = len(tls_handshake_frames) > 0
     first_tls_frame = tls_handshake_frames[0] if has_tls else None
 
-    # Track upgrade advertising, requesting, and succeeding
-    upgrade_advertised = "NO"
-    upgrade_requested = "NO"
-    upgrade_succeeded = "NO"
-    auth_before_tls = "NO"
-
     # Implicit TLS check: standard ports 465 (SMTPS), 993 (IMAPS), 995 (POP3S)
-    # or packets start directly with TLS ClientHello without cleartext commands
     implicit_ports = {465, 993, 995}
     is_implicit_tls = server_port in implicit_ports
 
-    # Look for command keywords
+    # 1. Check for STARTTLS advertisement by server
+    adv_found, adv_frames = _scan_for_keywords(
+        server_packets,
+        ("250-STARTTLS", "250 STARTTLS", "STARTTLS", "STLS"),
+    )
+    upgrade_advertised = "YES" if adv_found else "NO"
+    evidence_frames.extend(adv_frames)
+
+    # 2. Check for STARTTLS requested by client
+    req_found, req_frames = _scan_for_keywords(
+        client_packets,
+        ("STARTTLS", "STLS"),
+    )
+    upgrade_requested = "YES" if req_found else "NO"
+    evidence_frames.extend(req_frames)
+
+    # 3. Check for authentication commands
     auth_observed = False
-    auth_frames = []
+    auth_frames: List[int] = []
 
-    for pkt in packets:
-        text = pkt.application_data.upper()
-        if not text:
-            continue
+    auth_keywords: Tuple[str, ...] = ()
+    if protocol == "SMTP":
+        auth_keywords = ("AUTH LOGIN", "AUTH PLAIN", "AUTH ")
+    elif protocol == "IMAP":
+        auth_keywords = ("AUTHENTICATE", " LOGIN ", "\nLOGIN ")
+    elif protocol == "POP3":
+        auth_keywords = ("USER ", "PASS ", "AUTH ")
 
-        # Check for STARTTLS advertisement by server
-        if any(w in text for w in ("250-STARTTLS", "250 STARTTLS", "STARTTLS", "STLS")):
-            if pkt in server_packets:
-                upgrade_advertised = "YES"
-                evidence_frames.append(pkt.frame_number)
-
-        # Check for STARTTLS requested by client
-        if any(w in text for w in ("STARTTLS", "STLS")):
-            if pkt in client_packets:
-                upgrade_requested = "YES"
-                evidence_frames.append(pkt.frame_number)
-
-        # Check for authentication commands
-        # SMTP: AUTH, AUTH LOGIN, AUTH PLAIN
-        # IMAP: AUTHENTICATE, LOGIN
-        # POP3: USER, PASS, AUTH
-        is_auth_pkt = False
-        if protocol == "SMTP" and any(cmd in text for cmd in ("AUTH LOGIN", "AUTH PLAIN", "AUTH ")):
-            is_auth_pkt = True
-        elif protocol == "IMAP" and any(cmd in text for cmd in ("AUTHENTICATE", " LOGIN ")):
-            is_auth_pkt = True
-        elif protocol == "POP3" and any(cmd in text for cmd in ("USER ", "PASS ", "AUTH ")):
-            is_auth_pkt = True
-
-        if is_auth_pkt and pkt in client_packets:
+    if auth_keywords:
+        auth_found, a_frames = _scan_for_keywords(client_packets, auth_keywords)
+        if auth_found:
             auth_observed = True
-            auth_frames.append(pkt.frame_number)
-            evidence_frames.append(pkt.frame_number)
+            auth_frames.extend(a_frames)
+            evidence_frames.extend(a_frames)
 
     # Determine encryption mode and upgrade success
     if is_implicit_tls:
@@ -96,7 +133,6 @@ def analyze_email_security(
         if not has_tls:
             auth_before_tls = "YES"
         elif first_tls_frame is not None:
-            # If any auth command occurred before first TLS frame
             if any(f < first_tls_frame for f in auth_frames):
                 auth_before_tls = "YES"
             else:
@@ -114,4 +150,4 @@ def analyze_email_security(
         authentication_before_tls=auth_before_tls,
         capture_completeness=completeness,
     )
-    return sec_info, evidence_frames
+    return sec_info, sorted(set(evidence_frames))

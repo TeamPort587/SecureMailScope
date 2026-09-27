@@ -242,9 +242,19 @@ def parse_packet_json(pkt_data: Dict[str, Any]) -> Optional[PacketRecord]:
             cert_data["subject"] = parsed_cert.subject.rfc4514_string()
             cert_data["issuer"] = parsed_cert.issuer.rfc4514_string()
             cert_data["valid_from"] = parsed_cert.not_valid_before_utc.isoformat()
-            cert_data["valid_until"] = parsed_cert.not_valid_after_utc.isoformat()
-            cert_data["key_size"] = getattr(parsed_cert.public_key(), "key_size", 2048)
-            cert_data["key_type"] = "RSA"
+            pub_key = parsed_cert.public_key()
+            cert_data["key_size"] = getattr(pub_key, "key_size", 2048)
+            from cryptography.hazmat.primitives.asymmetric import rsa, ec, dsa, ed25519, ed448
+            if isinstance(pub_key, ec.EllipticCurvePublicKey):
+                cert_data["key_type"] = "EC"
+            elif isinstance(pub_key, rsa.RSAPublicKey):
+                cert_data["key_type"] = "RSA"
+            elif isinstance(pub_key, dsa.DSAPublicKey):
+                cert_data["key_type"] = "DSA"
+            elif isinstance(pub_key, (ed25519.Ed25519PublicKey, ed448.Ed448PublicKey)):
+                cert_data["key_type"] = "EdDSA"
+            else:
+                cert_data["key_type"] = "RSA"
         except Exception:
             pass
 

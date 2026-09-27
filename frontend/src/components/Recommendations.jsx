@@ -1,7 +1,7 @@
 import React from 'react';
 import RiskBadge from './RiskBadge';
 import EmptyState from './EmptyState';
-import { Lightbulb, CheckCircle2, Network } from 'lucide-react';
+import { Lightbulb, CheckCircle2, Network, BookOpen } from 'lucide-react';
 
 export default function Recommendations({
   recommendations = [],
@@ -227,6 +227,33 @@ function RecommendationCard({
             {recommendation.description}
           </p>
         )}
+
+        {/* Standards Guidance Reference */}
+        {(() => {
+          const text = `${recommendation?.title || ''} ${recommendation?.description || ''}`.toLowerCase();
+          let guidance = null;
+          if (text.includes('tls 1.0') || text.includes('tls 1.1')) {
+            guidance = { doc: 'RFC 8996', note: 'TLS 1.0 & 1.1 are formally deprecated; modern negotiation requires TLS 1.2+.' };
+          } else if (text.includes('tls 1.3') || text.includes('tls 1.2') || text.includes('pfs') || text.includes('cipher')) {
+            guidance = { doc: 'RFC 9325', note: 'IETF guidance prefers TLS 1.3 with AEAD and PFS; TLS 1.2 is an acceptable baseline.' };
+          } else if (text.includes('cleartext') || text.includes('plaintext') || text.includes('starttls') || text.includes('implicit')) {
+            guidance = { doc: 'RFC 8314', note: 'Cleartext email submission/access is obsolete; Implicit TLS is preferred.' };
+          } else if (text.includes('certificate') || text.includes('rsa') || text.includes('key')) {
+            guidance = { doc: 'NIST SP 800-52 / 57', note: 'NIST key management requires ≥ 2048-bit RSA or equivalent curves.' };
+          }
+
+          if (!guidance) return null;
+
+          return (
+            <div className="mt-3 flex items-center gap-2 rounded-lg border border-sky-200/80 bg-sky-50/60 px-3 py-1.5 text-xs text-sky-900">
+              <BookOpen className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="font-mono font-bold text-sky-800">{guidance.doc}:</span>
+                <span className="text-sky-700">{guidance.note}</span>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Affected / Target Sessions */}
         <div className="mt-4 pt-3.5 border-t border-slate-200/60">

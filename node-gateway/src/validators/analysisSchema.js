@@ -94,10 +94,75 @@ const anomalyAssessmentSchema = z.object({
   anomalous_session_ids: z.array(z.string()).optional(),
 }).nullable().optional();
 
+// -- Risk schema ---------------------------------------------------------------
+
+const sessionRiskSchema = z.object({
+  score: z.number().min(0).max(100).optional(),
+  level: riskLevel,
+  model_version: z.string().optional().default('rf-v1'),
+  method: z.string().optional(),
+  confidence: z.number().min(0).max(1).optional(),
+  severity: z.string().optional(),
+  prediction_quality: z.string().optional(),
+  evidence_quality: z.string().optional(),
+  findings_count: z.number().optional(),
+  critical_count: z.number().optional(),
+  high_count: z.number().optional(),
+  medium_count: z.number().optional(),
+  low_count: z.number().optional(),
+}).passthrough();
+
+const riskSchema = z.object({
+  score: z.number().min(0).max(100),
+  level: riskLevel,
+  model_version: z.string().optional().default('rf-v1'),
+  method: z.string().optional(),
+  confidence: z.number().min(0).max(1).optional(),
+});
+
+// -- Standards context schema --------------------------------------------------
+
+const standardsSourceSchema = z.object({
+  name: z.string(),
+  title: z.string().optional(),
+  section: z.string().optional(),
+  url: z.string().optional(),
+  published_date: z.string().optional(),
+  effective_status: z.string().optional(),
+});
+
+const standardsOptionSchema = z.object({
+  value: z.string(),
+  label: z.string(),
+  status: z.string(),
+  description: z.string().optional(),
+});
+
+const standardsContextItemSchema = z.object({
+  field: z.string(),
+  label: z.string(),
+  observed: z.string(),
+  status: z.string(),
+  preferred: z.array(z.string()),
+  visualization: z.enum([
+    'ordered_spectrum',
+    'categorical_spectrum',
+    'capability_comparison',
+    'status_assessment',
+  ]),
+  options: z.array(standardsOptionSchema),
+  profile: z.string(),
+  profile_name: z.string(),
+  rationale: z.string(),
+  sources: z.array(standardsSourceSchema),
+  metadata: z.record(z.any()).optional(),
+}).passthrough();
+
 // -- Session schema ------------------------------------------------------------
 
 const sessionSchema = z.object({
   session_id: z.string(),
+  tcp_stream: z.number().int().nullable().optional(),
   protocol: protocol,
   service: z.string().optional(),
   client_ip: z.string(),
@@ -108,6 +173,13 @@ const sessionSchema = z.object({
   tls: tlsSchema,
   certificate: certificateSchema,
   anomaly: anomalySchema,
+  risk: sessionRiskSchema.nullable().optional(),
+  wireshark_filter: z.string().nullable().optional(),
+  packet_count: z.number().int().optional(),
+  start_time: z.string().nullable().optional(),
+  end_time: z.string().nullable().optional(),
+  source_pcap_sha256: z.string().nullable().optional(),
+  standards_context: z.array(standardsContextItemSchema).optional(),
 });
 
 // -- Finding schema ------------------------------------------------------------
@@ -121,16 +193,6 @@ const findingSchema = z.object({
   description: z.string(),
   confidence: confidence,
   evidence: z.record(z.unknown()), // JSONB-compatible
-});
-
-// -- Risk schema ---------------------------------------------------------------
-
-const riskSchema = z.object({
-  score: z.number().min(0).max(100),
-  level: riskLevel,
-  model_version: z.string(),
-  method: z.string().optional(),
-  confidence: z.number().min(0).max(1).optional(),
 });
 
 // -- Recommendation schema -----------------------------------------------------
@@ -155,6 +217,11 @@ const summarySchema = z.object({
   implicit_tls_sessions: z.number().int().min(0).optional(),
   vulnerable_sessions: z.number().int().min(0).optional(),
   findings_count: z.number().int().min(0),
+  severity_counts: z.record(z.number().int()).optional(),
+  protocol_counts: z.record(z.number().int()).optional(),
+  encryption_mode_counts: z.record(z.number().int()).optional(),
+  critical_sessions: z.number().int().optional(),
+  high_risk_sessions: z.number().int().optional(),
 });
 
 // -- File echo schema (optional — Django may echo back file metadata) ----------

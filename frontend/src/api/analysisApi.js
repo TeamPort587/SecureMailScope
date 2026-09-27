@@ -254,6 +254,52 @@ export const analysisApi = {
     );
   },
 
+  /*
+  |--------------------------------------------------------------------------
+  | Download Session PCAP
+  |--------------------------------------------------------------------------
+  */
+
+  async downloadSessionPcap(analysisId, sessionId) {
+    if (USE_MOCK_ENV || isDemoId(analysisId)) {
+      return new Blob(
+        [new Uint8Array([0xd4, 0xc3, 0xb2, 0xa1, 0x02, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00])],
+        { type: 'application/vnd.tcpdump.pcap' }
+      );
+    }
+
+    return await apiClient(
+      `/api/analyses/${encodeURIComponent(analysisId)}/sessions/${encodeURIComponent(sessionId)}/pcap`,
+      {
+        asBlob: true,
+      }
+    );
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | Session Provenance
+  |--------------------------------------------------------------------------
+  */
+
+  async getSessionProvenance(analysisId, sessionId) {
+    if (USE_MOCK_ENV || isDemoId(analysisId)) {
+      return {
+        analysis_id: analysisId,
+        session_id: sessionId,
+        tcp_stream: 0,
+        source_pcap_filename: 'demo_capture.pcap',
+        source_pcap_sha256: '7d793037a0760186574b0282f2f435e7c7a7f7e3c5f1d4c1c2e8e9b0a1f2c3d4',
+        completeness: 'COMPLETE',
+        wireshark_filter: 'tcp.stream == 0',
+      };
+    }
+
+    return await apiClient(
+      `/api/analyses/${encodeURIComponent(analysisId)}/sessions/${encodeURIComponent(sessionId)}/provenance`
+    );
+  },
+
 
   /*
   |--------------------------------------------------------------------------
