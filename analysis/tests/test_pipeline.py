@@ -286,6 +286,12 @@ def test_pipeline_contract_conformity(monkeypatch):
         assert "recommendations" in res
         assert len(res["recommendations"]) >= 2
 
+        # Check anomaly assessment
+        assert "anomaly_assessment" in res
+        assert "overall_status" in res["anomaly_assessment"]
+        assert res["anomaly_assessment"]["total_sessions"] == 4
+        assert "anomaly" in res["sessions"][0]
+
     finally:
         if os.path.exists(dummy_pcap_path):
             os.remove(dummy_pcap_path)

@@ -96,7 +96,27 @@
             }
           ]
         }
-      ]
+      ],
+      "anomaly": {
+        "status": "COMPLETE",
+        "classification": "WITHIN_BASELINE",
+        "is_anomalous": false,
+        "raw_score": -0.421,
+        "decision_score": 0.082,
+        "threshold": 0.0,
+        "anomaly_index": 22.0,
+        "model_version": "if-v1",
+        "feature_schema_version": "if-features-v1",
+        "explanation": {
+          "summary": "Session parameters align with learned normal email baseline.",
+          "deviations": [],
+          "related_findings": [],
+          "limitations": [
+            "Statistical anomaly detection reflects behavioral outlier status relative to baseline training data, not verified malicious activity."
+          ]
+        },
+        "warnings": []
+      }
     },
     {
       "session_id": "smtp-002",
@@ -254,5 +274,18 @@
       "title": "Enable TLS protection for IMAP",
       "description": "Use IMAPS or successfully negotiate STARTTLS before authentication."
     }
-  ]
+  ],
+  "anomaly_assessment": {
+    "model_version": "if-v1",
+    "feature_schema_version": "if-features-v1",
+    "total_sessions": 4,
+    "eligible_sessions": 4,
+    "anomalous_sessions": 0,
+    "within_baseline_sessions": 4,
+    "insufficient_evidence_sessions": 0,
+    "unavailable_sessions": 0,
+    "anomalous_session_ids": [],
+    "summary_status": "ALL_WITHIN_BASELINE",
+    "notes": "Isolation Forest anomaly assessment operates independently of Random Forest risk scoring."
+  }
 }

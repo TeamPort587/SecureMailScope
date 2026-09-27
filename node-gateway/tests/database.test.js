@@ -126,5 +126,28 @@ describe('Database Service — Data Transformation', () => {
 
       expect(mapped.analysis_version).toBe('mock-v1');
     });
+
+    it('should map anomaly_assessment and session anomaly when present', () => {
+      const response = getMockAnalysisResponse(validMetadata);
+      response.anomaly_assessment = {
+        overall_status: 'ANOMALIES_DETECTED',
+        total_sessions: 4,
+        anomalous_count: 1,
+        within_baseline_count: 3,
+        anomalous_session_ids: ['smtp-002'],
+      };
+      response.sessions[1].anomaly = {
+        status: 'COMPLETE',
+        classification: 'ANOMALOUS',
+        is_anomalous: true,
+        raw_score: -0.15,
+        decision_score: 0.85,
+        threshold: 0.0,
+      };
+
+      const mapped = transformForPersistence(response);
+      expect(mapped.anomaly_assessment).toEqual(response.anomaly_assessment);
+      expect(mapped.sessions[1].anomaly.is_anomalous).toBe(true);
+    });
   });
 });

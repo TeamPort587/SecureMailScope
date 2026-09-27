@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   XCircle,
   HelpCircle,
+  Cpu,
   Download,
   Copy,
   Check,
@@ -886,6 +887,79 @@ export default function SessionDetails({
               </div>
             )}
           </section>
+
+          {/* ISOLATION FOREST ANOMALY ASSESSMENT */}
+          {session.anomaly && (
+            <section className="space-y-3">
+              <SectionHeader
+                icon={Cpu}
+                title="Behavioral Anomaly Assessment"
+                description="Isolation Forest unsupervised outlier analysis for this session"
+                color="brand"
+              />
+
+              <div
+                className={`rounded-2xl border p-5 ${
+                  session.anomaly.is_anomalous
+                    ? 'border-amber-200 bg-amber-50/30'
+                    : 'border-emerald-200 bg-emerald-50/20'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        session.anomaly.is_anomalous
+                          ? 'bg-amber-100 text-amber-800'
+                          : 'bg-emerald-100 text-emerald-800'
+                      }`}
+                    >
+                      {session.anomaly.is_anomalous
+                        ? 'ANOMALOUS OUTLIER'
+                        : 'WITHIN NORMAL BASELINE'}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      model: {session.anomaly.model_version || 'if-v1'}
+                    </span>
+                  </div>
+                  {typeof session.anomaly.decision_score === 'number' && (
+                    <span className="font-mono text-xs font-semibold text-slate-600 bg-white px-2 py-0.5 rounded border border-slate-200">
+                      Score: {session.anomaly.decision_score.toFixed(3)}
+                    </span>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-700 leading-relaxed bg-white/80 p-3 rounded-xl border border-slate-200/60">
+                  {session.anomaly.explanation?.summary ||
+                    'No anomaly explanation provided.'}
+                </p>
+
+                {Array.isArray(session.anomaly.explanation?.deviations) &&
+                  session.anomaly.explanation.deviations.length > 0 && (
+                    <div className="mt-3 space-y-1.5">
+                      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                        Feature Deviations:
+                      </p>
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {session.anomaly.explanation.deviations.map((d, i) => (
+                          <div
+                            key={i}
+                            className="text-xs bg-white p-2 rounded-lg border border-slate-200"
+                          >
+                            <span className="font-mono font-medium text-slate-800">
+                              {d.feature || d.name}
+                            </span>
+                            <div className="text-[11px] text-amber-700 mt-0.5">
+                              Observed: {typeof d.observed === 'number' ? d.observed.toFixed(2) : d.observed}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+              </div>
+            </section>
+          )}
 
           {/* STANDARDS CONTEXT & CONFIGURATION COMPARISON */}
           <StandardsContextSection

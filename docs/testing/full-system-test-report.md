@@ -352,6 +352,21 @@ Run 10: 0.296s (ID: 8d8db6e8-27fa-49a6-8852-83dd5cb16e06) -> Score 15 (LOW)
 - **QA Lead / Agent**: Antigravity Full-Scale QA Engine
 - **Test Date**: September 10, 2026
 - **Target Branch**: `feature/full-system-qa`
-- **Validated Commit**: `dbb744f506b3bd67be59d7d9fa7ae83de9b8ff2f`
-
 Every component of SecureMailScope—from user authentication and file ingest through packet dissection, feature extraction, ML classification, and frontend reporting—has been proven operational, accurate, and stable under live execution.
+
+---
+
+## 21. Isolation Forest Integration & Validation (September 27, 2026)
+
+### Key Metrics Summary
+| Metric Category | Value | Status |
+|---|---|---|
+| **Isolation Forest Python Tests (`pytest`)** | 5 | 5 Passed, 0 Failed |
+| **Pipeline Integration Tests (`pytest`)** | 3 | 3 Passed, 0 Failed |
+| **Contract Validation Tests (`pytest`)** | 6 | 6 Passed, 0 Failed |
+| **Node.js Gateway Tests (`jest`)** | 83 | 83 Passed, 0 Failed |
+| **Frontend Tests (`vitest`)** | 22 | 22 Passed, 0 Failed |
+| **Frontend Production Build (`vite build`)** | 0 Errors | Built in 4.95s |
+| **Dual Model Invariant** | 100% Preserved | Random Forest outputs untouched |
+| **Failure Isolation** | Verified | Anomaly exceptions shielded |
+

@@ -1,4 +1,29 @@
-version: "1.0"
-datasets: []
-description: "Manifest describing benchmark datasets, sample captures, and test payloads for SecureMailScope."
-last_updated: "2026-09-09"
+version: "1.1"
+description: "Manifest describing benchmark datasets, baseline generators, sample captures, and test payloads for SecureMailScope."
+last_updated: "2026-09-27"
+datasets:
+  - id: "rf-training-v1"
+    name: "Random Forest Supervised Risk Dataset"
+    type: "curated_synthetic"
+    samples: 1600
+    features: 19
+    schema: "docs/contracts/ml-feature-vector.json"
+    files:
+      train: "data/processed/train.csv"
+      validation: "data/processed/validation.csv"
+      test: "data/processed/test.csv"
+  - id: "if-baseline-v1"
+    name: "Isolation Forest Behavioral Anomaly Baseline"
+    type: "protocol_aware_synthetic_baseline"
+    training_samples: 2000
+    holdout_normal_samples: 300
+    anomaly_eval_samples: 500
+    features: 30
+    schema: "docs/contracts/isolation-forest-feature-vector.json"
+    generator: "analysis/anomaly_detection/dataset_generator.py"
+    trainer: "analysis/anomaly_detection/train_model.py"
+    artifacts:
+      model: "analysis/anomaly_detection/artifacts/isolation_forest.joblib"
+      preprocessor: "analysis/anomaly_detection/artifacts/if_preprocessor.joblib"
+      metadata: "analysis/anomaly_detection/artifacts/if_metadata.json"
+      baseline_stats: "analysis/anomaly_detection/artifacts/if_baseline_stats.json"
