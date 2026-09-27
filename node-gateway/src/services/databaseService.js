@@ -317,15 +317,55 @@ async function persistAnalysisResult(analysisId, data) {
 /**
  * Get paginated analyses for a user.
  */
-async function getAnalysesByUser(userId, { page = 1, limit = 20 } = {}) {
+async function getAnalysesByUser(userId, { page = 1, limit = 20, search, date } = {}) {
   const offset = (page - 1) * limit;
 
   try {
+    const conditions = ['a.user_id = $1'];
+    const params = [userId];
+    let paramIndex = 2;
+
+    if (search && typeof search === 'string' && search.trim()) {
+      conditions.push(`(a.filename ILIKE $${paramIndex} OR a.id::text ILIKE $${paramIndex})`);
+      params.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+
+    if (date && typeof date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(date.trim())) {
+      conditions.push(`a.created_at::date = $${paramIndex}::date`);
+      params.push(date.trim());
+      paramIndex++;
+    }
+
+    const whereClause = conditions.join(' AND ');
+
     const countResult = await pool.query(
-      'SELECT COUNT(*) FROM analyses WHERE user_id = $1',
-      [userId]
+      `SELECT COUNT(*) FROM analyses a WHERE ${whereClause}`,
+      params
     );
     const total = parseInt(countResult.rows[0].count, 10);
+
+    const statsResult = await pool.query(
+      `SELECT
+         COUNT(*) AS total_analyses,
+         COUNT(CASE WHEN LOWER(a.overall_risk) IN ('high', 'critical') THEN 1 END) AS high_risk_count,
+         COALESCE(SUM((SELECT COUNT(*) FROM sessions s WHERE s.analysis_id = a.id)), 0) AS total_sessions,
+         COALESCE(SUM((SELECT COUNT(*) FROM findings f WHERE f.analysis_id = a.id)), 0) AS total_findings
+       FROM analyses a
+       WHERE a.user_id = $1`,
+      [userId]
+    );
+    const statsRow = statsResult.rows[0] || {};
+    const stats = {
+      totalAnalyses: parseInt(statsRow.total_analyses || 0, 10),
+      highRiskCount: parseInt(statsRow.high_risk_count || 0, 10),
+      totalSessions: parseInt(statsRow.total_sessions || 0, 10),
+      totalFindings: parseInt(statsRow.total_findings || 0, 10),
+    };
+
+    const queryParams = [...params, limit, offset];
+    const limitIndex = paramIndex;
+    const offsetIndex = paramIndex + 1;
 
     const result = await pool.query(
       `SELECT
@@ -341,10 +381,10 @@ async function getAnalysesByUser(userId, { page = 1, limit = 20 } = {}) {
          (SELECT COUNT(*) FROM sessions s WHERE s.analysis_id = a.id) AS session_count,
          (SELECT COUNT(*) FROM findings f WHERE f.analysis_id = a.id) AS finding_count
        FROM analyses a
-       WHERE a.user_id = $1
+       WHERE ${whereClause}
        ORDER BY a.created_at DESC
-       LIMIT $2 OFFSET $3`,
-      [userId, limit, offset]
+       LIMIT $${limitIndex} OFFSET $${offsetIndex}`,
+      queryParams
     );
 
     return {
@@ -365,7 +405,9 @@ async function getAnalysesByUser(userId, { page = 1, limit = 20 } = {}) {
         page,
         limit,
         total,
+        totalPages: Math.ceil(total / limit) || 1,
       },
+      stats,
     };
   } catch (err) {
     logger.error('Database error fetching analyses', { error: err.message });
@@ -401,6 +443,71 @@ async function getAnalysisById(analysisId, userId) {
     logger.error('Database error fetching analysis', { error: err.message });
     throw new DatabaseError();
   }
+}
+
+/**
+ * Maps a joined session + security_info DB row into the standard contract object.
+ */
+function mapSessionRow(row) {
+  const session = {
+    session_id: row.session_ref || row.session_id,
+    tcp_stream: row.tcp_stream !== undefined && row.tcp_stream !== null ? row.tcp_stream : null,
+    wireshark_filter: row.tcp_stream !== undefined && row.tcp_stream !== null ? `tcp.stream == ${row.tcp_stream}` : null,
+    risk: row.risk_label ? {
+      level: row.risk_label,
+      severity: row.risk_label,
+      score: row.risk_label === 'CRITICAL' ? 95 : row.risk_label === 'HIGH' ? 80 : row.risk_label === 'MEDIUM' ? 50 : 15,
+      confidence: 0.95,
+    } : null,
+    risk_label: row.risk_label || null,
+    protocol: row.protocol,
+    service: row.service,
+    client_ip: row.src_ip,
+    server_ip: row.dst_ip,
+    client_port: row.src_port,
+    server_port: row.dst_port || row.service_port,
+    security: {
+      encryption_mode: row.encryption_mode,
+      upgrade_advertised: row.upgrade_advertised,
+      upgrade_requested: row.upgrade_requested,
+      upgrade_succeeded: row.upgrade_succeeded,
+      authentication_before_tls: row.authentication_before_tls,
+      capture_completeness: row.capture_completeness,
+    },
+    tls: null,
+    certificate: null,
+  };
+
+  if (row.tls_version) {
+    session.tls = {
+      version: row.tls_version,
+      cipher_suite: row.cipher_suite,
+      pfs: row.pfs,
+    };
+  }
+
+  if (row.certificate_subject || row.certificate_visibility) {
+    if (row.certificate_visibility === 'NOT_OBSERVABLE') {
+      session.certificate = { visibility: 'NOT_OBSERVABLE' };
+    } else {
+      session.certificate = {
+        subject: row.certificate_subject,
+        issuer: row.certificate_issuer,
+        valid_from: row.certificate_valid_from instanceof Date
+          ? row.certificate_valid_from.toISOString()
+          : (row.certificate_valid_from || null),
+        valid_until: row.certificate_valid_to instanceof Date
+          ? row.certificate_valid_to.toISOString()
+          : (row.certificate_valid_to || null),
+        key_type: row.certificate_key_algorithm,
+        key_size: row.certificate_key_size,
+        self_signed: row.self_signed,
+      };
+    }
+  }
+
+  session.standards_context = standardsService.evaluateSessionStandards(session);
+  return session;
 }
 
 /**
@@ -477,67 +584,7 @@ async function getFullAnalysis(analysisId) {
     );
 
     // Build sessions with nested security/tls/certificate like the contract
-    const sessions = sessionsResult.rows.map((row) => {
-      const session = {
-        session_id: row.session_ref || row.session_id,
-        tcp_stream: row.tcp_stream !== undefined && row.tcp_stream !== null ? row.tcp_stream : null,
-        wireshark_filter: row.tcp_stream !== undefined && row.tcp_stream !== null ? `tcp.stream == ${row.tcp_stream}` : null,
-        risk: row.risk_label ? {
-          level: row.risk_label,
-          severity: row.risk_label,
-          score: row.risk_label === 'CRITICAL' ? 95 : row.risk_label === 'HIGH' ? 80 : row.risk_label === 'MEDIUM' ? 50 : 15,
-          confidence: 0.95,
-        } : null,
-        risk_label: row.risk_label || null,
-        protocol: row.protocol,
-        service: row.service,
-        client_ip: row.src_ip,
-        server_ip: row.dst_ip,
-        client_port: row.src_port,
-        server_port: row.dst_port || row.service_port,
-        security: {
-          encryption_mode: row.encryption_mode,
-          upgrade_advertised: row.upgrade_advertised,
-          upgrade_requested: row.upgrade_requested,
-          upgrade_succeeded: row.upgrade_succeeded,
-          authentication_before_tls: row.authentication_before_tls,
-          capture_completeness: row.capture_completeness,
-        },
-        tls: null,
-        certificate: null,
-      };
-
-      // Build TLS object if data exists
-      if (row.tls_version) {
-        session.tls = {
-          version: row.tls_version,
-          cipher_suite: row.cipher_suite,
-          pfs: row.pfs,
-        };
-      }
-
-      // Build certificate object
-      if (row.certificate_subject || row.certificate_visibility) {
-        if (row.certificate_visibility === 'NOT_OBSERVABLE') {
-          session.certificate = { visibility: 'NOT_OBSERVABLE' };
-        } else {
-          session.certificate = {
-            subject: row.certificate_subject,
-            issuer: row.certificate_issuer,
-            valid_from: row.certificate_valid_from,
-            valid_until: row.certificate_valid_to,
-            key_type: row.certificate_key_algorithm,
-            key_size: row.certificate_key_size,
-            self_signed: row.self_signed,
-          };
-        }
-      }
-
-      // Attach standards context
-      session.standards_context = standardsService.evaluateSessionStandards(session);
-
-      return session;
-    });
+    const sessions = sessionsResult.rows.map(mapSessionRow);
 
     const findings = findingsResult.rows.map((row) => ({
       finding_id: row.finding_id,
@@ -577,6 +624,132 @@ async function getFullAnalysis(analysisId) {
     return { sessions, findings, risk, recommendations };
   } catch (err) {
     logger.error('Database error fetching full analysis', { error: err.message });
+    throw new DatabaseError();
+  }
+}
+
+/**
+ * Get paginated, filtered, and sorted sessions for an analysis.
+ */
+async function getSessionsByAnalysis(analysisId, {
+  page = 1,
+  limit = 15,
+  search = '',
+  protocol = 'ALL',
+  encryption = 'ALL',
+  risk = 'ALL',
+  sortBy = 'tcp_stream',
+  sortOrder = 'ASC',
+} = {}) {
+  const offset = (page - 1) * limit;
+
+  try {
+    const conditions = ['s.analysis_id = $1'];
+    const params = [analysisId];
+    let paramIndex = 2;
+
+    if (search && typeof search === 'string' && search.trim()) {
+      conditions.push(
+        `(s.session_ref ILIKE $${paramIndex} OR s.src_ip ILIKE $${paramIndex} OR s.dst_ip ILIKE $${paramIndex} OR s.protocol ILIKE $${paramIndex} OR s.service ILIKE $${paramIndex})`
+      );
+      params.push(`%${search.trim()}%`);
+      paramIndex++;
+    }
+
+    if (protocol && protocol !== 'ALL') {
+      conditions.push(`UPPER(s.protocol) = UPPER($${paramIndex})`);
+      params.push(protocol);
+      paramIndex++;
+    }
+
+    if (encryption && encryption !== 'ALL') {
+      conditions.push(`UPPER(s.encryption_mode) = UPPER($${paramIndex})`);
+      params.push(encryption);
+      paramIndex++;
+    }
+
+    if (risk && risk !== 'ALL') {
+      conditions.push(`UPPER(s.risk_label) = UPPER($${paramIndex})`);
+      params.push(risk);
+      paramIndex++;
+    }
+
+    const whereClause = conditions.join(' AND ');
+
+    const countResult = await pool.query(
+      `SELECT COUNT(*) FROM sessions s WHERE ${whereClause}`,
+      params
+    );
+    const total = parseInt(countResult.rows[0].count, 10);
+
+    const allowedSortFields = {
+      tcp_stream: 's.tcp_stream',
+      session_id: 's.session_ref',
+      protocol: 's.protocol',
+      encryption: 's.encryption_mode',
+      risk: "CASE UPPER(s.risk_label) WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 1 ELSE 0 END",
+    };
+
+    const sortColumn = allowedSortFields[sortBy] || 's.tcp_stream';
+    const direction = String(sortOrder).toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
+    const orderClause = `${sortColumn} ${direction} NULLS LAST`;
+
+    const queryParams = [...params, limit, offset];
+    const limitIndex = paramIndex;
+    const offsetIndex = paramIndex + 1;
+
+    const sessionsResult = await pool.query(
+      `SELECT
+         s.id AS session_id,
+         s.session_ref,
+         s.tcp_stream,
+         s.protocol,
+         s.service,
+         s.service_port,
+         s.src_ip,
+         s.src_port,
+         s.dst_ip,
+         s.dst_port,
+         s.encryption_mode,
+         s.capture_completeness,
+         s.risk_label,
+         si.upgrade_advertised,
+         si.upgrade_requested,
+         si.upgrade_succeeded,
+         si.authentication_before_tls,
+         si.tls_version,
+         si.cipher_suite,
+         si.key_exchange,
+         si.pfs,
+         si.certificate_visibility,
+         si.certificate_subject,
+         si.certificate_issuer,
+         si.certificate_valid_from,
+         si.certificate_valid_to,
+         si.certificate_key_algorithm,
+         si.certificate_key_size,
+         si.self_signed
+       FROM sessions s
+       LEFT JOIN security_info si ON si.session_id = s.id
+       WHERE ${whereClause}
+       ORDER BY ${orderClause}
+       LIMIT $${limitIndex} OFFSET $${offsetIndex}`,
+      queryParams
+    );
+
+    const items = sessionsResult.rows.map(mapSessionRow);
+
+    return {
+      items,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit) || 1,
+      },
+    };
+  } catch (err) {
+    logger.error('Database error fetching paginated sessions', { error: err.message });
     throw new DatabaseError();
   }
 }
@@ -627,5 +800,6 @@ module.exports = {
   getAnalysesByUser,
   getAnalysisById,
   getFullAnalysis,
+  getSessionsByAnalysis,
   getSessionByRef,
 };

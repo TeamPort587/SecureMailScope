@@ -95,15 +95,23 @@ describe('Frontend Component Unit & Integration Tests', () => {
   // --- SessionTable & SessionDetails ---
   describe('SessionTable', () => {
     it('displays multiple sessions with protocols and ports', () => {
-      render(<SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />);
+      render(
+        <BrowserRouter>
+          <SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />
+        </BrowserRouter>
+      );
       expect(screen.getByText('smtp-001')).toBeInTheDocument();
       expect(screen.getByText('smtp-002')).toBeInTheDocument();
       expect(screen.getByText('imap-001')).toBeInTheDocument();
       expect(screen.getByText('pop3-001')).toBeInTheDocument();
     });
 
-    it('opens session inspection modal with tri-state values when clicking inspect', () => {
-      render(<SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />);
+    it('opens session inspection modal with tri-state values when clicking inspect without analysisId', () => {
+      render(
+        <BrowserRouter>
+          <SessionTable sessions={mockAnalysis.sessions} findings={mockAnalysis.findings} />
+        </BrowserRouter>
+      );
       const inspectButtons = screen.getAllByRole('button', { name: /inspect/i });
       fireEvent.click(inspectButtons[0]);
 
@@ -111,6 +119,120 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(screen.getByRole('dialog')).toBeInTheDocument();
       expect(screen.getByText('Protocol Handshake')).toBeInTheDocument();
       expect(screen.getByText('Upgrade Advertised')).toBeInTheDocument();
+    });
+
+    it('invokes onSelectSession callback when inspecting with custom handler', () => {
+      const handleSelect = vi.fn();
+      render(
+        <BrowserRouter>
+          <SessionTable
+            sessions={mockAnalysis.sessions}
+            findings={mockAnalysis.findings}
+            onSelectSession={handleSelect}
+          />
+        </BrowserRouter>
+      );
+      const inspectButtons = screen.getAllByRole('button', { name: /inspect/i });
+      fireEvent.click(inspectButtons[0]);
+      expect(handleSelect).toHaveBeenCalledWith(mockAnalysis.sessions[0]);
+    });
+
+    it('paginates sessions at 15 items per page and allows navigation', () => {
+      // Create 20 mock sessions
+      const manySessions = Array.from({ length: 20 }, (_, idx) => ({
+        ...mockAnalysis.sessions[0],
+        session_id: `session-${String(idx + 1).padStart(3, '0')}`,
+        tcp_stream: idx,
+      }));
+
+      render(
+        <BrowserRouter>
+          <SessionTable sessions={manySessions} findings={[]} />
+        </BrowserRouter>
+      );
+
+      // Verify page 1 shows 15 items: session-001 to session-015
+      expect(screen.getByText('session-001')).toBeInTheDocument();
+      expect(screen.getByText('session-015')).toBeInTheDocument();
+      expect(screen.queryByText('session-016')).not.toBeInTheDocument();
+
+      // Check pagination footer
+      expect(screen.getByText(/Showing/i)).toBeInTheDocument();
+      expect(screen.getByText('20')).toBeInTheDocument();
+
+      // Click Next page button
+      const nextBtn = screen.getByRole('button', { name: /next page/i });
+      fireEvent.click(nextBtn);
+
+      // Verify page 2 shows session-016 to session-020
+      expect(screen.getByText('session-016')).toBeInTheDocument();
+      expect(screen.getByText('session-020')).toBeInTheDocument();
+      expect(screen.queryByText('session-001')).not.toBeInTheDocument();
+    });
+
+    it('allows sorting sessions by clicking column header with 3-state cycle (ASC -> DESC -> Reset)', () => {
+      const sample = [
+        { ...mockAnalysis.sessions[0], session_id: 'zebra-001', tcp_stream: 1 },
+        { ...mockAnalysis.sessions[0], session_id: 'alpha-001', tcp_stream: 2 },
+      ];
+
+      render(
+        <BrowserRouter>
+          <SessionTable sessions={sample} findings={[]} />
+        </BrowserRouter>
+      );
+
+      // Initial natural order (tcp_stream 1 before 2)
+      let cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('zebra-001');
+      expect(cells[1]).toHaveTextContent('alpha-001');
+
+      const sessionHeader = screen.getByText('Session');
+
+      // Click 1: Sort by session_id ASC
+      fireEvent.click(sessionHeader);
+      cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('alpha-001');
+      expect(cells[1]).toHaveTextContent('zebra-001');
+
+      // Click 2: Sort by session_id DESC
+      fireEvent.click(sessionHeader);
+      cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('zebra-001');
+      expect(cells[1]).toHaveTextContent('alpha-001');
+
+      // Click 3: Revert to natural order (tcp_stream)
+      fireEvent.click(sessionHeader);
+      cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('zebra-001');
+      expect(cells[1]).toHaveTextContent('alpha-001');
+    });
+
+    it('allows resetting sort via the Reset button', () => {
+      const sample = [
+        { ...mockAnalysis.sessions[0], session_id: 'zebra-001', tcp_stream: 1 },
+        { ...mockAnalysis.sessions[0], session_id: 'alpha-001', tcp_stream: 2 },
+      ];
+
+      render(
+        <BrowserRouter>
+          <SessionTable sessions={sample} findings={[]} />
+        </BrowserRouter>
+      );
+
+      // Sort by Session (alpha-001 first)
+      fireEvent.click(screen.getByText('Session'));
+      let cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('alpha-001');
+      expect(cells[1]).toHaveTextContent('zebra-001');
+
+      // Click Reset button to clear sort back to natural stream order
+      const resetBtn = screen.getByRole('button', { name: /reset all filters and sorting/i });
+      fireEvent.click(resetBtn);
+
+      cells = screen.getAllByText(/alpha-001|zebra-001/);
+      expect(cells[0]).toHaveTextContent('zebra-001');
+      expect(cells[1]).toHaveTextContent('alpha-001');
     });
   });
 

@@ -126,68 +126,89 @@ export const analysisApi = {
   |--------------------------------------------------------------------------
   */
 
-  async getAnalyses(page = 1, limit = 20) {
+  async getAnalyses(page = 1, limit = 20, search = '', date = '') {
 
     if (USE_MOCK_ENV) {
 
-      const start =
-        (page - 1) * limit;
+      let mapped = localMockAnalyses.map((analysis) => ({
+        analysis_id: analysis.analysis_id,
+        filename: analysis.filename,
+        status: analysis.status || 'COMPLETED',
+        risk_label: analysis.risk?.level || 'UNKNOWN',
+        risk_score: analysis.risk?.score ?? null,
+        session_count: analysis.summary?.total_sessions || analysis.sessions?.length || 0,
+        finding_count: analysis.summary?.findings_count || analysis.findings?.length || 0,
+        created_at: analysis.uploaded_at,
+        completed_at: analysis.uploaded_at,
+      }));
 
-      const end =
-        start + limit;
+      if (search && search.trim()) {
+        const term = search.trim().toLowerCase();
+        mapped = mapped.filter(
+          (item) =>
+            String(item.filename || '').toLowerCase().includes(term) ||
+            String(item.analysis_id || '').toLowerCase().includes(term)
+        );
+      }
 
-      const items =
-        localMockAnalyses
-          .map((analysis) => ({
-            analysis_id:
-              analysis.analysis_id,
+      if (date && date.trim()) {
+        const dStr = date.trim();
+        mapped = mapped.filter((item) => {
+          if (!item.created_at) return false;
+          const d = new Date(item.created_at);
+          if (isNaN(d.getTime())) return false;
+          const y = d.getFullYear();
+          const m = String(d.getMonth() + 1).padStart(2, '0');
+          const day = String(d.getDate()).padStart(2, '0');
+          return `${y}-${m}-${day}` === dStr;
+        });
+      }
 
-            filename:
-              analysis.filename,
+      const total = mapped.length;
+      const start = (page - 1) * limit;
+      const items = mapped.slice(start, start + limit);
 
-            status:
-              analysis.status || 'COMPLETED',
+      const highRiskCount = localMockAnalyses.filter((item) => {
+        const level = String(item.risk?.level || '').toLowerCase();
+        return level === 'high' || level === 'critical';
+      }).length;
 
-            risk_label:
-              analysis.risk?.level ||
-              'UNKNOWN',
+      const totalSessions = localMockAnalyses.reduce(
+        (acc, item) => acc + (item.summary?.total_sessions || item.sessions?.length || 0),
+        0
+      );
 
-            risk_score:
-              analysis.risk?.score ??
-              null,
-
-            session_count:
-              analysis.summary?.total_sessions ||
-              analysis.sessions?.length ||
-              0,
-
-            finding_count:
-              analysis.summary?.findings_count ||
-              analysis.findings?.length ||
-              0,
-
-            created_at:
-              analysis.uploaded_at,
-
-            completed_at:
-              analysis.uploaded_at,
-          }))
-          .slice(start, end);
+      const totalFindings = localMockAnalyses.reduce(
+        (acc, item) => acc + (item.summary?.findings_count || item.findings?.length || 0),
+        0
+      );
 
       return {
         items,
-
         pagination: {
           page,
           limit,
-          total:
-            localMockAnalyses.length,
+          total,
+          totalPages: Math.ceil(total / limit) || 1,
+        },
+        stats: {
+          totalAnalyses: localMockAnalyses.length,
+          highRiskCount,
+          totalSessions,
+          totalFindings,
         },
       };
     }
 
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (search && search.trim()) params.set('search', search.trim());
+    if (date && date.trim()) params.set('date', date.trim());
+
     return await apiClient(
-      `/api/analyses?page=${page}&limit=${limit}`
+      `/api/analyses?${params.toString()}`
     );
   },
 
@@ -212,6 +233,111 @@ export const analysisApi = {
 
     return await apiClient(
       `/api/analyses/${encodeURIComponent(analysisId)}`
+    );
+  },
+
+  /*
+  |--------------------------------------------------------------------------
+  | Get Paginated, Filtered, and Sorted Sessions
+  |--------------------------------------------------------------------------
+  */
+
+  async getSessions(analysisId, {
+    page = 1,
+    limit = 15,
+    search = '',
+    protocol = 'ALL',
+    encryption = 'ALL',
+    risk = 'ALL',
+    sortBy = 'tcp_stream',
+    sortOrder = 'ASC',
+  } = {}) {
+    if (USE_MOCK_ENV || isDemoId(analysisId)) {
+      const localMatch = findLocalAnalysis(analysisId);
+      let allSessions = localMatch ? [...(localMatch.sessions || [])] : [];
+
+      if (search && search.trim()) {
+        const q = search.trim().toLowerCase();
+        allSessions = allSessions.filter((s) =>
+          (s.session_id || '').toLowerCase().includes(q) ||
+          (s.client_ip || '').toLowerCase().includes(q) ||
+          (s.server_ip || '').toLowerCase().includes(q) ||
+          (s.protocol || '').toLowerCase().includes(q) ||
+          (s.service || '').toLowerCase().includes(q)
+        );
+      }
+
+      if (protocol && protocol !== 'ALL') {
+        allSessions = allSessions.filter(
+          (s) => (s.protocol || '').toUpperCase() === protocol.toUpperCase()
+        );
+      }
+
+      if (encryption && encryption !== 'ALL') {
+        allSessions = allSessions.filter(
+          (s) => (s.security?.encryption_mode || '').toUpperCase() === encryption.toUpperCase()
+        );
+      }
+
+      if (risk && risk !== 'ALL') {
+        allSessions = allSessions.filter((s) => {
+          const r = (s.risk?.level || s.risk_label || 'LOW').toUpperCase();
+          return r === risk.toUpperCase();
+        });
+      }
+
+      const orderMultiplier = String(sortOrder).toUpperCase() === 'DESC' ? -1 : 1;
+      allSessions.sort((a, b) => {
+        if (sortBy === 'session_id') {
+          return (a.session_id || '').localeCompare(b.session_id || '') * orderMultiplier;
+        }
+        if (sortBy === 'protocol') {
+          return (a.protocol || '').localeCompare(b.protocol || '') * orderMultiplier;
+        }
+        if (sortBy === 'risk') {
+          const rank = { CRITICAL: 4, HIGH: 3, MEDIUM: 2, LOW: 1 };
+          const rA = rank[(a.risk?.level || a.risk_label || 'LOW').toUpperCase()] || 0;
+          const rB = rank[(b.risk?.level || b.risk_label || 'LOW').toUpperCase()] || 0;
+          return (rA - rB) * orderMultiplier;
+        }
+        if (sortBy === 'encryption') {
+          return (
+            (a.security?.encryption_mode || '').localeCompare(b.security?.encryption_mode || '') *
+            orderMultiplier
+          );
+        }
+        return ((a.tcp_stream ?? 0) - (b.tcp_stream ?? 0)) * orderMultiplier;
+      });
+
+      const total = allSessions.length;
+      const totalPages = Math.ceil(total / limit) || 1;
+      const offset = (page - 1) * limit;
+      const items = allSessions.slice(offset, offset + limit);
+
+      return {
+        items,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages,
+        },
+      };
+    }
+
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (search && search.trim()) params.set('search', search.trim());
+    if (protocol && protocol !== 'ALL') params.set('protocol', protocol);
+    if (encryption && encryption !== 'ALL') params.set('encryption', encryption);
+    if (risk && risk !== 'ALL') params.set('risk', risk);
+    if (sortBy) params.set('sortBy', sortBy);
+    if (sortOrder) params.set('sortOrder', sortOrder);
+
+    return await apiClient(
+      `/api/analyses/${encodeURIComponent(analysisId)}/sessions?${params.toString()}`
     );
   },
 

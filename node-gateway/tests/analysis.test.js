@@ -178,6 +178,23 @@ describe('Analysis API', () => {
       );
     });
 
+    it('should support search and date parameters', async () => {
+      db.getAnalysesByUser.mockResolvedValue({
+        items: [],
+        pagination: { page: 1, limit: 10, total: 0 },
+      });
+
+      await request(app)
+        .get('/api/analyses?page=1&limit=10&search=capture1&date=2026-09-28')
+        .set('Authorization', `Bearer ${getToken()}`)
+        .expect(200);
+
+      expect(db.getAnalysesByUser).toHaveBeenCalledWith(
+        TEST_USER.id,
+        { page: 1, limit: 10, search: 'capture1', date: '2026-09-28' }
+      );
+    });
+
     it('should return empty list for user with no analyses', async () => {
       db.getAnalysesByUser.mockResolvedValue({
         items: [],
@@ -281,6 +298,61 @@ describe('Analysis API', () => {
 
       await request(app)
         .get(`/api/analyses/${MOCK_ANALYSIS.id}/export`)
+        .set('Authorization', `Bearer ${getToken(OTHER_USER)}`)
+        .expect(403);
+    });
+  });
+
+  // ===========================================================================
+  // GET /api/analyses/:analysisId/sessions
+  // ===========================================================================
+
+  describe('GET /api/analyses/:analysisId/sessions', () => {
+    it('should return paginated sessions for valid analysis', async () => {
+      db.getAnalysisById.mockResolvedValue(MOCK_ANALYSIS);
+      db.getSessionsByAnalysis.mockResolvedValue({
+        items: MOCK_FULL_DATA.sessions,
+        pagination: {
+          page: 1,
+          limit: 15,
+          total: 1,
+          totalPages: 1,
+        },
+      });
+
+      const res = await request(app)
+        .get(`/api/analyses/${MOCK_ANALYSIS.id}/sessions?page=1&limit=15&search=smtp&protocol=SMTP`)
+        .set('Authorization', `Bearer ${getToken()}`)
+        .expect(200);
+
+      expect(res.body.items).toHaveLength(1);
+      expect(res.body.pagination.limit).toBe(15);
+      expect(res.body.pagination.total).toBe(1);
+      expect(db.getSessionsByAnalysis).toHaveBeenCalledWith(
+        MOCK_ANALYSIS.id,
+        expect.objectContaining({
+          page: 1,
+          limit: 15,
+          search: 'smtp',
+          protocol: 'SMTP',
+        })
+      );
+    });
+
+    it('should return 404 for non-existent analysis', async () => {
+      db.getAnalysisById.mockResolvedValue(null);
+
+      await request(app)
+        .get('/api/analyses/non-existent-id/sessions')
+        .set('Authorization', `Bearer ${getToken()}`)
+        .expect(404);
+    });
+
+    it('should return 403 for unauthorized user', async () => {
+      db.getAnalysisById.mockResolvedValue({ forbidden: true });
+
+      await request(app)
+        .get(`/api/analyses/${MOCK_ANALYSIS.id}/sessions`)
         .set('Authorization', `Bearer ${getToken(OTHER_USER)}`)
         .expect(403);
     });

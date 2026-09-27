@@ -7,7 +7,7 @@ rule evaluation, and summary aggregation matching django-analysis-response.json.
 import hashlib
 import os
 import uuid
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from analysis.feature_extraction.extractor import extract_security_profile
 from analysis.feature_extraction.models import Finding, SecurityProfile

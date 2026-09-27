@@ -4,6 +4,7 @@ const authenticate = require('../middleware/auth');
 const {
   getAnalyses,
   getAnalysisById,
+  getSessions,
   exportAnalysis,
   downloadSessionPcap,
   getSessionProvenance,
@@ -20,6 +21,12 @@ router.get('/', authenticate, getAnalyses);
  * Get full analysis detail.
  */
 router.get('/:analysisId', authenticate, getAnalysisById);
+
+/**
+ * GET /api/analyses/:analysisId/sessions
+ * List paginated, filtered, and sorted sessions for an analysis.
+ */
+router.get('/:analysisId/sessions', authenticate, getSessions);
 
 /**
  * GET /api/analyses/:analysisId/export

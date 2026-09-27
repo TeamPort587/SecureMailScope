@@ -120,7 +120,10 @@ describe('Standards Context & Configuration Comparison Frontend Tests', () => {
       render(<StandardsSpectrum result={sampleTlsResult} />);
 
       expect(screen.getByText('TLS Protocol Version')).toBeInTheDocument();
-      expect(screen.getByText(/Preferred:/i)).toBeInTheDocument();
+      expect(screen.getByText('PREFERRED')).toBeInTheDocument();
+      expect(screen.getByText('Less preferred')).toBeInTheDocument();
+      expect(screen.getByText('Spectrum Progression')).toBeInTheDocument();
+      expect(screen.getByText('More preferred')).toBeInTheDocument();
 
       // Check all 4 version options are displayed
       expect(screen.getByText('TLS 1.0')).toBeInTheDocument();

@@ -6,6 +6,7 @@ import Footer from './components/Footer';
 
 import Dashboard from './pages/Dashboard';
 import Analysis from './pages/Analysis';
+import SessionPage from './pages/SessionPage';
 import AnalysisOverview from './pages/AnalysisOverview';
 import History from './pages/History';
 import NotFound from './pages/NotFound';
@@ -50,8 +51,8 @@ export default function App() {
         <Navbar onLoadPreset={handleSelectPreset} onResetAnalysis={handleResetAnalysis} onLogout={logout} user={user} />
       )}
 
-      {/* Right of sidebar */}
-      <div className={`flex min-h-screen flex-col ${location.pathname !== '/login' ? 'md:ml-[220px]' : ''}`}>
+      {/* Main page content layout */}
+      <div className="flex min-h-screen flex-col">
 
         {/* Page content */}
         <main className="flex-1">
@@ -82,6 +83,24 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Analysis />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/analysis/:id/session/:sessionId"
+              element={
+                <ProtectedRoute>
+                  <SessionPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/analysis/:id/sessions/:sessionId"
+              element={
+                <ProtectedRoute>
+                  <SessionPage />
                 </ProtectedRoute>
               }
             />

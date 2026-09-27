@@ -1,26 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import UploadForm from '../components/UploadForm';
 import UploadProgress from '../components/UploadProgress';
-import RiskSummary from '../components/RiskSummary';
-import SessionTable from '../components/SessionTable';
-import FindingsList from '../components/FindingsList';
-import Recommendations from '../components/Recommendations';
-import CopilotChat from '../components/CopilotChat';
 import ErrorState from '../components/ErrorState';
 
 import {
-  Download,
-  Layers,
-  Bug,
-  Lightbulb,
   Sparkles,
   ArrowUpRight,
   ShieldCheck,
   FileSearch,
-  Activity,
   Upload,
-  CheckCircle2,
 } from 'lucide-react';
 
 import { DEMO_PRESETS } from '../mock/demoCaptures';
@@ -31,21 +21,29 @@ export default function Dashboard({ analysisHook }) {
     uploading,
     error,
     uploadPcap,
-    exportJson,
     loadPreset,
     setError,
   } = analysisHook;
 
-  const [activeTab, setActiveTab] = useState('overview');
+  const navigate = useNavigate();
 
-  const sessionCount =
-    analysis?.sessions?.length || 0;
+  // If an analysis exists/is loaded on Dashboard, immediately navigate to the unified Analysis route
+  useEffect(() => {
+    if (analysis?.analysis_id) {
+      navigate(`/analysis/${analysis.analysis_id}`, { state: { analysis } });
+    }
+  }, [analysis, navigate]);
 
-  const findingCount =
-    analysis?.findings?.length || 0;
-
-  const recommendationCount =
-    analysis?.recommendations?.length || 0;
+  const handleUpload = async (file) => {
+    try {
+      const result = await uploadPcap(file);
+      if (result?.analysis_id) {
+        navigate(`/analysis/${result.analysis_id}`, { state: { analysis: result } });
+      }
+    } catch (err) {
+      // Error handled by analysisHook
+    }
+  };
 
   return (
     <main className="min-h-screen w-full bg-slate-50">
@@ -207,7 +205,7 @@ export default function Dashboard({ analysisHook }) {
                   <UploadProgress />
                 ) : (
                   <UploadForm
-                    onUpload={uploadPcap}
+                    onUpload={handleUpload}
                     loading={uploading}
                   />
                 )}
@@ -291,9 +289,14 @@ export default function Dashboard({ analysisHook }) {
                       <button
                         key={demo.id}
                         type="button"
-                        onClick={() =>
-                          loadPreset(demo.data)
-                        }
+                        onClick={() => {
+                          loadPreset(demo.data);
+                          if (demo.data?.analysis_id) {
+                            navigate(`/analysis/${demo.data.analysis_id}`, {
+                              state: { analysis: demo.data },
+                            });
+                          }
+                        }}
                         className={`sample-card ${cardClass} group rounded-xl p-4 text-left`}
                       >
 
@@ -372,345 +375,20 @@ export default function Dashboard({ analysisHook }) {
 
 
         {/* =====================================================
-            ANALYSIS
+            ANALYSIS TRANSITION
         ====================================================== */}
 
         {analysis && (
-          <div className="animate-in fade-in duration-300">
-
-            {/* =================================================
-                ANALYSIS HEADER + NAVIGATION
-            ================================================== */}
-
-            <section className="mb-7 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-
-              {/* INSPECTION HEADER */}
-
-              <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-
-                <div className="flex min-w-0 items-center gap-3">
-
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-brand-200 bg-brand-50">
-                    <FileSearch className="h-4 w-4 text-brand-600" />
-                  </div>
-
-                  <div className="min-w-0">
-
-                    <div className="flex flex-wrap items-center gap-2">
-
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-                        Active inspection
-                      </span>
-
-                      <span className="h-1 w-1 rounded-full bg-slate-300" />
-
-                      <span className="flex items-center gap-1.5 text-[10px] font-semibold text-yellow-600">
-
-                        <CheckCircle2 className="h-3 w-3" />
-
-                        Analysis complete
-
-                      </span>
-
-                    </div>
-
-                    <div className="mt-1.5 flex min-w-0 items-center gap-2">
-
-                      <span className="truncate font-mono text-xs font-semibold text-slate-800 sm:text-sm">
-                        {analysis.filename ||
-                          'packet_capture.pcap'}
-                      </span>
-
-                      {analysis.analysis_id && (
-                        <>
-                          <span className="text-slate-300">
-                            ·
-                          </span>
-
-                          <span className="hidden shrink-0 font-mono text-[10px] text-slate-400 sm:inline">
-                            {analysis.analysis_id}
-                          </span>
-                        </>
-                      )}
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    exportJson(analysis.analysis_id)
-                  }
-                  className="ui-button ui-button-primary w-full sm:w-auto"
-                  title="Download authoritative analysis report JSON"
-                >
-
-                  <Download className="h-3.5 w-3.5" />
-
-                  Export report
-
-                </button>
-
-              </div>
-
-
-              {/* =================================================
-                  SECTION NAVIGATION
-              ================================================== */}
-
-              <div className="border-t border-slate-100 bg-slate-50/50 px-2 sm:px-3">
-
-                <div className="flex overflow-x-auto">
-
-                  <AnalysisTab
-                    active={
-                      activeTab === 'overview'
-                    }
-                    onClick={() =>
-                      setActiveTab('overview')
-                    }
-                    icon={ShieldCheck}
-                    label="Overview"
-                  />
-
-                  <AnalysisTab
-                    active={
-                      activeTab === 'sessions'
-                    }
-                    onClick={() =>
-                      setActiveTab('sessions')
-                    }
-                    icon={Layers}
-                    label="Sessions"
-                    count={sessionCount}
-                  />
-
-                  <AnalysisTab
-                    active={
-                      activeTab === 'findings'
-                    }
-                    onClick={() =>
-                      setActiveTab('findings')
-                    }
-                    icon={Bug}
-                    label="Findings"
-                    count={findingCount}
-                    countClass="text-amber-700 bg-amber-50 border-amber-200"
-                  />
-
-                  <AnalysisTab
-                    active={
-                      activeTab === 'recommendations'
-                    }
-                    onClick={() =>
-                      setActiveTab('recommendations')
-                    }
-                    icon={Lightbulb}
-                    label="Recommendations"
-                    count={recommendationCount}
-                    countClass="text-yellow-700 bg-yellow-50 border-yellow-200"
-                  />
-
-                  <AnalysisTab
-                    active={
-                      activeTab === 'ai-assistance'
-                    }
-                    onClick={() =>
-                      setActiveTab('ai-assistance')
-                    }
-                    icon={
-                      <img
-                        src="/Agent_SMS_logo_2.jpeg"
-                        alt="Agent SMS"
-                        className="h-4 w-4 rounded-sm object-contain"
-                      />
-                    }
-                    label="AI Assistance"
-                  />
-
-                </div>
-
-              </div>
-
-            </section>
-
-
-            {/* =================================================
-                OVERVIEW
-            ================================================== */}
-
-            {activeTab === 'overview' && (
-              <section>
-
-                <div className="mb-5">
-
-                  <div className="flex items-center gap-2">
-
-                    <ShieldCheck className="h-4 w-4 text-brand-600" />
-
-                    <h2 className="text-sm font-semibold text-slate-900">
-                      Security overview
-                    </h2>
-
-                  </div>
-
-                  <p className="mt-1 text-xs text-slate-500">
-                    Overall risk posture and key observations from this capture.
-                  </p>
-
-                </div>
-
-
-                <RiskSummary
-                  risk={analysis.risk}
-                  summary={analysis.summary}
-                  filename={analysis.filename}
-                  uploadedAt={analysis.uploaded_at}
-                />
-
-              </section>
-            )}
-
-
-            {/* =================================================
-                SESSIONS
-
-                IMPORTANT:
-                No duplicate SectionIntro here.
-                SessionTable owns its own heading.
-            ================================================== */}
-
-            {activeTab === 'sessions' && (
-              <section>
-
-                <SessionTable
-                  sessions={analysis.sessions}
-                  findings={analysis.findings}
-                  analysisId={analysis.analysis_id}
-                />
-
-              </section>
-            )}
-
-
-            {/* =================================================
-                FINDINGS
-
-                FindingsList owns its own heading.
-            ================================================== */}
-
-            {activeTab === 'findings' && (
-              <section>
-
-                <FindingsList
-                  findings={analysis.findings}
-                />
-
-              </section>
-            )}
-
-
-            {/* =================================================
-                RECOMMENDATIONS
-
-                Recommendations owns its own heading.
-            ================================================== */}
-
-            {activeTab === 'recommendations' && (
-              <section>
-
-                <Recommendations
-                  recommendations={
-                    analysis.recommendations
-                  }
-                  findings={analysis.findings || []}
-                  sessions={analysis.sessions || []}
-                  onSelectSession={() => setActiveTab('sessions')}
-                />
-
-              </section>
-            )}
-
-
-            {/* =================================================
-                AI ASSISTANCE / COPILOT
-            ================================================== */}
-
-            {activeTab === 'ai-assistance' && (
-              <section>
-
-                <CopilotChat analysis={analysis} />
-
-              </section>
-            )}
-
+          <div className="flex min-h-[300px] items-center justify-center py-12">
+            <div className="flex flex-col items-center gap-3">
+              <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-brand-600" />
+              <p className="text-xs text-slate-500">Opening analysis report...</p>
+            </div>
           </div>
         )}
 
       </div>
 
     </main>
-  );
-}
-
-
-/* ===============================================================
-   ANALYSIS TAB
-=============================================================== */
-
-function AnalysisTab({
-  active,
-  onClick,
-  icon: Icon,
-  label,
-  count,
-  countClass = 'text-slate-600 bg-white border-slate-200',
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`relative flex shrink-0 items-center gap-2.5 px-5 py-3.5 text-xs font-semibold transition-all duration-200 ${
-        active
-          ? 'text-slate-900'
-          : 'text-slate-500 hover:text-slate-800'
-      }`}
-    >
-
-      {/* Active indicator */}
-
-      {active && (
-        <span className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-brand-500" />
-      )}
-
-      {React.isValidElement(Icon) ? (
-        Icon
-      ) : typeof Icon === 'function' ? (
-        <Icon
-          className={`h-4 w-4 ${
-            active
-              ? 'text-brand-600'
-              : 'text-slate-400'
-          }`}
-        />
-      ) : null}
-
-      <span>
-        {label}
-      </span>
-
-      {typeof count === 'number' && (
-        <span
-          className={`min-w-[22px] rounded-md border px-1.5 py-0.5 text-center text-[10px] font-semibold leading-none ${countClass}`}
-        >
-          {count}
-        </span>
-      )}
-
-    </button>
   );
 }

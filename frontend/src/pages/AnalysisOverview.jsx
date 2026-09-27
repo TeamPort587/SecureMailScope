@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   FileSearch,
@@ -6,12 +6,17 @@ import {
   Activity,
   ShieldAlert,
   Database,
-  RefreshCw,
   Plus,
   Clock,
   Server,
   AlertTriangle,
   CheckCircle2,
+  Search,
+  Calendar,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
 } from 'lucide-react';
 
 import { analysisApi } from '../api/analysisApi';
@@ -22,23 +27,43 @@ export default function AnalysisOverview() {
   const navigate = useNavigate();
 
   const [analyses, setAnalyses] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, totalPages: 1 });
+  const [stats, setStats] = useState({ totalAnalyses: 0, highRiskCount: 0, totalSessions: 0, totalFindings: 0 });
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
 
-  const loadAnalyses = async (isRefresh = false) => {
-    if (isRefresh) {
-      setRefreshing(true);
-    } else {
+  // Search, Date Filter & Pagination state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchDate, setSearchDate] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
+
+  const isFirstRender = useRef(true);
+
+  const loadAnalyses = async (page = 1, search = '', date = '', isInitial = false) => {
+    if (isInitial) {
       setLoading(true);
+    } else {
+      setIsFetching(true);
     }
 
     setError(null);
 
     try {
-      const data = await analysisApi.getAnalyses(1, 50);
+      const data = await analysisApi.getAnalyses(page, ITEMS_PER_PAGE, search, date);
 
       setAnalyses(data?.items || []);
+      setPagination(data?.pagination || { page, limit: ITEMS_PER_PAGE, total: 0, totalPages: 1 });
+
+      if (data?.stats) {
+        setStats(data.stats);
+      } else {
+        setStats((prev) => ({
+          ...prev,
+          totalAnalyses: data?.pagination?.total || data?.items?.length || 0,
+        }));
+      }
     } catch (err) {
       setError(
         err.message ||
@@ -46,34 +71,46 @@ export default function AnalysisOverview() {
       );
     } finally {
       setLoading(false);
-      setRefreshing(false);
+      setIsFetching(false);
     }
   };
 
+  // Initial load
   useEffect(() => {
-    loadAnalyses();
+    loadAnalyses(1, '', '', true);
   }, []);
 
-  const highRiskCount = analyses.filter((item) => {
-    const level = String(item.risk_label || '').toLowerCase();
+  // Debounced server search / date / page change
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
 
-    return (
-      level === 'high' ||
-      level === 'critical'
-    );
-  }).length;
+    const timer = setTimeout(() => {
+      loadAnalyses(currentPage, searchTerm, searchDate, false);
+    }, 280);
 
-  const totalSessions = analyses.reduce(
-    (total, item) =>
-      total + (item.session_count || 0),
-    0
-  );
+    return () => clearTimeout(timer);
+  }, [currentPage, searchTerm, searchDate]);
 
-  const totalFindings = analyses.reduce(
-    (total, item) =>
-      total + (item.finding_count || 0),
-    0
-  );
+  const handleSearchChange = (val) => {
+    setSearchTerm(val);
+    setCurrentPage(1);
+  };
+
+  const handleDateChange = (val) => {
+    setSearchDate(val);
+    setCurrentPage(1);
+  };
+
+  const handleClearFilters = () => {
+    setSearchTerm('');
+    setSearchDate('');
+    setCurrentPage(1);
+  };
+
+  const totalPages = pagination.totalPages || 1;
 
   const getRiskClass = (level) => {
     const risk = String(level || '').toLowerCase();
@@ -154,32 +191,11 @@ export default function AnalysisOverview() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-400/30 to-transparent" />
 
 
-          {/* top-right buttons */}
-          <div className="absolute right-7 bottom-10 z-10 flex items-center gap-2 sm:right-10 sm:bottom-12">
-            <button
-              type="button"
-              onClick={() => loadAnalyses(true)}
-              disabled={refreshing}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white/80 backdrop-blur-sm px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
-              {refreshing ? 'Refreshing...' : 'Refresh'}
-            </button>
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-brand-700"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              New Analysis
-            </Link>
-          </div>
-
           {/* content */}
           <div className="relative flex items-center justify-between gap-8">
 
-            {/* LEFT — text */}
-            <div className="max-w-xl">
+            {/* LEFT — text & CTA */}
+            <div className="max-w-xl py-2">
 
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50/80 px-3 py-1 backdrop-blur-sm">
                 <FileSearch className="h-3 w-3 text-brand-500" />
@@ -201,6 +217,15 @@ export default function AnalysisOverview() {
                 security posture of your network traffic.
               </p>
 
+              <div className="mt-5">
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition-all hover:bg-brand-700 hover:shadow-md active:scale-[0.98]"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  New Analysis
+                </Link>
+              </div>
 
             </div>
 
@@ -260,7 +285,7 @@ export default function AnalysisOverview() {
         <StatCard
           icon={<Database className="h-5 w-5" />}
           label="Total Analyses"
-          value={analyses.length}
+          value={stats.totalAnalyses}
           description="Available security reports"
           iconBg="bg-brand-100"
           iconText="text-brand-600"
@@ -270,18 +295,17 @@ export default function AnalysisOverview() {
         <StatCard
           icon={<ShieldAlert className="h-5 w-5" />}
           label="High / Critical Risk"
-          value={highRiskCount}
+          value={stats.highRiskCount}
           description="Elevated risk posture"
           iconBg="bg-rose-100"
           iconText="text-rose-600"
           glow="shadow-[0_0_18px_4px_rgba(239,68,68,0.13)]"
           topBar="from-rose-300 via-rose-400 to-rose-300"
-          alert={highRiskCount > 0}
         />
         <StatCard
           icon={<Activity className="h-5 w-5" />}
           label="Captured Sessions"
-          value={totalSessions}
+          value={stats.totalSessions}
           description="Across all analyses"
           iconBg="bg-sky-100"
           iconText="text-sky-600"
@@ -291,7 +315,7 @@ export default function AnalysisOverview() {
         <StatCard
           icon={<AlertTriangle className="h-5 w-5" />}
           label="Security Findings"
-          value={totalFindings}
+          value={stats.totalFindings}
           description="Issues requiring review"
           iconBg="bg-amber-100"
           iconText="text-amber-600"
@@ -304,7 +328,7 @@ export default function AnalysisOverview() {
       {/* ANALYSIS RECORDS */}
       <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
-        {/* SECTION HEADER */}
+        {/* SECTION HEADER & TOOLBAR */}
         <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
@@ -321,18 +345,71 @@ export default function AnalysisOverview() {
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-2 self-start rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 sm:self-auto">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
-
-            <span className="text-[11px] font-semibold text-slate-600">
-              {analyses.length} Records
-            </span>
-          </div>
+          {isFetching && (
+            <div className="flex items-center gap-1.5 text-xs text-brand-600 animate-pulse self-start sm:self-auto">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span className="text-[11px] font-medium">Updating...</span>
+            </div>
+          )}
 
         </div>
 
+        {/* SEARCH & DATE FILTER BAR */}
+        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3 sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            
+            {/* Search by filename or ID */}
+            <div className="relative flex-1 max-w-md">
+              <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search by capture name or ID..."
+                className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-8 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
+              />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => handleSearchChange('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                  title="Clear search"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
 
-        {analyses.length === 0 ? (
+            {/* Date Picker & Reset */}
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <Calendar className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+                <input
+                  type="date"
+                  value={searchDate}
+                  onChange={(e) => handleDateChange(e.target.value)}
+                  className="rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
+                  title="Filter by capture date"
+                />
+              </div>
+
+              {(searchTerm || searchDate) && (
+                <button
+                  type="button"
+                  onClick={handleClearFilters}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  title="Reset all filters"
+                >
+                  <X className="h-3 w-3" />
+                  Clear
+                </button>
+              )}
+            </div>
+
+          </div>
+        </div>
+
+        {stats.totalAnalyses === 0 && !searchTerm && !searchDate ? (
 
           <div className="flex flex-col items-center justify-center px-6 py-20 text-center">
 
@@ -359,59 +436,150 @@ export default function AnalysisOverview() {
 
           </div>
 
+        ) : pagination.total === 0 ? (
+
+          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-slate-400">
+              <Search className="h-5 w-5" />
+            </div>
+
+            <h3 className="mt-4 text-sm font-semibold text-slate-900">
+              No matching captures found
+            </h3>
+
+            <p className="mt-1 max-w-sm text-xs text-slate-500">
+              No analysis records match your search query or selected date.
+            </p>
+
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="mt-4 inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50"
+            >
+              <X className="h-3.5 w-3.5" />
+              Clear Filters
+            </button>
+
+          </div>
+
         ) : (
 
-          <div className="divide-y divide-slate-100">
+          <div>
+            <div className="divide-y divide-slate-100">
 
-            {analyses.map((item) => {
+              {analyses.map((item) => {
 
-              const risk =
-                String(item.risk_label || 'UNKNOWN');
+                const risk =
+                  String(item.risk_label || 'UNKNOWN');
 
-              return (
-                <button
-                  key={item.analysis_id}
-                  type="button"
-                  onClick={() =>
-                    navigate(`/analysis/${item.analysis_id}`)
-                  }
-                  className="group w-full px-5 py-5 text-left transition-all hover:bg-slate-50"
-                >
+                return (
+                  <button
+                    key={item.analysis_id}
+                    type="button"
+                    onClick={() =>
+                      navigate(`/analysis/${item.analysis_id}`)
+                    }
+                    className="group w-full px-5 py-5 text-left transition-all hover:bg-slate-50"
+                  >
 
-                  <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
+                    <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
 
-                    {/* FILE */}
-                    <div className="flex min-w-0 flex-1 items-center gap-4">
+                      {/* FILE */}
+                      <div className="flex min-w-0 flex-1 items-center gap-4">
 
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 transition-transform group-hover:scale-[1.03]">
-                        <FileSearch className="h-4.5 w-4.5 text-brand-600" />
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 transition-transform group-hover:scale-[1.03]">
+                          <FileSearch className="h-4.5 w-4.5 text-brand-600" />
+                        </div>
+
+                        <div className="min-w-0">
+
+                          <p className="truncate text-sm font-semibold text-slate-800">
+                            {item.filename || 'Untitled Capture'}
+                          </p>
+
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+
+                            <span className="font-mono text-slate-400">
+                              {item.analysis_id}
+                            </span>
+
+                            <span className="hidden text-slate-300 sm:inline">
+                              •
+                            </span>
+
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+
+                              {item.created_at
+                                ? new Date(
+                                  item.created_at
+                                ).toLocaleString()
+                                : 'Unknown time'}
+                            </span>
+
+                          </div>
+
+                        </div>
+
                       </div>
 
-                      <div className="min-w-0">
 
-                        <p className="truncate text-sm font-semibold text-slate-800">
-                          {item.filename || 'Untitled Capture'}
-                        </p>
+                      {/* METADATA */}
+                      <div className="grid grid-cols-3 gap-5 lg:flex lg:items-center lg:gap-8">
 
-                        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                        {/* RISK */}
+                        <div className="min-w-[95px]">
 
-                          <span className="font-mono text-slate-400">
-                            {item.analysis_id}
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Risk Level
+                          </p>
+
+                          <span
+                            className={`mt-2 inline-flex rounded-md border px-2 py-1 text-[9px] font-bold uppercase tracking-wide ${getRiskClass(
+                              risk
+                            )}`}
+                          >
+                            {risk}
                           </span>
 
-                          <span className="hidden text-slate-300 sm:inline">
-                            •
-                          </span>
+                        </div>
 
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
 
-                            {item.created_at
-                              ? new Date(
-                                item.created_at
-                              ).toLocaleString()
-                              : 'Unknown time'}
-                          </span>
+                        {/* SESSIONS */}
+                        <div className="min-w-[75px]">
+
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Sessions
+                          </p>
+
+                          <p className="mt-2 text-sm font-semibold text-slate-800">
+                            {item.session_count || 0}
+                          </p>
+
+                        </div>
+
+
+                        {/* FINDINGS */}
+                        <div className="min-w-[75px]">
+
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                            Findings
+                          </p>
+
+                          <p className="mt-2 text-sm font-semibold text-slate-800">
+                            {item.finding_count || 0}
+                          </p>
+
+                        </div>
+
+
+                        {/* OPEN */}
+                        <div className="flex items-center justify-end">
+
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition-all group-hover:border-brand-100 group-hover:bg-brand-50 group-hover:text-brand-600">
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                          </div>
 
                         </div>
 
@@ -419,73 +587,65 @@ export default function AnalysisOverview() {
 
                     </div>
 
+                  </button>
+                );
+              })}
 
-                    {/* METADATA */}
-                    <div className="grid grid-cols-3 gap-5 lg:flex lg:items-center lg:gap-8">
+            </div>
 
-                      {/* RISK */}
-                      <div className="min-w-[95px]">
+            {/* PAGINATION FOOTER */}
+            {pagination.total > 0 && (
+              <div className="flex flex-col gap-3 border-t border-slate-100 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 bg-slate-50/40">
+                <p className="text-xs text-slate-500">
+                  Showing <span className="font-semibold text-slate-700">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{' '}
+                  <span className="font-semibold text-slate-700">{Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)}</span> of{' '}
+                  <span className="font-semibold text-slate-700">{pagination.total}</span> captures
+                </p>
 
-                        <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                          Risk Level
-                        </p>
+                {totalPages > 1 && (
+                  <div className="flex items-center gap-1 self-center sm:self-auto">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1 || isFetching}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Previous Page"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
 
-                        <span
-                          className={`mt-2 inline-flex rounded-md border px-2 py-1 text-[9px] font-bold uppercase tracking-wide ${getRiskClass(
-                            risk
-                          )}`}
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
+                      const isCurrent = pageNum === currentPage;
+                      return (
+                        <button
+                          key={pageNum}
+                          type="button"
+                          onClick={() => setCurrentPage(pageNum)}
+                          disabled={isFetching}
+                          className={`inline-flex h-8 min-w-[32px] px-2 items-center justify-center rounded-lg text-xs font-semibold shadow-sm transition-colors ${
+                            isCurrent
+                              ? 'bg-brand-600 text-white border border-brand-600'
+                              : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                          }`}
                         >
-                          {risk}
-                        </span>
+                          {pageNum}
+                        </button>
+                      );
+                    })}
 
-                      </div>
-
-
-                      {/* SESSIONS */}
-                      <div className="min-w-[75px]">
-
-                        <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                          Sessions
-                        </p>
-
-                        <p className="mt-2 text-sm font-semibold text-slate-800">
-                          {item.session_count || 0}
-                        </p>
-
-                      </div>
-
-
-                      {/* FINDINGS */}
-                      <div className="min-w-[75px]">
-
-                        <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
-                          Findings
-                        </p>
-
-                        <p className="mt-2 text-sm font-semibold text-slate-800">
-                          {item.finding_count || 0}
-                        </p>
-
-                      </div>
-
-
-                      {/* OPEN */}
-                      <div className="flex items-center justify-end">
-
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition-all group-hover:border-brand-100 group-hover:bg-brand-50 group-hover:text-brand-600">
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                        </div>
-
-                      </div>
-
-                    </div>
-
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages || isFetching}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      aria-label="Next Page"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
-
-                </button>
-              );
-            })}
-
+                )}
+              </div>
+            )}
           </div>
 
         )}
@@ -497,7 +657,7 @@ export default function AnalysisOverview() {
 }
 
 
-function StatCard({ icon, label, value, description, iconBg, iconText, glow, topBar, alert }) {
+function StatCard({ icon, label, value, description, iconBg, iconText, glow, topBar }) {
   return (
     <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-soft-hover">
 
@@ -511,13 +671,6 @@ function StatCard({ icon, label, value, description, iconBg, iconText, glow, top
         <div className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconBg} ${iconText} ${glow} transition-transform duration-200 group-hover:scale-110`}>
           {icon}
         </div>
-
-        {alert && (
-          <span className="flex items-center gap-1.5 rounded-full border border-rose-100 bg-rose-50 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-rose-600">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-rose-500" />
-            Alert
-          </span>
-        )}
 
       </div>
 

@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { analysisApi } from '../api/analysisApi';
 
-export function useAnalysis(initialAnalysisId = null) {
-  const [analysis, setAnalysis] = useState(null);
+export function useAnalysis(initialAnalysisId = null, initialData = null) {
+  const [analysis, setAnalysis] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState(null);
@@ -63,9 +63,11 @@ export function useAnalysis(initialAnalysisId = null) {
 
   useEffect(() => {
     if (initialAnalysisId) {
-      fetchAnalysis(initialAnalysisId);
+      if (!initialData || String(initialData.analysis_id) !== String(initialAnalysisId)) {
+        fetchAnalysis(initialAnalysisId);
+      }
     }
-  }, [initialAnalysisId, fetchAnalysis]);
+  }, [initialAnalysisId, initialData, fetchAnalysis]);
 
   return {
     analysis,

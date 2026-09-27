@@ -52,15 +52,6 @@ export default function CapabilityComparison({ result }) {
             <StandardsBadge status={status} size="sm" />
           </div>
         </div>
-
-        {preferred.length > 0 && (
-          <div className="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-1 rounded-lg border border-emerald-200 dark:border-emerald-800">
-            <Sparkles className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span className="font-medium text-[11px]">
-              Preferred: <strong className="font-semibold">{preferred.join(', ')}</strong>
-            </span>
-          </div>
-        )}
       </div>
 
       {/* Binary / Capability Cards */}

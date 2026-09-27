@@ -7,6 +7,8 @@ import React, {
 import {
   Link,
   useParams,
+  useLocation,
+  useNavigate,
 } from 'react-router-dom';
 
 import {
@@ -45,6 +47,9 @@ import ErrorState from '../components/ErrorState';
 export default function Analysis() {
 
   const { id } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const initialData = location.state?.analysis || null;
 
   const {
     analysis,
@@ -52,10 +57,20 @@ export default function Analysis() {
     error,
     fetchAnalysis,
     exportJson,
-  } = useAnalysis(id);
+  } = useAnalysis(id, initialData);
 
-  const [activeTab, setActiveTab] =
-    useState('overview');
+  const [activeTab, setActiveTab] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('tab') || location.state?.tab || 'overview';
+  });
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tabParam = params.get('tab') || location.state?.tab;
+    if (tabParam) {
+      setActiveTab(tabParam);
+    }
+  }, [location.search, location.state]);
 
   const [selectedFinding, setSelectedFinding] =
     useState(null);
@@ -70,11 +85,11 @@ export default function Analysis() {
 
   useEffect(() => {
 
-    if (id) {
+    if (id && (!initialData || String(initialData.analysis_id) !== String(id))) {
       fetchAnalysis(id);
     }
 
-  }, [id, fetchAnalysis]);
+  }, [id, initialData, fetchAnalysis]);
 
 
   /* ============================================================
@@ -746,90 +761,6 @@ export default function Analysis() {
           </div>
 
 
-          {/* ACTIONS */}
-
-          <div className="
-            flex flex-wrap
-            items-center
-            gap-2
-          ">
-
-            <button
-              type="button"
-              onClick={handleRefresh}
-              disabled={isRefreshing}
-              className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-lg
-                border border-slate-200
-                bg-white
-                px-4 py-2.5
-                text-xs
-                font-semibold
-                text-slate-700
-                shadow-sm
-                transition-all
-                hover:bg-slate-50
-                hover:border-slate-300
-                active:scale-[0.98]
-                disabled:cursor-not-allowed
-                disabled:opacity-70
-              "
-            >
-
-              <RefreshCw
-                className={`
-                  h-3.5 w-3.5
-                  ${
-                    isRefreshing
-                      ? 'animate-spin'
-                      : ''
-                  }
-                `}
-              />
-
-              {isRefreshing
-                ? 'Refreshing...'
-                : 'Refresh'}
-
-            </button>
-
-
-            <button
-              type="button"
-              onClick={() =>
-                exportJson(
-                  analysis.analysis_id
-                )
-              }
-              className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-lg
-                bg-brand-600
-                px-4 py-2.5
-                text-xs
-                font-semibold
-                text-white
-                shadow-sm
-                transition-all
-                hover:bg-brand-700
-                hover:shadow-md
-                active:scale-[0.98]
-              "
-            >
-
-              <Download className="h-3.5 w-3.5" />
-
-              Export Report
-
-            </button>
-
-          </div>
-
         </div>
 
       </div>
@@ -938,31 +869,35 @@ export default function Analysis() {
           </div>
 
 
-          <div className="
-            flex items-center
-            gap-2
-            rounded-full
-            bg-yellow-50
-            px-3 py-1.5
-            self-start
-            lg:self-auto
-          ">
-
-            <span className="
-              h-2 w-2
-              rounded-full
-              bg-yellow-500
-            " />
-
-            <span className="
+          <button
+            type="button"
+            onClick={() =>
+              exportJson(
+                analysis.analysis_id
+              )
+            }
+            className="
+              inline-flex
+              items-center
+              gap-2
+              rounded-lg
+              bg-brand-600
+              px-4 py-2.5
               text-xs
               font-semibold
-              text-yellow-700
-            ">
-              Analysis completed
-            </span>
-
-          </div>
+              text-white
+              shadow-sm
+              transition-all
+              hover:bg-brand-700
+              hover:shadow-md
+              active:scale-[0.98]
+              self-start
+              lg:self-auto
+            "
+          >
+            <Download className="h-3.5 w-3.5" />
+            Export Report
+          </button>
 
         </div>
 
@@ -1005,17 +940,21 @@ export default function Analysis() {
 
             <div
               className={`
-                flex h-12 w-12
+                flex h-14 w-14 sm:h-16 sm:w-16
                 shrink-0
                 items-center justify-center
-                rounded-xl
+                rounded-2xl
+                border
+                shadow-sm
                 ${riskStyles.iconBg}
               `}
+              style={riskStyles.heroBorder}
             >
 
               <ShieldAlert
                 className={`
-                  h-5 w-5
+                  h-7 w-7 sm:h-8 sm:w-8
+                  stroke-[2.2]
                   ${riskStyles.iconText}
                 `}
               />
@@ -1733,7 +1672,11 @@ export default function Analysis() {
               recommendations={recommendations}
               findings={findings}
               sessions={sessions}
-              onSelectSession={(sId) => setActiveTab('sessions')}
+              onSelectSession={(sId) =>
+                navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
+                  state: { analysis, analysisId: analysis?.analysis_id || id, findings },
+                })
+              }
             />
 
           </div>

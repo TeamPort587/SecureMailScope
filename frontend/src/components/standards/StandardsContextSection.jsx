@@ -4,7 +4,7 @@ import StandardsSpectrum from './StandardsSpectrum';
 import CapabilityComparison from './CapabilityComparison';
 import StatusAssessment from './StatusAssessment';
 
-export default function StandardsContextSection({ standardsContext = [], session = null }) {
+export default function StandardsContextSection({ standardsContext = [], session = null, hideHeader = false }) {
   const [activeTab, setActiveTab] = useState('ALL');
 
   if (!standardsContext || standardsContext.length === 0) {
@@ -34,31 +34,33 @@ export default function StandardsContextSection({ standardsContext = [], session
   return (
     <section className="space-y-3.5">
       {/* Section Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400">
-            <Compass className="h-4 w-4" />
+      {!hideHeader && (
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400">
+              <Compass className="h-4 w-4" />
+            </div>
+
+            <div>
+              <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
+                <span>Standards Context & Configuration Comparison</span>
+                <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full font-bold">
+                  {standardsContext.length} {standardsContext.length === 1 ? 'PROPERTY' : 'PROPERTIES'}
+                </span>
+              </h4>
+              <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
+                Evaluates where observed configurations sit relative to authoritative industry baselines and preferences.
+              </p>
+            </div>
           </div>
 
-          <div>
-            <h4 className="text-[15px] font-semibold text-slate-900 dark:text-slate-100 flex items-center gap-2">
-              <span>Standards Context & Configuration Comparison</span>
-              <span className="font-mono text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2 py-0.5 rounded-full font-bold">
-                {standardsContext.length} {standardsContext.length === 1 ? 'PROPERTY' : 'PROPERTIES'}
-              </span>
-            </h4>
-            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-              Evaluates where observed configurations sit relative to authoritative industry baselines and preferences.
-            </p>
+          {/* Informational Epistemology Pill */}
+          <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 px-2.5 py-1 text-[11px] text-slate-500 dark:text-slate-400">
+            <Info className="h-3.5 w-3.5 text-brand-500 shrink-0" />
+            <span>Contextual guidance · Separate from risk scoring</span>
           </div>
         </div>
-
-        {/* Informational Epistemology Pill */}
-        <div className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/80 px-2.5 py-1 text-[11px] text-slate-500 dark:text-slate-400">
-          <Info className="h-3.5 w-3.5 text-brand-500 shrink-0" />
-          <span>Contextual guidance · Separate from risk scoring</span>
-        </div>
-      </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="flex flex-wrap items-center gap-1.5 border-b border-slate-200/80 dark:border-slate-800 pb-2">

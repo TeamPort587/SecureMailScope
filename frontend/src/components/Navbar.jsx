@@ -1,29 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
-
+import { NavLink, Link } from 'react-router-dom';
 import {
-  ChevronDown,
-  Database,
-  LayoutDashboard,
-  History,
   FileSearch,
-  Sparkles,
-  Activity,
-  Menu,
-  X,
+  FileUp,
+  FlaskConical,
   User,
-  Mail,
   LogOut,
-  Settings,
+  Database,
+  ArrowRight,
+  History,
+  ShieldCheck,
 } from 'lucide-react';
-
-import { NavLink } from 'react-router-dom';
 
 import { DEMO_PRESETS } from '../mock/demoCaptures';
 
 export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }) {
-
   const [demoOpen, setDemoOpen] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
   const demoRef = useRef(null);
@@ -45,314 +37,225 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
   const handlePreset = (preset) => {
     if (onLoadPreset) onLoadPreset(preset.data);
     setDemoOpen(false);
-    setMobileOpen(false);
   };
 
+  const rawUsername = user?.email?.split('@')[0] || 'User';
+  const displayName = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
+
   return (
-    <>
-      {/* MOBILE HEADER */}
-      <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 md:hidden">
-        <BrandMark />
-        <button
-          type="button"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-600"
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        
+        {/* LEFT: BRAND LOGO */}
+        <Link
+          to="/"
+          onClick={onResetAnalysis}
+          className="group flex items-center gap-3 transition-opacity hover:opacity-95"
         >
-          {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-        </button>
-      </header>
-
-      {/* MOBILE MENU */}
-      {mobileOpen && (
-        <div className="fixed inset-x-0 top-16 z-40 border-b border-slate-200 bg-white p-3 shadow-lg md:hidden">
-          <SidebarNavigation
-            onLoadPreset={handlePreset}
-            demoOpen={demoOpen}
-            setDemoOpen={setDemoOpen}
-            demoRef={demoRef}
-            onNavigate={() => setMobileOpen(false)}
-            onResetAnalysis={onResetAnalysis}
+          <img
+            src="/SMS.png"
+            alt="SecureMailScope"
+            className="h-11 w-11 shrink-0 object-contain drop-shadow-sm transition-transform group-hover:scale-105"
           />
-        </div>
-      )}
+          <div className="flex flex-col justify-center">
+            <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-tight text-slate-900">
+              Secure<span className="text-brand-600">Mail</span>Scope
+            </span>
+            <span className="mt-0.5 text-xs font-medium text-slate-500 tracking-tight leading-none">
+              Email Security Analysis
+            </span>
+          </div>
+        </Link>
 
-      {/* DESKTOP SIDEBAR */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-[220px] flex-col border-r border-slate-100 bg-white md:flex">
-
-        {/* BRAND */}
-        <div className="flex h-[72px] shrink-0 items-center border-b border-slate-100 px-5">
-          <BrandMark />
-        </div>
-
-        {/* NAV */}
-        <div className="flex flex-1 flex-col overflow-y-auto px-3 py-5">
-          <SidebarNavigation
-            onLoadPreset={handlePreset}
-            demoOpen={demoOpen}
-            setDemoOpen={setDemoOpen}
-            demoRef={demoRef}
-          />
-        </div>
-
-        {/* PROFILE */}
-        <div className="border-t border-slate-100 p-3" ref={profileRef}>
-          <button
-            type="button"
-            onClick={() => setProfileOpen(!profileOpen)}
-            className="
-              group flex w-full items-center gap-3
-              rounded-xl px-3 py-2.5
-              transition-colors
-              hover:bg-slate-50
-            "
-          >
-            <div className="
-              flex h-8 w-8 shrink-0
-              items-center justify-center
-              rounded-full
-              bg-gradient-to-br from-brand-500 to-brand-700
-              text-white
-              text-xs font-bold
-              shadow-sm
-            ">
-              {user?.email?.[0]?.toUpperCase() || 'U'}
-            </div>
-            <div className="min-w-0 flex-1 text-left">
-              <p className="text-[12px] font-semibold text-slate-800 truncate">{user?.email?.split('@')[0] || 'User'}</p>
-              <p className="text-[10px] text-slate-400 truncate">{user?.email || ''}</p>
-            </div>
-            <ChevronDown className={`
-              h-3.5 w-3.5 text-slate-400 transition-transform shrink-0
-              ${profileOpen ? 'rotate-180' : ''}
-            `} />
-          </button>
-
-          {/* PROFILE POPOVER */}
-          {profileOpen && (
-            <div className="
-              mb-2 overflow-hidden
-              rounded-xl border border-slate-200
-              bg-white shadow-lg
-            ">
-              <div className="border-b border-slate-100 px-4 py-3">
-                <p className="text-[11px] font-semibold text-slate-800">{user?.email?.split('@')[0] || 'User'}</p>
-                <p className="text-[10px] text-slate-400 mt-0.5">{user?.email || ''}</p>
-              </div>
-              <div className="p-1.5 space-y-0.5">
-                {[
-                  { icon: User, label: 'Profile' },
-                  { icon: Settings, label: 'Settings' },
-                ].map(({ icon: Icon, label }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    className="
-                      flex w-full items-center gap-2.5
-                      rounded-lg px-3 py-2
-                      text-[11px] font-medium text-slate-600
-                      transition-colors hover:bg-slate-50 hover:text-slate-900
-                    "
-                  >
-                    <Icon className="h-3.5 w-3.5 text-slate-400" />
-                    {label}
-                  </button>
-                ))}
-                <div className="my-1 border-t border-slate-100" />
-                <button
-                  type="button"
-                  onClick={onLogout}
-                  className="
-                    flex w-full items-center gap-2.5
-                    rounded-lg px-3 py-2
-                    text-[11px] font-medium text-rose-600
-                    transition-colors hover:bg-rose-50
-                  "
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                  Sign out
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-      </aside>
-    </>
-  );
-}
-
-
-/* ===============================================================
-   BRAND MARK
-=============================================================== */
-
-function BrandMark() {
-  return (
-    <div className="flex items-center gap-2">
-
-      <img
-        src="/SMS.png"
-        alt="SecureMailScope"
-        className="h-11 w-11 shrink-0 object-contain"
-      />
-
-      <div className="flex flex-col justify-center leading-none translate-y-1">
-        <p className="text-[13px] font-bold tracking-tight leading-tight">
-          <span className="text-slate-900">Secure</span>
-          <span className="text-brand-600">Mail</span>
-          <span className="text-slate-900">Scope</span>
-        </p>
-        <p className="text-[10px] text-slate-400 mt-[3px]">
-          Email Security Analysis
-        </p>
-      </div>
-
-    </div>
-  );
-}
-
-
-/* ===============================================================
-   SIDEBAR NAVIGATION
-=============================================================== */
-
-function SidebarNavigation({
-  onLoadPreset,
-  demoOpen,
-  setDemoOpen,
-  demoRef,
-  onNavigate,
-}) {
-  return (
-    <div className="flex flex-col gap-6">
-
-      {/* ANALYSIS */}
-      <div>
-        <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-          Analysis
-        </p>
-        <div className="space-y-0.5">
-          <SidebarLink to="/" end icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" onClick={() => { if (onNavigate) onNavigate(); window.location.href = '/'; }} />
-          <SidebarLink to="/analysis" icon={<FileSearch className="h-4 w-4" />} label="Analysis" onClick={onNavigate} />
-        </div>
-      </div>
-
-      {/* TOOLS */}
-      <div>
-        <p className="mb-1.5 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-400">
-          Tools
-        </p>
-        <div className="space-y-0.5" ref={demoRef}>
-          <button
-            type="button"
-            onClick={() => setDemoOpen(!demoOpen)}
-            className={`
-              flex w-full items-center gap-3
-              rounded-lg px-3 py-2.5
-              text-left text-xs font-medium
-              transition-colors
-              ${demoOpen
-                ? 'bg-brand-50 text-brand-700'
-                : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+        {/* RIGHT: ICON BUTTON GROUP WITH HOVER TOOLTIPS */}
+        <nav className="flex items-center gap-2.5">
+          
+          {/* 1. UPLOAD PCAP / DASHBOARD */}
+          <div className="relative group">
+            <NavLink
+              to="/"
+              end
+              onClick={onResetAnalysis}
+              className={({ isActive }) =>
+                `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                  isActive
+                    ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
+                    : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                }`
               }
-            `}
-          >
-            <Sparkles className={`h-4 w-4 ${demoOpen ? 'text-brand-500' : 'text-slate-400'}`} />
-            <span className="flex-1">Demo Captures</span>
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform ${demoOpen ? 'rotate-180' : ''}`} />
-          </button>
+            >
+              <FileUp className="h-4.5 w-4.5" />
+            </NavLink>
+            <NavTooltip label="UPLOAD" />
+          </div>
 
-          {demoOpen && (
-            <div className="mt-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-50/80">
-              {DEMO_PRESETS.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => onLoadPreset(preset)}
-                  className="flex w-full items-start gap-2.5 border-b border-slate-100 p-3 text-left transition-colors last:border-0 hover:bg-white"
-                >
-                  <Database className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-500" />
-                  <div className="min-w-0">
-                    <p className="truncate text-[11px] font-semibold text-slate-800">
-                      {preset.name.split(':')[1]?.trim() || preset.name}
-                    </p>
-                    <p className="mt-0.5 line-clamp-2 text-[10px] leading-4 text-slate-500">
-                      {preset.description}
-                    </p>
+          {/* 2. ANALYSIS CENTER */}
+          <div className="relative group">
+            <NavLink
+              to="/analysis"
+              className={({ isActive }) =>
+                `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                  isActive
+                    ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
+                    : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                }`
+              }
+            >
+              <FileSearch className="h-4.5 w-4.5" />
+            </NavLink>
+            <NavTooltip label="ANALYSIS" />
+          </div>
+
+          {/* 3. DEMO CAPTURES */}
+          <div className="relative group" ref={demoRef}>
+            <button
+              type="button"
+              onClick={() => {
+                setDemoOpen(!demoOpen);
+                setProfileOpen(false);
+              }}
+              className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                demoOpen
+                  ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
+                  : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+              }`}
+            >
+              <FlaskConical className="h-4.5 w-4.5" />
+            </button>
+            <NavTooltip label="DEMO" hidden={demoOpen} />
+
+            {/* DEMO POPOVER */}
+            {demoOpen && (
+              <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl animate-in fade-in zoom-in-95 duration-150">
+                <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <FlaskConical className="h-4 w-4 text-brand-600" />
+                    <p className="text-xs font-semibold text-slate-900">Demo PCAP Captures</p>
                   </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+                  <p className="text-[10px] text-slate-500 mt-0.5">
+                    Inspect realistic email security traffic captures
+                  </p>
+                </div>
+
+                <div className="max-h-[320px] overflow-y-auto p-2 space-y-1">
+                  {DEMO_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => handlePreset(preset)}
+                      className="group/item flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left transition-colors hover:bg-brand-50/60"
+                    >
+                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-600 transition-colors group-hover/item:bg-brand-100">
+                        <Database className="h-3.5 w-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-semibold text-slate-800 group-hover/item:text-brand-700">
+                          {preset.name.split(':')[1]?.trim() || preset.name}
+                        </p>
+                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-4 text-slate-500">
+                          {preset.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="mt-1 h-3.5 w-3.5 text-slate-300 opacity-0 transition-all group-hover/item:translate-x-0.5 group-hover/item:opacity-100 group-hover/item:text-brand-600" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* 4. USER PROFILE */}
+          <div className="relative group" ref={profileRef}>
+            <button
+              type="button"
+              onClick={() => {
+                setProfileOpen(!profileOpen);
+                setDemoOpen(false);
+              }}
+              className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
+                profileOpen
+                  ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
+                  : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+              }`}
+            >
+              <User className="h-4.5 w-4.5" />
+            </button>
+            <NavTooltip label="ACCOUNT" hidden={profileOpen} />
+
+            {/* PROFILE POPOVER */}
+            {profileOpen && (
+              <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150">
+                <div className="border-b border-slate-100 bg-gradient-to-br from-slate-50 via-white to-brand-50/30 px-4 py-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 via-sky-500 to-brand-600 text-xs font-bold text-white shadow-xs ring-2 ring-brand-100">
+                      {displayName.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-1.5 truncate text-xs font-bold text-slate-800 leading-tight">
+                        <span>Hi, <span className="text-brand-600">{displayName}</span></span>
+                        <ShieldCheck className="h-3.5 w-3.5 text-brand-500 shrink-0" />
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-1.5 space-y-0.5">
+                  <Link
+                    to="/analysis"
+                    onClick={() => setProfileOpen(false)}
+                    className="group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:text-slate-900"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-100/80 text-slate-500 transition-colors group-hover:border-brand-200 group-hover:bg-brand-50 group-hover:text-brand-600">
+                        <History className="h-3.5 w-3.5" />
+                      </div>
+                      <span>Upload History</span>
+                    </div>
+                    <ArrowRight className="h-3.5 w-3.5 text-slate-300 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-brand-600" />
+                  </Link>
+
+                  <div className="my-1 border-t border-slate-100" />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setProfileOpen(false);
+                      if (onLogout) onLogout();
+                    }}
+                    className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-50"
+                  >
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-rose-500 transition-colors group-hover:bg-rose-100 group-hover:text-rose-600">
+                      <LogOut className="h-3.5 w-3.5" />
+                    </div>
+                    <span>Sign out</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+        </nav>
+
       </div>
-
-    </div>
+    </header>
   );
 }
 
+/**
+ * Custom tooltip matching the reference dark box with triangular arrow caret
+ */
+function NavTooltip({ label, hidden = false }) {
+  if (hidden) return null;
 
-/* ===============================================================
-   SIDEBAR LINK
-=============================================================== */
-
-function SidebarLink({ to, icon, label, end = false, onClick }) {
   return (
-    <NavLink
-      to={to}
-      end={end}
-      onClick={onClick}
-      className={({ isActive }) =>
-        `relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-xs font-medium transition-all ${
-          isActive
-            ? 'bg-brand-50 text-brand-700'
-            : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-        }`
-      }
-    >
-      {({ isActive }) => (
-        <>
-          {isActive && (
-            <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-brand-500" />
-          )}
-          <span className={isActive ? 'text-brand-600' : 'text-slate-400'}>
-            {icon}
-          </span>
-          <span>{label}</span>
-        </>
-      )}
-    </NavLink>
-  );
-}
-
-
-/* ===============================================================
-   SIDEBAR FOOTER
-=============================================================== */
-
-function SidebarFooter() {
-  return (
-    <div className="px-4 pb-4">
-      <div className="
-        flex items-center justify-between
-        rounded-xl
-        border border-slate-100
-        bg-slate-50
-        px-3 py-2.5
-      ">
-        <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-white shadow-sm">
-            <Activity className="h-3 w-3 text-yellow-500" />
-          </div>
-          <div>
-            <p className="text-[10px] font-semibold text-slate-600">Analysis Engine</p>
-            <div className="flex items-center gap-1 mt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
-              <span className="text-[9px] font-medium text-yellow-600">Operational</span>
-            </div>
-          </div>
-        </div>
-        <span className="text-[9px] font-semibold text-slate-400">SIH 2026</span>
+    <div className="pointer-events-none absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1 transition-all duration-150 z-50 whitespace-nowrap">
+      <div className="relative flex items-center justify-center rounded-lg border border-slate-700/90 bg-slate-900/95 px-2.5 py-1 shadow-xl backdrop-blur-sm">
+        {/* Top triangular arrow pointer */}
+        <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-l border-t border-slate-700/90 bg-slate-900" />
+        {/* Label text in high-contrast vibrant electric sky cyan */}
+        <span className="relative z-10 text-[10px] font-bold tracking-wider text-sky-400 select-none">
+          {label}
+        </span>
       </div>
     </div>
   );

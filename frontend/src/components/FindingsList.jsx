@@ -146,15 +146,6 @@ export default function FindingsList({
       {findings.length > 0 && (
         <div className="mb-5 flex flex-wrap items-center gap-1.5">
 
-          <div className="mr-1 flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400">
-
-            <SlidersHorizontal className="h-3 w-3" />
-
-            Severity
-
-          </div>
-
-
           {FILTERS.map((filter) => {
 
             const count =

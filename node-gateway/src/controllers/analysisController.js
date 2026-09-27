@@ -23,8 +23,14 @@ async function getAnalyses(req, res, next) {
     const userId = req.user.id;
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 20));
+    const search = req.query.search ? String(req.query.search).trim() : undefined;
+    const date = req.query.date ? String(req.query.date).trim() : undefined;
 
-    const result = await db.getAnalysesByUser(userId, { page, limit });
+    const options = { page, limit };
+    if (search) options.search = search;
+    if (date) options.date = date;
+
+    const result = await db.getAnalysesByUser(userId, options);
 
     res.json(result);
   } catch (err) {
@@ -82,6 +88,52 @@ async function getAnalysisById(req, res, next) {
       risk: fullData.risk,
       recommendations: fullData.recommendations,
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * GET /api/analyses/:analysisId/sessions
+ *
+ * Get paginated, filtered, and sorted sessions for an analysis.
+ */
+async function getSessions(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const { analysisId } = req.params;
+
+    const analysis = await db.getAnalysisById(analysisId, userId);
+
+    if (!analysis) {
+      throw new AnalysisNotFoundError();
+    }
+
+    if (analysis.forbidden) {
+      throw new ForbiddenError('You do not have permission to view this analysis.');
+    }
+
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 15));
+    const search = req.query.search ? String(req.query.search).trim() : '';
+    const protocol = req.query.protocol ? String(req.query.protocol).trim() : 'ALL';
+    const encryption = req.query.encryption ? String(req.query.encryption).trim() : 'ALL';
+    const risk = req.query.risk ? String(req.query.risk).trim() : 'ALL';
+    const sortBy = req.query.sortBy ? String(req.query.sortBy).trim() : 'tcp_stream';
+    const sortOrder = req.query.sortOrder ? String(req.query.sortOrder).trim() : 'ASC';
+
+    const result = await db.getSessionsByAnalysis(analysisId, {
+      page,
+      limit,
+      search,
+      protocol,
+      encryption,
+      risk,
+      sortBy,
+      sortOrder,
+    });
+
+    res.json(result);
   } catch (err) {
     next(err);
   }
@@ -304,6 +356,7 @@ async function getSessionProvenance(req, res, next) {
 module.exports = {
   getAnalyses,
   getAnalysisById,
+  getSessions,
   exportAnalysis,
   downloadSessionPcap,
   getSessionProvenance,

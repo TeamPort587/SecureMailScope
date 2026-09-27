@@ -484,18 +484,25 @@ function evaluateCertificateValidity(certificate, startTime) {
   let observed = 'Validity Window Indeterminate';
   let rationale = 'Certificate timestamps could not be extracted from passive capture.';
 
+  const fromStr = validFrom instanceof Date && !isNaN(validFrom)
+    ? validFrom.toISOString().slice(0, 10)
+    : (typeof certificate.valid_from === 'string' ? certificate.valid_from.slice(0, 10) : String(certificate.valid_from || ''));
+  const untilStr = validUntil instanceof Date && !isNaN(validUntil)
+    ? validUntil.toISOString().slice(0, 10)
+    : (typeof certificate.valid_until === 'string' ? certificate.valid_until.slice(0, 10) : String(certificate.valid_until || ''));
+
   if (validUntil && validUntil < refTime) {
     status = 'DEPRECATED';
-    observed = `Expired at Capture Time (${certificate.valid_until})`;
-    rationale = `The certificate validity period ended on ${certificate.valid_until}, which preceded the session capture time. Expired certificates fail authentication under NIST SP 800-52 Rev. 2 Section 3.1.`;
+    observed = `Expired at Capture Time (${untilStr})`;
+    rationale = `The certificate validity period ended on ${untilStr}, which preceded the session capture time. Expired certificates fail authentication under NIST SP 800-52 Rev. 2 Section 3.1.`;
   } else if (validFrom && validFrom > refTime) {
     status = 'NOT_RECOMMENDED';
-    observed = `Not Yet Valid at Capture Time (${certificate.valid_from})`;
-    rationale = `The certificate valid_from date (${certificate.valid_from}) was after the session capture time.`;
+    observed = `Not Yet Valid at Capture Time (${fromStr})`;
+    rationale = `The certificate valid_from date (${fromStr}) was after the session capture time.`;
   } else if (validFrom && validUntil) {
     status = 'RECOMMENDED';
     observed = 'Valid During Session Capture';
-    rationale = `The certificate was valid when the session was recorded. Validity period spans ${certificate.valid_from.slice(0, 10)} to ${certificate.valid_until.slice(0, 10)}, encompassing the session capture.`;
+    rationale = `The certificate was valid when the session was recorded. Validity period spans ${fromStr} to ${untilStr}, encompassing the session capture.`;
   }
 
   return {
