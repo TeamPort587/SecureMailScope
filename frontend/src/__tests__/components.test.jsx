@@ -13,6 +13,8 @@ import Recommendations from '../components/Recommendations';
 import HistoryTable from '../components/HistoryTable';
 import CopilotChat from '../components/CopilotChat';
 import Navbar from '../components/Navbar';
+import FindingsList from '../components/FindingsList';
+import GroupedFindingCard from '../components/GroupedFindingCard';
 import { copilotApi } from '../api/copilotApi';
 
 import mockAnalysis from '../mock/mockAnalysis.json';
@@ -235,6 +237,34 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(cells[0]).toHaveTextContent('zebra-001');
       expect(cells[1]).toHaveTextContent('alpha-001');
     });
+
+    it('filters sessions by sessionFilter and renders dismissible banner', () => {
+      const sample = [
+        { ...mockAnalysis.sessions[0], session_id: 'session-match-1', tcp_stream: 1 },
+        { ...mockAnalysis.sessions[0], session_id: 'session-other-2', tcp_stream: 2 },
+      ];
+      const clearMock = vi.fn();
+
+      render(
+        <BrowserRouter>
+          <SessionTable
+            sessions={sample}
+            findings={[]}
+            sessionFilter={{ title: 'Insecure Authentication', sessionIds: ['session-match-1'] }}
+            onClearSessionFilter={clearMock}
+          />
+        </BrowserRouter>
+      );
+
+      expect(screen.getByText(/Filtered by:/i)).toBeInTheDocument();
+      expect(screen.getByText(/Insecure Authentication/i)).toBeInTheDocument();
+      expect(screen.getByText('session-match-1')).toBeInTheDocument();
+      expect(screen.queryByText('session-other-2')).not.toBeInTheDocument();
+
+      const clearBtn = screen.getByRole('button', { name: /clear filter/i });
+      fireEvent.click(clearBtn);
+      expect(clearMock).toHaveBeenCalled();
+    });
   });
 
   // --- FindingCard & EvidencePanel ---
@@ -283,6 +313,47 @@ describe('Frontend Component Unit & Integration Tests', () => {
     it('renders empty state when no recommendations exist', () => {
       render(<Recommendations recommendations={[]} />);
       expect(screen.getByText(/no immediate remediation needed/i)).toBeInTheDocument();
+    });
+
+    it('supports expanding drawer and clicking Open in table to filter sessions', () => {
+      const findings = Array.from({ length: 8 }, (_, i) => ({
+        finding_id: `f-${i}`,
+        finding_type: 'PLAINTEXT_TRANSMISSION',
+        session_id: `smtp-plain-${i}`,
+      }));
+      const rec = {
+        recommendation_id: 'REC-PLAIN-01',
+        title: 'Enforce Plaintext Encryption',
+        description: 'Plaintext communication observed',
+        priority: 'CRITICAL',
+      };
+      const filterMock = vi.fn();
+
+      render(
+        <Recommendations
+          recommendations={[rec]}
+          findings={findings}
+          sessions={[]}
+          onFilterSessionsInTable={filterMock}
+        />
+      );
+
+      // 4 sample chips should be rendered
+      expect(screen.getByText('smtp-plain-0')).toBeInTheDocument();
+      expect(screen.getByText('smtp-plain-3')).toBeInTheDocument();
+      // +4 more button
+      const moreBtn = screen.getByRole('button', { name: /\+4 more/i });
+      expect(moreBtn).toBeInTheDocument();
+
+      // Open in table button
+      const openBtn = screen.getByRole('button', { name: /open in table/i });
+      fireEvent.click(openBtn);
+      expect(filterMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Enforce Plaintext Encryption',
+          sessionIds: expect.arrayContaining(['smtp-plain-0', 'smtp-plain-7']),
+        })
+      );
     });
   });
 
@@ -391,5 +462,198 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(document.documentElement.classList.contains('dark')).toBe(initialIsDark);
     });
   });
+
+  // --- FindingsList & GroupedFindingCard ---
+  describe('FindingsList & GroupedFindingCard', () => {
+    const sampleFindings = [
+      {
+        finding_id: 'f-1',
+        session_id: 'session-001',
+        finding_type: 'PLAINTEXT',
+        title: 'Plaintext Transmission Detected',
+        description: 'Session communicated without TLS encryption.',
+        severity: 'CRITICAL',
+        confidence: 'OBSERVED',
+        evidence: { port: 25 },
+      },
+      {
+        finding_id: 'f-2',
+        session_id: 'session-002',
+        finding_type: 'PLAINTEXT',
+        title: 'Plaintext Transmission Detected',
+        description: 'Session communicated without TLS encryption.',
+        severity: 'CRITICAL',
+        confidence: 'OBSERVED',
+        evidence: { port: 25 },
+      },
+      {
+        finding_id: 'f-3',
+        session_id: 'session-003',
+        finding_type: 'WEAK_CIPHER',
+        title: 'Weak TLS Cipher Detected',
+        description: 'Legacy 3DES cipher negotiated.',
+        severity: 'MEDIUM',
+        confidence: 'OBSERVED',
+        evidence: { cipher: '3DES' },
+      },
+    ];
+
+    it('renders deduplicated grouped findings with affected sessions count and raw occurrences badge', () => {
+      render(<FindingsList findings={sampleFindings} totalSessions={3} />);
+
+      // Should show issue count and raw occurrences badge
+      expect(screen.getByText(/2 issues/i)).toBeInTheDocument();
+      expect(screen.getByText(/raw occurrences across capture/i)).toBeInTheDocument();
+
+      // Deduplicated: PLAINTEXT has 2 sessions, so it renders 1 card with "2 sessions affected"
+      expect(screen.getAllByText(/2 sessions affected/i).length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText(/Plaintext Transmission Detected/i)).toBeInTheDocument();
+      expect(screen.getByText(/Weak TLS Cipher Detected/i)).toBeInTheDocument();
+    });
+
+    it('toggles session explorer and allows switching active session evidence', () => {
+      const handleSelect = vi.fn();
+      render(
+        <FindingsList
+          findings={sampleFindings}
+          totalSessions={3}
+          onSelectSession={handleSelect}
+        />
+      );
+
+      // Click "Explore sessions" on the Plaintext card
+      const exploreBtn = screen.getAllByRole('button', { name: /explore sessions/i })[0];
+      fireEvent.click(exploreBtn);
+
+      // Session chips should appear
+      expect(screen.getByRole('button', { name: /session-001/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /session-002/i })).toBeInTheDocument();
+
+      // Click "Inspect session"
+      const inspectBtn = screen.getByRole('button', { name: /inspect session/i });
+      fireEvent.click(inspectBtn);
+      expect(handleSelect).toHaveBeenCalledWith('session-001');
+
+      // Click session-002 chip
+      const session2Chip = screen.getByRole('button', { name: /session-002/i });
+      fireEvent.click(session2Chip);
+      fireEvent.click(inspectBtn);
+      expect(handleSelect).toHaveBeenCalledWith('session-002');
+    });
+
+    it('filters grouped findings by severity', () => {
+      render(<FindingsList findings={sampleFindings} totalSessions={3} />);
+
+      // Filter by Medium
+      const mediumBtn = screen.getByRole('button', { name: /medium/i });
+      fireEvent.click(mediumBtn);
+
+      // Only the weak cipher finding should be shown
+      expect(screen.getByText(/Weak TLS Cipher Detected/i)).toBeInTheDocument();
+      expect(screen.queryByText(/Plaintext Transmission Detected/i)).not.toBeInTheDocument();
+
+      // Clear filter
+      const clearBtn = screen.getByRole('button', { name: /clear/i });
+      fireEvent.click(clearBtn);
+      expect(screen.getByText(/Plaintext Transmission Detected/i)).toBeInTheDocument();
+    });
+
+    it('renders pagination when vulnerability types exceed page size', () => {
+      const manyTypesFindings = Array.from({ length: 25 }, (_, i) => ({
+        finding_id: `finding-${i + 1}`,
+        session_id: `session-${i + 1}`,
+        finding_type: `VULN_RULE_${i + 1}`,
+        title: `Vulnerability Type #${i + 1}`,
+        description: `Description for vuln #${i + 1}`,
+        severity: 'HIGH',
+        confidence: 'OBSERVED',
+        evidence: {},
+      }));
+
+      render(<FindingsList findings={manyTypesFindings} totalSessions={25} />);
+
+      // Pagination footer should be visible: 25 items with PAGE_SIZE 15 = 2 pages
+      const paginationInfo = screen.getByText(/Showing/i);
+      expect(paginationInfo).toHaveTextContent(/Showing 1 to 15 of 25 vulnerability types/i);
+      expect(screen.getByRole('button', { name: /next page/i })).toBeInTheDocument();
+
+      // Click next page
+      fireEvent.click(screen.getByRole('button', { name: /next page/i }));
+      expect(screen.getByText(/Showing/i)).toHaveTextContent(/Showing 16 to 25 of 25 vulnerability types/i);
+    });
+
+    it('mini-paginates session chips inside card and triggers onViewSessionsTab', () => {
+      const handleViewTab = vi.fn();
+      // 20 sessions for a single PLAINTEXT vulnerability
+      const twentySessionsFindings = Array.from({ length: 20 }, (_, i) => ({
+        finding_id: `f-${i + 1}`,
+        session_id: `stream-session-${i + 1}`,
+        finding_type: 'PLAINTEXT',
+        title: 'Plaintext Transmission Detected',
+        description: 'Plaintext transmission',
+        severity: 'CRITICAL',
+        confidence: 'OBSERVED',
+        evidence: { port: 25 },
+      }));
+
+      render(
+        <FindingsList
+          findings={twentySessionsFindings}
+          totalSessions={20}
+          onViewSessionsTab={handleViewTab}
+        />
+      );
+
+      // Expand sessions drawer
+      fireEvent.click(screen.getByRole('button', { name: /explore sessions/i }));
+
+      // "Open in Sessions table" button should be visible (since > 5 sessions)
+      const openTableBtn = screen.getByRole('button', { name: /open in sessions table/i });
+      expect(openTableBtn).toBeInTheDocument();
+      fireEvent.click(openTableBtn);
+      expect(handleViewTab).toHaveBeenCalled();
+
+      // Mini-pagination should be active: 20 sessions with CHIPS_PER_PAGE 12 -> "Showing 1–12 of 20"
+      expect(screen.getByText(/Showing/i)).toHaveTextContent(/Showing 1–12 of 20/i);
+      expect(screen.getByText('1 / 2')).toBeInTheDocument();
+
+      // Click Next session chips page
+      const nextChipsBtn = screen.getByRole('button', { name: /next sessions page/i });
+      fireEvent.click(nextChipsBtn);
+      expect(screen.getByText('2 / 2')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /stream-session-13/i })).toBeInTheDocument();
+    });
+
+    it('calls onFilterSessionsInTable when clicking open in sessions table', () => {
+      const handleFilterInTable = vi.fn();
+      const findings = Array.from({ length: 8 }, (_, i) => ({
+        finding_id: `f-${i}`,
+        finding_type: 'INSECURE_AUTH',
+        title: 'Insecure Authentication',
+        severity: 'CRITICAL',
+        confidence: 'OBSERVED',
+        session_id: `auth-session-${i}`,
+      }));
+
+      render(
+        <FindingsList
+          findings={findings}
+          totalSessions={8}
+          onFilterSessionsInTable={handleFilterInTable}
+        />
+      );
+
+      fireEvent.click(screen.getByRole('button', { name: /explore sessions/i }));
+      const openTableBtn = screen.getByRole('button', { name: /open in sessions table/i });
+      fireEvent.click(openTableBtn);
+      expect(handleFilterInTable).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Insecure Authentication',
+          sessionIds: expect.arrayContaining(['auth-session-0', 'auth-session-7']),
+        })
+      );
+    });
+  });
 });
+
 

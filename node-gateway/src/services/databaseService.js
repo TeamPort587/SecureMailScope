@@ -546,6 +546,18 @@ function mapSessionRow(row) {
     }
   }
 
+  if (row.is_anomalous !== undefined && row.is_anomalous !== null) {
+    session.anomaly = {
+      is_anomalous: Boolean(row.is_anomalous),
+      decision_score: row.decision_score !== null ? parseFloat(row.decision_score) : null,
+      threshold: row.threshold !== null ? parseFloat(row.threshold) : null,
+      model_version: row.model_version,
+      feature_schema_version: row.feature_schema_version,
+      warnings: typeof row.warnings_json === 'string' ? JSON.parse(row.warnings_json) : (row.warnings_json || []),
+      explanation: typeof row.explanation_json === 'string' ? JSON.parse(row.explanation_json) : (row.explanation_json || {}),
+    };
+  }
+
   session.standards_context = standardsService.evaluateSessionStandards(session);
   return session;
 }
@@ -788,6 +800,7 @@ async function getSessionsByAnalysis(analysisId, {
   protocol = 'ALL',
   encryption = 'ALL',
   risk = 'ALL',
+  anomaly = 'ALL',
   sortBy = 'tcp_stream',
   sortOrder = 'ASC',
 } = {}) {
@@ -824,10 +837,20 @@ async function getSessionsByAnalysis(analysisId, {
       paramIndex++;
     }
 
+    if (anomaly && anomaly !== 'ALL') {
+      if (anomaly === 'ANOMALOUS') {
+        conditions.push('ar.is_anomalous = TRUE');
+      } else if (anomaly === 'BASELINE') {
+        conditions.push('ar.is_anomalous = FALSE');
+      }
+    }
+
     const whereClause = conditions.join(' AND ');
 
     const countResult = await pool.query(
-      `SELECT COUNT(*) FROM sessions s WHERE ${whereClause}`,
+      `SELECT COUNT(*) FROM sessions s
+       LEFT JOIN anomaly_results ar ON ar.session_id = s.id
+       WHERE ${whereClause}`,
       params
     );
     const total = parseInt(countResult.rows[0].count, 10);
@@ -838,6 +861,9 @@ async function getSessionsByAnalysis(analysisId, {
       protocol: 's.protocol',
       encryption: 's.encryption_mode',
       risk: "CASE UPPER(s.risk_label) WHEN 'CRITICAL' THEN 4 WHEN 'HIGH' THEN 3 WHEN 'MEDIUM' THEN 2 WHEN 'LOW' THEN 1 ELSE 0 END",
+      score: 'ar.decision_score',
+      decision_score: 'ar.decision_score',
+      anomaly: 'ar.is_anomalous',
     };
 
     const sortColumn = allowedSortFields[sortBy] || 's.tcp_stream';
@@ -878,9 +904,17 @@ async function getSessionsByAnalysis(analysisId, {
          si.certificate_valid_to,
          si.certificate_key_algorithm,
          si.certificate_key_size,
-         si.self_signed
+         si.self_signed,
+         ar.is_anomalous,
+         ar.decision_score,
+         ar.threshold,
+         ar.model_version,
+         ar.feature_schema_version,
+         ar.warnings_json,
+         ar.explanation_json
        FROM sessions s
        LEFT JOIN security_info si ON si.session_id = s.id
+       LEFT JOIN anomaly_results ar ON ar.session_id = s.id
        WHERE ${whereClause}
        ORDER BY ${orderClause}
        LIMIT $${limitIndex} OFFSET $${offsetIndex}`,

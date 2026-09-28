@@ -79,10 +79,26 @@ export default function Analysis() {
   const [selectedFinding, setSelectedFinding] =
     useState(null);
 
+  const [activeSessionFilter, setActiveSessionFilter] =
+    useState(null);
+
   const [isRefreshing, setIsRefreshing] =
     useState(false);
 
   const sessions = analysis?.sessions || [];
+
+  const anomalousCount = useMemo(() => {
+    if (analysis?.anomaly_assessment?.anomalous_count != null) {
+      return analysis.anomaly_assessment.anomalous_count;
+    }
+    return (analysis?.sessions || []).filter((s) => s?.anomaly?.is_anomalous).length;
+  }, [analysis?.anomaly_assessment, analysis?.sessions]);
+
+  const handleFilterSessionsInTable = ({ title, sessionIds }) => {
+    setActiveSessionFilter({ title, sessionIds });
+    setActiveTab('sessions');
+    navigate('?tab=sessions', { replace: true });
+  };
   /* ============================================================
      FETCH ANALYSIS
   ============================================================ */
@@ -1166,6 +1182,13 @@ export default function Analysis() {
               count={totalSessions}
             />
 
+            <AnalysisTab
+              active={activeTab === 'anomalies'}
+              onClick={() => setActiveTab('anomalies')}
+              icon={<Cpu className="h-3.5 w-3.5" />}
+              label="Anomalies"
+              count={anomalousCount}
+            />
 
             <AnalysisTab
               active={activeTab === 'findings'}
@@ -1176,7 +1199,6 @@ export default function Analysis() {
               label="Findings"
               count={findingsCount}
             />
-
 
             <AnalysisTab
               active={
@@ -1190,14 +1212,6 @@ export default function Analysis() {
               }
               label="Recommendations"
               count={recommendations.length}
-            />
-
-            <AnalysisTab
-              active={activeTab === 'anomalies'}
-              onClick={() => setActiveTab('anomalies')}
-              icon={<Cpu className="h-3.5 w-3.5" />}
-              label="Anomalies"
-              count={analysis?.anomaly_assessment?.anomalous_count ?? 0}
             />
 
             <AnalysisTab
@@ -1241,10 +1255,10 @@ export default function Analysis() {
           ">
 
             <OverviewCard
-              icon={<Wifi className="h-4 w-4" />}
+              icon={<Wifi className="h-5 w-5" />}
               title="Protocol Coverage"
               subtitle="Email protocols detected in this capture"
-              iconClass="text-brand-600 bg-brand-50"
+              iconClass="text-brand-600 dark:text-brand-400 bg-brand-500/10 dark:bg-brand-950/60 border border-brand-500/20 dark:border-brand-500/30"
             >
 
               <ProtocolRow
@@ -1269,10 +1283,10 @@ export default function Analysis() {
 
 
             <OverviewCard
-              icon={<Lock className="h-4 w-4" />}
+              icon={<Lock className="h-5 w-5" />}
               title="Transport Encryption"
               subtitle="Encryption methods observed"
-              iconClass="text-yellow-600 bg-yellow-50"
+              iconClass="text-yellow-600 dark:text-yellow-400 bg-yellow-500/10 dark:bg-yellow-950/60 border border-yellow-500/20 dark:border-yellow-500/30"
             >
 
               <ProtocolRow
@@ -1298,11 +1312,14 @@ export default function Analysis() {
 
           </div>
 
-          {/* ISOLATION FOREST BEHAVIORAL ANOMALY CARD */}
+          {/* ISOLATION FOREST BEHAVIORAL ANOMALY CARD (SUMMARY VIEW) */}
           <AnomalyDetectionCard
             anomalyAssessment={analysis?.anomaly_assessment}
             sessions={sessions}
             findings={findings}
+            summaryOnly={true}
+            analysisId={analysis?.analysis_id || id}
+            onViewAllAnomalies={() => setActiveTab('anomalies')}
             onSelectSession={() => setActiveTab('sessions')}
           />
 
@@ -1320,7 +1337,7 @@ export default function Analysis() {
               flex flex-col
               gap-3
               border-b border-slate-100 dark:border-slate-800
-              px-5 py-4
+              px-6 py-5
               sm:flex-row
               sm:items-center
               sm:justify-between
@@ -1330,19 +1347,20 @@ export default function Analysis() {
 
                 <div className="
                   flex items-center
-                  gap-2
+                  gap-3
                 ">
 
                   <div className="
-                    flex h-8 w-8
+                    flex h-10 w-10 shrink-0
                     items-center justify-center
-                    rounded-lg
-                    bg-amber-50 dark:bg-amber-950/60
+                    rounded-xl shadow-sm
+                    bg-amber-500/10 dark:bg-amber-950/60
+                    text-amber-600 dark:text-amber-400
+                    border border-amber-500/20 dark:border-amber-500/30
                   ">
 
                     <ShieldAlert className="
-                      h-4 w-4
-                      text-amber-600 dark:text-amber-400
+                      h-5 w-5
                     " />
 
                   </div>
@@ -1351,9 +1369,10 @@ export default function Analysis() {
                   <div>
 
                     <h2 className="
-                      text-sm
+                      text-base
                       font-semibold
                       text-slate-900 dark:text-white
+                      tracking-tight
                     ">
                       Security Highlights
                     </h2>
@@ -1388,8 +1407,9 @@ export default function Analysis() {
                     gap-1
                     text-xs
                     font-semibold
-                    text-brand-600
-                    hover:text-brand-700
+                    text-brand-600 dark:text-brand-400
+                    hover:text-brand-700 dark:hover:text-brand-300
+                    transition-colors
                   "
                 >
 
@@ -1406,7 +1426,8 @@ export default function Analysis() {
 
             <div className="
               divide-y
-              divide-slate-100
+              divide-slate-100 dark:divide-slate-800
+              bg-white dark:bg-slate-900
             ">
 
               {topFindings.length > 0 ? (
@@ -1492,35 +1513,36 @@ export default function Analysis() {
             <div className="
               overflow-hidden
               rounded-xl
-              border border-slate-200
-              bg-white
+              border border-slate-200 dark:border-slate-800
+              bg-white dark:bg-slate-900
               shadow-sm
             ">
 
               <div className="
                 flex items-center
                 justify-between
-                border-b border-slate-100
-                px-5 py-4
+                border-b border-slate-100 dark:border-slate-800
+                px-6 py-5
               ">
 
                 <div>
 
                   <div className="
                     flex items-center
-                    gap-2
+                    gap-3
                   ">
 
                     <div className="
-                      flex h-8 w-8
+                      flex h-10 w-10 shrink-0
                       items-center justify-center
-                      rounded-lg
-                      bg-yellow-50
+                      rounded-xl shadow-sm
+                      bg-amber-500/10 dark:bg-amber-950/60
+                      text-amber-600 dark:text-amber-400
+                      border border-amber-500/20 dark:border-amber-500/30
                     ">
 
                       <CheckCircle2 className="
-                        h-4 w-4
-                        text-yellow-600
+                        h-5 w-5
                       " />
 
                     </div>
@@ -1529,9 +1551,10 @@ export default function Analysis() {
                     <div>
 
                       <h2 className="
-                        text-sm
+                        text-base
                         font-semibold
-                        text-slate-900
+                        text-slate-900 dark:text-white
+                        tracking-tight
                       ">
                         Recommended Actions
                       </h2>
@@ -1540,7 +1563,7 @@ export default function Analysis() {
                       <p className="
                         mt-0.5
                         text-xs
-                        text-slate-500
+                        text-slate-500 dark:text-slate-400
                       ">
                         Prioritized remediation for detected
                         security issues.
@@ -1561,13 +1584,18 @@ export default function Analysis() {
                     )
                   }
                   className="
+                    inline-flex
+                    items-center
+                    gap-1
                     text-xs
                     font-semibold
-                    text-brand-600
-                    hover:text-brand-700
+                    text-brand-600 dark:text-brand-400
+                    hover:text-brand-700 dark:hover:text-brand-300
+                    transition-colors
                   "
                 >
                   View all
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </button>
 
               </div>
@@ -1635,12 +1663,38 @@ export default function Analysis() {
               sessions={sessions}
               findings={findings}
               analysisId={analysis?.analysis_id || id}
+              sessionFilter={activeSessionFilter}
+              onClearSessionFilter={() => setActiveSessionFilter(null)}
             />
 
           </div>
 
         </div>
 
+      )}
+
+
+      {/* ========================================================
+          ANOMALIES TAB
+      ======================================================== */}
+
+      {activeTab === 'anomalies' && (
+        <AnomalyDetectionCard
+          anomalyAssessment={analysis?.anomaly_assessment}
+          sessions={sessions}
+          findings={findings}
+          analysisId={analysis?.analysis_id || id}
+          onSelectSession={(session) => {
+            const sId = typeof session === 'string' ? session : session?.session_id;
+            if (sId) {
+              navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
+                state: { analysis, analysisId: analysis?.analysis_id || id, findings },
+              });
+            } else {
+              setActiveTab('sessions');
+            }
+          }}
+        />
       )}
 
 
@@ -1665,11 +1719,18 @@ export default function Analysis() {
 
             <FindingsList
               findings={findings}
+              sessions={sessions}
+              totalSessions={totalSessions}
               onSelectSession={(sId) =>
                 navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
                   state: { analysis, analysisId: analysis?.analysis_id || id, findings },
                 })
               }
+              onViewSessionsTab={() => {
+                setActiveTab('sessions');
+                navigate(`?tab=sessions`, { replace: true });
+              }}
+              onFilterSessionsInTable={handleFilterSessionsInTable}
             />
 
           </div>
@@ -1707,26 +1768,13 @@ export default function Analysis() {
                   state: { analysis, analysisId: analysis?.analysis_id || id, findings },
                 })
               }
+              onFilterSessionsInTable={handleFilterSessionsInTable}
             />
 
           </div>
 
         </div>
 
-      )}
-
-
-      {/* ========================================================
-          ANOMALIES TAB
-      ======================================================== */}
-
-      {activeTab === 'anomalies' && (
-        <AnomalyDetectionCard
-          anomalyAssessment={analysis?.anomaly_assessment}
-          sessions={sessions}
-          findings={findings}
-          onSelectSession={() => setActiveTab('sessions')}
-        />
       )}
 
 
@@ -1977,14 +2025,14 @@ function OverviewCard({
         flex items-center
         gap-3
         border-b border-slate-100 dark:border-slate-800
-        px-5 py-4
+        px-6 py-5
       ">
 
         <div
           className={`
-            flex h-9 w-9
+            flex h-10 w-10 shrink-0
             items-center justify-center
-            rounded-lg
+            rounded-xl shadow-sm
             ${iconClass}
           `}
         >
@@ -1995,9 +2043,10 @@ function OverviewCard({
         <div>
 
           <h2 className="
-            text-sm
+            text-base
             font-semibold
             text-slate-900 dark:text-white
+            tracking-tight
           ">
             {title}
           </h2>
@@ -2005,7 +2054,7 @@ function OverviewCard({
 
           <p className="
             mt-0.5
-            text-[10px]
+            text-xs
             text-slate-500 dark:text-slate-400
           ">
             {subtitle}
@@ -2143,6 +2192,7 @@ function FindingHighlight({
       flex flex-col
       gap-3
       px-5 py-4
+      bg-white dark:bg-slate-900
       transition-colors
       hover:bg-slate-50/60 dark:hover:bg-slate-800/40
       sm:flex-row
@@ -2331,12 +2381,6 @@ function RecommendationPreview({
     'Apply the recommended security configuration to improve protection.';
 
 
-  const action =
-    recommendation?.action ||
-    recommendation?.required_action ||
-    recommendation?.remediation ||
-    'Apply the relevant security policy.';
-
 
   const priority =
     recommendation?.priority ||
@@ -2450,33 +2494,6 @@ function RecommendationPreview({
         </div>
       )}
 
-
-      <div className="
-        mt-3
-        flex items-start
-        gap-2
-        rounded-lg
-        bg-brand-50 dark:bg-brand-950/50
-        px-3 py-2.5
-      ">
-
-        <Sparkles className="
-          mt-0.5
-          h-3 w-3
-          shrink-0
-          text-brand-500 dark:text-brand-400
-        " />
-
-        <p className="
-          text-xs
-          leading-5
-          text-brand-800 dark:text-brand-300
-          font-medium
-        ">
-          {action}
-        </p>
-
-      </div>
 
     </div>
 
@@ -3080,11 +3097,11 @@ function getSeverityStyles(severity) {
   ) {
 
     return {
-      iconBg: 'bg-rose-50',
-      iconText: 'text-rose-600',
-      badge: 'border-rose-200 bg-rose-50 text-rose-700',
-      pill: 'bg-rose-100 text-rose-700',
-      accentBar: 'bg-rose-400',
+      iconBg: 'bg-rose-50 dark:bg-rose-950/60 border border-rose-200/50 dark:border-rose-900/50',
+      iconText: 'text-rose-600 dark:text-rose-400',
+      badge: 'border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300',
+      pill: 'bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/80',
+      accentBar: 'bg-rose-400 dark:bg-rose-500',
     };
 
   }
@@ -3095,11 +3112,11 @@ function getSeverityStyles(severity) {
   ) {
 
     return {
-      iconBg: 'bg-orange-50',
-      iconText: 'text-orange-600',
-      badge: 'border-orange-200 bg-orange-50 text-orange-700',
-      pill: 'bg-orange-100 text-orange-700',
-      accentBar: 'bg-orange-400',
+      iconBg: 'bg-orange-50 dark:bg-orange-950/60 border border-orange-200/50 dark:border-orange-900/50',
+      iconText: 'text-orange-600 dark:text-orange-400',
+      badge: 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300',
+      pill: 'bg-orange-50 dark:bg-orange-950/80 text-orange-700 dark:text-orange-300 border border-orange-200/60 dark:border-orange-800/80',
+      accentBar: 'bg-orange-400 dark:bg-orange-500',
     };
 
   }
@@ -3110,11 +3127,11 @@ function getSeverityStyles(severity) {
   ) {
 
     return {
-      iconBg: 'bg-amber-50',
-      iconText: 'text-amber-600',
-      badge: 'border-amber-200 bg-amber-50 text-amber-700',
-      pill: 'bg-amber-100 text-amber-700',
-      accentBar: 'bg-amber-400',
+      iconBg: 'bg-amber-50 dark:bg-amber-950/60 border border-amber-200/50 dark:border-amber-900/50',
+      iconText: 'text-amber-600 dark:text-amber-400',
+      badge: 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300',
+      pill: 'bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/80',
+      accentBar: 'bg-amber-400 dark:bg-amber-500',
     };
 
   }
@@ -3122,20 +3139,20 @@ function getSeverityStyles(severity) {
 
   if (normalized.includes('LOW')) {
     return {
-      iconBg: 'bg-yellow-50',
-      iconText: 'text-yellow-600',
-      badge: 'border-yellow-200 bg-yellow-50 text-yellow-700',
-      pill: 'bg-yellow-100 text-yellow-700',
-      accentBar: 'bg-yellow-400',
+      iconBg: 'bg-yellow-50 dark:bg-yellow-950/60 border border-yellow-200/50 dark:border-yellow-900/50',
+      iconText: 'text-yellow-600 dark:text-yellow-400',
+      badge: 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-950/60 text-yellow-700 dark:text-yellow-300',
+      pill: 'bg-yellow-50 dark:bg-yellow-950/80 text-yellow-700 dark:text-yellow-300 border border-yellow-200/60 dark:border-yellow-800/80',
+      accentBar: 'bg-yellow-400 dark:bg-yellow-500',
     };
   }
 
   return {
-    iconBg: 'bg-brand-50',
-    iconText: 'text-brand-600',
-    badge: 'border-brand-200 bg-brand-50 text-brand-700',
-    pill: 'bg-brand-100 text-brand-700',
-    accentBar: 'bg-brand-400',
+    iconBg: 'bg-brand-50 dark:bg-brand-950/60 border border-brand-200/50 dark:border-brand-900/50',
+    iconText: 'text-brand-600 dark:text-brand-400',
+    badge: 'border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300',
+    pill: 'bg-brand-50 dark:bg-brand-950/80 text-brand-700 dark:text-brand-300 border border-brand-200/60 dark:border-brand-800/80',
+    accentBar: 'bg-brand-400 dark:bg-brand-500',
   };
 
 }

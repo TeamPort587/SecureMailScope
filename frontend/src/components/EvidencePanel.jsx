@@ -133,10 +133,6 @@ export default function EvidencePanel({ evidence }) {
                 <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                   {formatKey(key)}
                 </p>
-
-                <p className="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">
-                  Evidence attribute
-                </p>
               </div>
 
               <div className="sm:max-w-[58%]">

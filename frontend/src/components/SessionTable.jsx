@@ -27,6 +27,8 @@ export default function SessionTable({
   findings = [],
   analysisId = null,
   onSelectSession = null,
+  sessionFilter = null,
+  onClearSessionFilter = null,
 }) {
   const navigate = useNavigate();
   const [selectedSession, setSelectedSession] = useState(null);
@@ -58,6 +60,13 @@ export default function SessionTable({
     return () => clearTimeout(handler);
   }, [searchQuery]);
 
+  // Reset page to 1 whenever sessionFilter changes
+  useEffect(() => {
+    if (sessionFilter) {
+      setCurrentPage(1);
+    }
+  }, [sessionFilter]);
+
   // Vulnerable session map from findings
   const vulnerableSessionMap = useMemo(() => {
     const map = new Set();
@@ -73,7 +82,7 @@ export default function SessionTable({
 
   // Fetch paginated sessions from server when analysisId is provided
   useEffect(() => {
-    if (!analysisId) return;
+    if (!analysisId || sessionFilter) return;
 
     let isMounted = true;
     setIsLoading(true);
@@ -118,8 +127,15 @@ export default function SessionTable({
   // Client-side fallback filtering & sorting
   const clientFilteredSessions = useMemo(() => {
     const query = debouncedSearch.toLowerCase();
+    const allowedIds = sessionFilter?.sessionIds
+      ? new Set(sessionFilter.sessionIds)
+      : null;
 
     const filtered = (sessions || []).filter((session) => {
+      if (allowedIds && !allowedIds.has(session.session_id)) {
+        return false;
+      }
+
       const protocol = (session.protocol || '').toUpperCase();
       const encryption = (session.security?.encryption_mode || '').toUpperCase();
       const sessionRisk = (
@@ -174,6 +190,7 @@ export default function SessionTable({
     sortBy,
     sortOrder,
     vulnerableSessionMap,
+    sessionFilter,
   ]);
 
   const clientPaginatedSessions = useMemo(() => {
@@ -181,8 +198,8 @@ export default function SessionTable({
     return clientFilteredSessions.slice(start, start + PAGE_SIZE);
   }, [clientFilteredSessions, currentPage]);
 
-  // Determine whether server-side data is active
-  const isServerSide = Boolean(analysisId && serverData);
+  // Determine whether server-side data is active (disabled when active sessionFilter is applied)
+  const isServerSide = Boolean(analysisId && serverData && !sessionFilter);
 
   const displaySessions = isServerSide
     ? serverData.items || []
@@ -205,7 +222,7 @@ export default function SessionTable({
     riskFilter !== 'ALL' ||
     searchQuery.trim() !== '';
 
-  const hasModifications = hasActiveFilters || hasCustomSort;
+  const hasModifications = hasActiveFilters || hasCustomSort || Boolean(sessionFilter);
 
   const clearFilters = () => {
     setProtocolFilter('ALL');
@@ -214,6 +231,7 @@ export default function SessionTable({
     setSearchQuery('');
     setDebouncedSearch('');
     setCurrentPage(1);
+    onClearSessionFilter?.();
   };
 
   const resetAll = () => {
@@ -225,6 +243,7 @@ export default function SessionTable({
     setSortBy('tcp_stream');
     setSortOrder('ASC');
     setCurrentPage(1);
+    onClearSessionFilter?.();
   };
 
   const handleSort = (key) => {
@@ -366,6 +385,44 @@ export default function SessionTable({
       </div>
 
       {/* =========================================================
+          ACTIVE FILTER BANNER (e.g. from Finding or Recommendation)
+      ========================================================== */}
+      {sessionFilter && (
+        <div className="mb-4 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-brand-200 dark:border-brand-800 bg-brand-50/90 dark:bg-brand-950/60 px-4 py-3 shadow-xs animate-in fade-in duration-150">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-brand-600 text-white font-bold text-xs shadow-xs">
+              <Layers className="h-3.5 w-3.5" />
+            </span>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-brand-900 dark:text-brand-200">
+                  Filtered by:
+                </span>
+                <span className="truncate text-xs font-bold text-brand-700 dark:text-brand-300 max-w-[280px] sm:max-w-md">
+                  &ldquo;{sessionFilter.title}&rdquo;
+                </span>
+                <span className="rounded-full bg-brand-200/70 dark:bg-brand-900/80 px-2 py-0.5 font-mono text-[10px] font-bold text-brand-800 dark:text-brand-200">
+                  {totalSessions} {totalSessions === 1 ? 'session' : 'sessions'}
+                </span>
+              </div>
+              <p className="text-[11px] text-brand-700/80 dark:text-brand-400 mt-0.5">
+                Displaying only sessions impacted by this issue.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClearSessionFilter}
+            className="inline-flex items-center gap-1.5 self-start sm:self-center shrink-0 rounded-lg border border-brand-300 dark:border-brand-700 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs font-semibold text-brand-700 dark:text-brand-300 shadow-2xs hover:bg-brand-50 dark:hover:bg-brand-900/50 hover:border-brand-400 transition cursor-pointer"
+          >
+            <X className="h-3.5 w-3.5" />
+            <span>Clear filter</span>
+          </button>
+        </div>
+      )}
+
+      {/* =========================================================
           TABLE
       ========================================================== */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
@@ -459,11 +516,11 @@ export default function SessionTable({
                         Try changing the search term or clearing the active filters.
                       </p>
 
-                      {hasActiveFilters && (
+                      {(hasActiveFilters || sessionFilter) && (
                         <button
                           type="button"
                           onClick={clearFilters}
-                          className="mt-3 text-[11px] font-semibold text-brand-600 hover:text-brand-700"
+                          className="mt-3 text-[11px] font-semibold text-brand-600 hover:text-brand-700 cursor-pointer"
                         >
                           Clear filters
                         </button>
@@ -479,23 +536,32 @@ export default function SessionTable({
         {/* =======================================================
             PAGINATION & TABLE FOOTER
         ======================================================== */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 bg-slate-50/50 px-4 py-3.5">
-          <div className="flex items-center gap-2 text-xs text-slate-500">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850/50 px-4 py-3.5">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
             {totalSessions > 0 ? (
               <span>
                 Showing{' '}
-                <span className="font-semibold text-slate-700">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
                   {(currentPage - 1) * PAGE_SIZE + 1}
                 </span>{' '}
                 to{' '}
-                <span className="font-semibold text-slate-700">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
                   {Math.min(currentPage * PAGE_SIZE, totalSessions)}
                 </span>{' '}
                 of{' '}
-                <span className="font-semibold text-slate-700">
+                <span className="font-semibold text-slate-700 dark:text-slate-200">
                   {totalSessions}
                 </span>{' '}
-                sessions
+                {sessionFilter ? (
+                  <>
+                    matching sessions{' '}
+                    <span className="text-slate-400 dark:text-slate-500">
+                      (from {grandTotal} total)
+                    </span>
+                  </>
+                ) : (
+                  'sessions'
+                )}
               </span>
             ) : (
               <span>0 sessions</span>

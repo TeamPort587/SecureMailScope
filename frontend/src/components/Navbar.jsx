@@ -26,11 +26,21 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
 
   const { isDark } = useTheme();
 
-  // Scroll listener to detect when user has scrolled down even a little bit
+  // Throttled scroll listener with requestAnimationFrame and hysteresis to eliminate jitter
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      const scrolled = window.scrollY > 10;
-      setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const y = window.scrollY;
+          setIsScrolled((prev) => {
+            const next = prev ? y > 8 : y > 20;
+            return prev !== next ? next : prev;
+          });
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
 
     handleScroll();
@@ -59,9 +69,9 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
   const rawUsername = user?.email?.split('@')[0] || 'User';
   const displayName = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
 
-  // Dynamic button styling based on scroll state
+  // Dynamic button styling with hardware-accelerated transitions
   const btnClass = (isActive) =>
-    `relative flex items-center justify-center rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
+    `relative flex items-center justify-center rounded-xl border transition-[width,height,background-color,border-color,color,box-shadow,transform] duration-250 ease-out hover:-translate-y-0.5 active:translate-y-0 ${
       isScrolled ? 'h-8.5 w-8.5 sm:h-9 sm:w-9' : 'h-10 w-10'
     } ${
       isActive
@@ -69,21 +79,21 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
         : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
     }`;
 
-  const iconClass = isScrolled ? 'h-4 w-4' : 'h-4.5 w-4.5';
+  const iconClass = `${isScrolled ? 'h-4 w-4' : 'h-4.5 w-4.5'} transition-all duration-200 ease-out`;
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full border-0 border-none transition-[padding,background-color] duration-300 ease-in-out ${
+      className={`sticky top-0 z-50 w-full h-16 sm:h-18 flex items-center justify-center border-0 border-none transition-colors duration-250 ease-out px-3 sm:px-6 pointer-events-none ${
         isScrolled
-          ? 'py-2 sm:py-2.5 px-3 sm:px-6 pointer-events-none bg-transparent'
-          : 'py-0 px-0 bg-slate-50 dark:bg-slate-950 pointer-events-auto'
+          ? 'bg-transparent'
+          : 'bg-slate-50 dark:bg-slate-950'
       }`}
     >
       <div
-        className={`mx-auto flex items-center justify-between border transition-all duration-300 ease-in-out ${
+        className={`flex items-center justify-between border transform-gpu will-change-[width,max-width,height,border-radius,background-color,box-shadow] transition-[width,max-width,height,border-radius,background-color,border-color,box-shadow,padding] duration-250 ease-out ${
           isScrolled
-            ? 'pointer-events-auto w-[95%] sm:w-[88%] lg:w-[76%] max-w-5xl h-12 sm:h-13 rounded-full border-slate-200/90 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.45)] px-3.5 sm:px-5'
-            : 'w-full max-w-7xl h-16 sm:h-18 rounded-none border-transparent dark:border-transparent bg-transparent dark:bg-transparent px-4 sm:px-6 lg:px-8 shadow-none'
+            ? 'pointer-events-auto w-[95%] sm:w-[88%] lg:w-[76%] max-w-5xl h-12 sm:h-13 rounded-full border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.45)] px-3.5 sm:px-5'
+            : 'pointer-events-auto w-full max-w-7xl h-full rounded-none border-transparent dark:border-transparent bg-transparent dark:bg-transparent px-4 sm:px-6 lg:px-8 shadow-none'
         }`}
       >
         
@@ -96,23 +106,19 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
           <img
             src="/SMS.png"
             alt="SecureMailScope"
-            className={`shrink-0 object-contain drop-shadow-sm transition-all duration-300 group-hover:scale-105 ${
-              isScrolled ? 'h-8 w-8 sm:h-8.5 sm:w-8.5' : 'h-10 w-10 sm:h-11 sm:w-11'
+            className={`shrink-0 object-contain drop-shadow-sm transform-gpu transition-all duration-250 ease-out group-hover:scale-105 ${
+              isScrolled ? 'h-8 w-8 sm:h-8.5 sm:w-8.5' : 'h-9.5 w-9.5 sm:h-10 sm:w-10'
             }`}
           />
-          <div className="flex flex-col justify-center transition-all duration-300">
-            <span
-              className={`font-extrabold tracking-tight leading-tight text-slate-900 dark:text-slate-100 transition-all duration-300 ${
-                isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
-              }`}
-            >
+          <div className="flex flex-col justify-center">
+            <span className="font-extrabold tracking-tight leading-tight text-slate-900 dark:text-slate-100 text-base sm:text-lg transition-colors duration-250 ease-out">
               Secure<span className="text-brand-600 dark:text-brand-400">Mail</span>Scope
             </span>
             <span
-              className={`font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-none transition-all duration-300 ${
+              className={`font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-none text-xs transition-all duration-200 ease-out ${
                 isScrolled
-                  ? 'max-h-0 opacity-0 overflow-hidden -mt-1'
-                  : 'max-h-5 opacity-100 mt-0.5 text-xs'
+                  ? 'opacity-0 h-0 overflow-hidden'
+                  : 'opacity-100 h-auto mt-0.5'
               }`}
             >
               Email Security Analysis

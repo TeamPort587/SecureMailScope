@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import RiskBadge from './RiskBadge';
 import EmptyState from './EmptyState';
-import { Lightbulb, CheckCircle2, Network, BookOpen } from 'lucide-react';
+import {
+  Lightbulb,
+  CheckCircle2,
+  Network,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Table,
+  ArrowUpRight,
+  Search,
+} from 'lucide-react';
 
 export default function Recommendations({
   recommendations = [],
   findings = [],
   sessions = [],
   onSelectSession,
+  onFilterSessionsInTable = null,
 }) {
   if (!recommendations || recommendations.length === 0) {
     return (
@@ -40,6 +53,7 @@ export default function Recommendations({
             findings={findings}
             sessions={sessions}
             onSelectSession={onSelectSession}
+            onFilterSessionsInTable={onFilterSessionsInTable}
           />
         ))}
       </div>
@@ -88,12 +102,45 @@ function RecommendationCard({
   findings = [],
   sessions = [],
   onSelectSession,
+  onFilterSessionsInTable = null,
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [drawerSearch, setDrawerSearch] = useState('');
+  const [drawerPage, setDrawerPage] = useState(1);
+
   const priority = (
     recommendation?.priority || 'INFO'
   ).toUpperCase();
 
-  const affectedSessions = getAffectedSessions(recommendation, findings);
+  const affectedSessions = useMemo(
+    () => getAffectedSessions(recommendation, findings),
+    [recommendation, findings]
+  );
+
+  const SAMPLE_LIMIT = 4;
+  const hasMore = affectedSessions.length > SAMPLE_LIMIT;
+  const sampleChips = affectedSessions.slice(0, SAMPLE_LIMIT);
+
+  const filteredDrawerSessions = useMemo(() => {
+    if (!drawerSearch.trim()) return affectedSessions;
+    const q = drawerSearch.toLowerCase().trim();
+    return affectedSessions.filter((sId) => sId.toLowerCase().includes(q));
+  }, [affectedSessions, drawerSearch]);
+
+  const DRAWER_PAGE_SIZE = 10;
+  const totalDrawerPages = Math.ceil(filteredDrawerSessions.length / DRAWER_PAGE_SIZE) || 1;
+  const paginatedDrawerSessions = useMemo(() => {
+    const start = (drawerPage - 1) * DRAWER_PAGE_SIZE;
+    return filteredDrawerSessions.slice(start, start + DRAWER_PAGE_SIZE);
+  }, [filteredDrawerSessions, drawerPage]);
+
+  const handleOpenFilteredSessions = (e) => {
+    if (e) e.stopPropagation();
+    onFilterSessionsInTable?.({
+      title: recommendation?.title || 'Security Recommendation',
+      sessionIds: affectedSessions,
+    });
+  };
 
   const styles = {
     CRITICAL: {
@@ -262,65 +309,139 @@ function RecommendationCard({
               <Network className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
               Impacted Sessions
             </span>
-            {affectedSessions.length > 0 && (
-              <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
-                {affectedSessions.length === 1
-                  ? '1 session affected'
-                  : `${affectedSessions.length} sessions affected`}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              {affectedSessions.length > 0 && (
+                <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
+                  {affectedSessions.length === 1
+                    ? '1 session affected'
+                    : `${affectedSessions.length} sessions affected`}
+                </span>
+              )}
+              {affectedSessions.length > SAMPLE_LIMIT && onFilterSessionsInTable && (
+                <button
+                  type="button"
+                  onClick={handleOpenFilteredSessions}
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2 py-0.5 text-[10px] font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition shadow-2xs"
+                  title="View all affected sessions in Sessions table"
+                >
+                  <Table className="h-3 w-3" />
+                  <span>Open in table</span>
+                  <ArrowUpRight className="h-3 w-3" />
+                </button>
+              )}
+            </div>
           </div>
 
+          {/* Sample Chips Row */}
           <div className="flex flex-wrap items-center gap-1.5">
             {affectedSessions.length > 0 ? (
-              affectedSessions.map((sessionId) => {
-                const sessionObj = sessions.find((s) => s.session_id === sessionId);
-                const proto =
-                  sessionObj?.protocol ||
-                  (sessionId.toLowerCase().startsWith('smtp')
-                    ? 'SMTP'
-                    : sessionId.toLowerCase().startsWith('imap')
-                    ? 'IMAP'
-                    : sessionId.toLowerCase().startsWith('pop')
-                    ? 'POP3'
-                    : 'TCP');
-
-                return (
-                  <button
+              <>
+                {sampleChips.map((sessionId) => (
+                  <SessionChip
                     key={sessionId}
+                    sessionId={sessionId}
+                    sessions={sessions}
+                    onSelectSession={onSelectSession}
+                  />
+                ))}
+
+                {hasMore && (
+                  <button
                     type="button"
-                    onClick={() => onSelectSession?.(sessionId)}
-                    className="
-                      group/chip inline-flex items-center gap-1.5
-                      rounded-lg
-                      border border-slate-200/90 dark:border-slate-700
-                      bg-white dark:bg-slate-800
-                      px-2.5 py-1
-                      font-mono
-                      text-[11px]
-                      font-medium
-                      text-slate-700 dark:text-slate-300
-                      shadow-xs
-                      hover:border-brand-400 hover:bg-brand-50/70 hover:text-brand-700
-                      dark:hover:border-brand-500 dark:hover:bg-brand-950/60 dark:hover:text-brand-300
-                      transition-all
-                    "
-                    title={`Click to inspect session ${sessionId}`}
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-semibold transition-all ${
+                      isExpanded
+                        ? 'border-brand-300 dark:border-brand-700 bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300'
+                        : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-brand-300 hover:text-brand-600'
+                    }`}
                   >
-                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500 group-hover/chip:bg-brand-500 transition-colors" />
-                    <span className="font-semibold text-[10px] text-slate-400 group-hover/chip:text-brand-600 font-sans uppercase">
-                      {proto}
+                    <span>
+                      {isExpanded ? 'Hide' : `+${affectedSessions.length - SAMPLE_LIMIT} more`}
                     </span>
-                    <span>{sessionId}</span>
+                    {isExpanded ? (
+                      <ChevronUp className="h-3 w-3" />
+                    ) : (
+                      <ChevronDown className="h-3 w-3" />
+                    )}
                   </button>
-                );
-              })
+                )}
+              </>
             ) : (
               <span className="inline-flex items-center gap-1 text-xs text-slate-400 italic">
                 General hygiene policy (applies across all sessions)
               </span>
             )}
           </div>
+
+          {/* Expandable Mini-Drawer */}
+          {isExpanded && hasMore && (
+            <div className="mt-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/70 dark:bg-slate-850/60 p-3.5 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="mb-2.5 flex items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  All Impacted Sessions ({affectedSessions.length})
+                </span>
+
+                {affectedSessions.length > 6 && (
+                  <div className="relative w-36">
+                    <Search className="pointer-events-none absolute left-2 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      value={drawerSearch}
+                      onChange={(e) => {
+                        setDrawerSearch(e.target.value);
+                        setDrawerPage(1);
+                      }}
+                      className="h-6.5 w-full rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 pl-6 pr-2 text-[10px] text-slate-700 dark:text-slate-200 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-1.5">
+                {paginatedDrawerSessions.map((sessionId) => (
+                  <SessionChip
+                    key={sessionId}
+                    sessionId={sessionId}
+                    sessions={sessions}
+                    onSelectSession={onSelectSession}
+                  />
+                ))}
+              </div>
+
+              {filteredDrawerSessions.length > DRAWER_PAGE_SIZE && (
+                <div className="mt-2.5 flex items-center justify-between border-t border-slate-200/60 dark:border-slate-800 pt-2 text-[10px] text-slate-500 dark:text-slate-400">
+                  <span>
+                    {(drawerPage - 1) * DRAWER_PAGE_SIZE + 1}–{Math.min(drawerPage * DRAWER_PAGE_SIZE, filteredDrawerSessions.length)} of {filteredDrawerSessions.length}
+                  </span>
+
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      disabled={drawerPage <= 1}
+                      onClick={() => setDrawerPage((p) => Math.max(1, p - 1))}
+                      className="inline-flex items-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      aria-label="Previous sessions page"
+                    >
+                      <ChevronLeft className="h-2.5 w-2.5" />
+                    </button>
+                    <span className="font-mono px-1">
+                      {drawerPage}/{totalDrawerPages}
+                    </span>
+                    <button
+                      type="button"
+                      disabled={drawerPage >= totalDrawerPages}
+                      onClick={() => setDrawerPage((p) => Math.min(totalDrawerPages, p + 1))}
+                      className="inline-flex items-center rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-1.5 py-0.5 text-[10px] font-medium disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition"
+                      aria-label="Next sessions page"
+                    >
+                      <ChevronRight className="h-2.5 w-2.5" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Required action */}
@@ -376,6 +497,61 @@ export function getAffectedSessions(recommendation, findings = []) {
   }
 
   return Array.from(matched);
+}
+
+/* ---------------------------------------------------------
+   Impacted Session Chip Component
+--------------------------------------------------------- */
+function SessionChip({ sessionId, sessions = [], onSelectSession }) {
+  const sessionObj = sessions.find((s) => s.session_id === sessionId);
+  const proto = (
+    sessionObj?.protocol ||
+    (sessionId.toLowerCase().startsWith('smtp')
+      ? 'SMTP'
+      : sessionId.toLowerCase().startsWith('imap')
+      ? 'IMAP'
+      : sessionId.toLowerCase().startsWith('pop')
+      ? 'POP3'
+      : 'TCP')
+  ).toUpperCase();
+
+  const protoTheme = {
+    SMTP: {
+      badge: 'border-blue-300/80 dark:border-blue-700/80 bg-blue-50/90 dark:bg-blue-950/80 text-blue-700 dark:text-blue-300',
+      dot: 'bg-blue-500 dark:bg-blue-400',
+    },
+    IMAP: {
+      badge: 'border-purple-300/80 dark:border-purple-700/80 bg-purple-50/90 dark:bg-purple-950/80 text-purple-700 dark:text-purple-300',
+      dot: 'bg-purple-500 dark:bg-purple-400',
+    },
+    POP3: {
+      badge: 'border-emerald-300/80 dark:border-emerald-700/80 bg-emerald-50/90 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300',
+      dot: 'bg-emerald-500 dark:bg-emerald-400',
+    },
+  }[proto] || {
+    badge: 'border-slate-300/80 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
+    dot: 'bg-slate-400',
+  };
+
+  return (
+    <button
+      key={sessionId}
+      type="button"
+      onClick={() => onSelectSession?.(sessionId)}
+      className="group/chip inline-flex items-center gap-1.5 rounded-lg border border-slate-200/90 dark:border-slate-700/90 bg-white/90 dark:bg-slate-850 px-2.5 py-1 text-xs shadow-2xs hover:border-brand-400 dark:hover:border-brand-500 hover:bg-brand-50/50 dark:hover:bg-slate-800 transition-all duration-150 cursor-pointer"
+      title={`Click to inspect session ${sessionId}`}
+    >
+      <span
+        className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[9px] font-bold font-sans uppercase tracking-wider border ${protoTheme.badge}`}
+      >
+        <span className={`h-1.5 w-1.5 rounded-full ${protoTheme.dot}`} />
+        {proto}
+      </span>
+      <span className="font-mono text-[11px] font-semibold text-slate-800 dark:text-slate-100 group-hover/chip:text-brand-600 dark:group-hover/chip:text-brand-400 transition-colors">
+        {sessionId}
+      </span>
+    </button>
+  );
 }
 
 /* ---------------------------------------------------------

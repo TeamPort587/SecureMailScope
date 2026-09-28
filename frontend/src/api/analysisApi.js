@@ -249,6 +249,7 @@ export const analysisApi = {
     protocol = 'ALL',
     encryption = 'ALL',
     risk = 'ALL',
+    anomaly = 'ALL',
     sortBy = 'tcp_stream',
     sortOrder = 'ASC',
   } = {}) {
@@ -286,6 +287,14 @@ export const analysisApi = {
         });
       }
 
+      if (anomaly && anomaly !== 'ALL') {
+        if (anomaly === 'ANOMALOUS') {
+          allSessions = allSessions.filter((s) => s?.anomaly?.is_anomalous === true);
+        } else if (anomaly === 'BASELINE') {
+          allSessions = allSessions.filter((s) => s?.anomaly?.is_anomalous === false);
+        }
+      }
+
       const orderMultiplier = String(sortOrder).toUpperCase() === 'DESC' ? -1 : 1;
       allSessions.sort((a, b) => {
         if (sortBy === 'session_id') {
@@ -299,6 +308,16 @@ export const analysisApi = {
           const rA = rank[(a.risk?.level || a.risk_label || 'LOW').toUpperCase()] || 0;
           const rB = rank[(b.risk?.level || b.risk_label || 'LOW').toUpperCase()] || 0;
           return (rA - rB) * orderMultiplier;
+        }
+        if (sortBy === 'score' || sortBy === 'decision_score') {
+          const scA = a.anomaly?.decision_score ?? 999;
+          const scB = b.anomaly?.decision_score ?? 999;
+          return (scA - scB) * orderMultiplier;
+        }
+        if (sortBy === 'anomaly') {
+          const anomA = a.anomaly?.is_anomalous ? 1 : 0;
+          const anomB = b.anomaly?.is_anomalous ? 1 : 0;
+          return (anomB - anomA) * orderMultiplier;
         }
         if (sortBy === 'encryption') {
           return (
@@ -333,6 +352,7 @@ export const analysisApi = {
     if (protocol && protocol !== 'ALL') params.set('protocol', protocol);
     if (encryption && encryption !== 'ALL') params.set('encryption', encryption);
     if (risk && risk !== 'ALL') params.set('risk', risk);
+    if (anomaly && anomaly !== 'ALL') params.set('anomaly', anomaly);
     if (sortBy) params.set('sortBy', sortBy);
     if (sortOrder) params.set('sortOrder', sortOrder);
 

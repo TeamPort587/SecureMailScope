@@ -87,6 +87,7 @@ async function getAnalysisById(req, res, next) {
       findings: fullData.findings,
       risk: fullData.risk,
       recommendations: fullData.recommendations,
+      anomaly_assessment: fullData.anomaly_assessment,
     });
   } catch (err) {
     next(err);
@@ -119,6 +120,7 @@ async function getSessions(req, res, next) {
     const protocol = req.query.protocol ? String(req.query.protocol).trim() : 'ALL';
     const encryption = req.query.encryption ? String(req.query.encryption).trim() : 'ALL';
     const risk = req.query.risk ? String(req.query.risk).trim() : 'ALL';
+    const anomaly = req.query.anomaly ? String(req.query.anomaly).trim() : 'ALL';
     const sortBy = req.query.sortBy ? String(req.query.sortBy).trim() : 'tcp_stream';
     const sortOrder = req.query.sortOrder ? String(req.query.sortOrder).trim() : 'ASC';
 
@@ -129,6 +131,7 @@ async function getSessions(req, res, next) {
       protocol,
       encryption,
       risk,
+      anomaly,
       sortBy,
       sortOrder,
     });
@@ -182,6 +185,7 @@ async function exportAnalysis(req, res, next) {
       findings: fullData.findings,
       risk: fullData.risk,
       recommendations: fullData.recommendations,
+      anomaly_assessment: fullData.anomaly_assessment,
     };
 
     // Set content-disposition for download
