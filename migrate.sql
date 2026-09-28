@@ -136,7 +136,8 @@ CREATE TABLE IF NOT EXISTS recommendations (
   finding_id          UUID REFERENCES findings(id) ON DELETE SET NULL,
   priority            TEXT,
   title               TEXT,
-  recommendation_text TEXT
+  recommendation_text TEXT,
+  affected_sessions   JSONB DEFAULT '[]'::jsonb
 );
 
 CREATE INDEX IF NOT EXISTS idx_recommendations_analysis_id ON recommendations(analysis_id);

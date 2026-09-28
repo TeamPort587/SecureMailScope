@@ -22,17 +22,19 @@ export default function Dashboard({ analysisHook }) {
     error,
     uploadPcap,
     loadPreset,
+    setAnalysis,
     setError,
   } = analysisHook;
 
   const navigate = useNavigate();
 
-  // If an analysis exists/is loaded on Dashboard, immediately navigate to the unified Analysis route
+  // When visiting Dashboard (e.g. clicking "New Analysis" or navigating to upload),
+  // clear any previous completed analysis so the upload PCAP form is always presented.
   useEffect(() => {
-    if (analysis?.analysis_id) {
-      navigate(`/analysis/${analysis.analysis_id}`, { state: { analysis } });
+    if (setAnalysis) {
+      setAnalysis(null);
     }
-  }, [analysis, navigate]);
+  }, [setAnalysis]);
 
   const handleUpload = async (file) => {
     try {
@@ -52,9 +54,6 @@ export default function Dashboard({ analysisHook }) {
         {/* =====================================================
             UPLOAD / EMPTY STATE
         ====================================================== */}
-
-        {!analysis && (
-          <>
             <section className="mb-6">
 
               <div className="
@@ -369,16 +368,12 @@ export default function Dashboard({ analysisHook }) {
               </section>
             )}
 
-          </>
-        )}
-
-
         {/* =====================================================
             ERROR
         ====================================================== */}
 
         {error && (
-          <div className={analysis ? 'mb-6' : 'mt-6'}>
+          <div className="mt-6">
 
             <ErrorState
               title="Analysis Request Failed"
@@ -386,20 +381,6 @@ export default function Dashboard({ analysisHook }) {
               onRetry={() => setError(null)}
             />
 
-          </div>
-        )}
-
-
-        {/* =====================================================
-            ANALYSIS TRANSITION
-        ====================================================== */}
-
-        {analysis && (
-          <div className="flex min-h-[300px] items-center justify-center py-12">
-            <div className="flex flex-col items-center gap-3">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-slate-200 border-t-brand-600" />
-              <p className="text-xs text-slate-500">Opening analysis report...</p>
-            </div>
           </div>
         )}
 

@@ -19,11 +19,24 @@ import ThemeToggle from './ThemeToggle';
 export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }) {
   const [demoOpen, setDemoOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
   const demoRef = useRef(null);
   const profileRef = useRef(null);
 
   const { isDark } = useTheme();
+
+  // Scroll listener to detect when user has scrolled down even a little bit
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 10;
+      setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -46,33 +59,69 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
   const rawUsername = user?.email?.split('@')[0] || 'User';
   const displayName = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
 
+  // Dynamic button styling based on scroll state
+  const btnClass = (isActive) =>
+    `relative flex items-center justify-center rounded-xl border transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 ${
+      isScrolled ? 'h-8.5 w-8.5 sm:h-9 sm:w-9' : 'h-10 w-10'
+    } ${
+      isActive
+        ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
+        : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
+    }`;
+
+  const iconClass = isScrolled ? 'h-4 w-4' : 'h-4.5 w-4.5';
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-colors duration-200">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header
+      className={`sticky top-0 z-50 w-full border-0 border-none transition-[padding,background-color] duration-300 ease-in-out ${
+        isScrolled
+          ? 'py-2 sm:py-2.5 px-3 sm:px-6 pointer-events-none bg-transparent'
+          : 'py-0 px-0 bg-slate-50 dark:bg-slate-950 pointer-events-auto'
+      }`}
+    >
+      <div
+        className={`mx-auto flex items-center justify-between border transition-all duration-300 ease-in-out ${
+          isScrolled
+            ? 'pointer-events-auto w-[95%] sm:w-[88%] lg:w-[76%] max-w-5xl h-12 sm:h-13 rounded-full border-slate-200/90 dark:border-slate-800 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md shadow-lg dark:shadow-[0_8px_30px_rgba(0,0,0,0.45)] px-3.5 sm:px-5'
+            : 'w-full max-w-7xl h-16 sm:h-18 rounded-none border-transparent dark:border-transparent bg-transparent dark:bg-transparent px-4 sm:px-6 lg:px-8 shadow-none'
+        }`}
+      >
         
         {/* LEFT: BRAND LOGO */}
         <Link
           to="/"
           onClick={onResetAnalysis}
-          className="group flex items-center gap-3 transition-opacity hover:opacity-95"
+          className="group flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-95"
         >
           <img
             src="/SMS.png"
             alt="SecureMailScope"
-            className="h-11 w-11 shrink-0 object-contain drop-shadow-sm transition-transform group-hover:scale-105"
+            className={`shrink-0 object-contain drop-shadow-sm transition-all duration-300 group-hover:scale-105 ${
+              isScrolled ? 'h-8 w-8 sm:h-8.5 sm:w-8.5' : 'h-10 w-10 sm:h-11 sm:w-11'
+            }`}
           />
-          <div className="flex flex-col justify-center">
-            <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-slate-100">
+          <div className="flex flex-col justify-center transition-all duration-300">
+            <span
+              className={`font-extrabold tracking-tight leading-tight text-slate-900 dark:text-slate-100 transition-all duration-300 ${
+                isScrolled ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
+              }`}
+            >
               Secure<span className="text-brand-600 dark:text-brand-400">Mail</span>Scope
             </span>
-            <span className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-none">
+            <span
+              className={`font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-none transition-all duration-300 ${
+                isScrolled
+                  ? 'max-h-0 opacity-0 overflow-hidden -mt-1'
+                  : 'max-h-5 opacity-100 mt-0.5 text-xs'
+              }`}
+            >
               Email Security Analysis
             </span>
           </div>
         </Link>
 
         {/* RIGHT: ICON BUTTON GROUP WITH HOVER TOOLTIPS */}
-        <nav className="flex items-center gap-2.5">
+        <nav className="flex items-center gap-2 sm:gap-2.5">
           
           {/* 1. UPLOAD PCAP / DASHBOARD */}
           <div className="relative group">
@@ -80,15 +129,9 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
               to="/"
               end
               onClick={onResetAnalysis}
-              className={({ isActive }) =>
-                `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
-                  isActive
-                    ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
-                }`
-              }
+              className={({ isActive }) => btnClass(isActive)}
             >
-              <FileUp className="h-4.5 w-4.5" />
+              <FileUp className={iconClass} />
             </NavLink>
             <NavTooltip label="UPLOAD" />
           </div>
@@ -97,15 +140,9 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
           <div className="relative group">
             <NavLink
               to="/analysis"
-              className={({ isActive }) =>
-                `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
-                  isActive
-                    ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
-                    : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
-                }`
-              }
+              className={({ isActive }) => btnClass(isActive)}
             >
-              <FileSearch className="h-4.5 w-4.5" />
+              <FileSearch className={iconClass} />
             </NavLink>
             <NavTooltip label="ANALYSIS" />
           </div>
@@ -120,19 +157,15 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
                 setDemoOpen(!demoOpen);
                 setProfileOpen(false);
               }}
-              className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
-                demoOpen
-                  ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
-                  : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
-              }`}
+              className={btnClass(demoOpen)}
             >
-              <FlaskConical className="h-4.5 w-4.5" />
+              <FlaskConical className={iconClass} />
             </button>
             <NavTooltip label="DEMO" hidden={demoOpen} />
 
             {/* DEMO POPOVER */}
             {demoOpen && (
-              <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl animate-in fade-in zoom-in-95 duration-150">
                 <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 px-4 py-3">
                   <div className="flex items-center gap-2">
                     <FlaskConical className="h-4 w-4 text-brand-600 dark:text-brand-400" />
@@ -172,7 +205,10 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
 
           {/* 4. THEME TOGGLE (DARK / LIGHT MODE) */}
           <div className="relative group">
-            <ThemeToggle />
+            <ThemeToggle
+              className={btnClass(false)}
+              iconClassName={iconClass}
+            />
             <NavTooltip label={isDark ? 'LIGHT' : 'DARK'} />
           </div>
 
@@ -186,19 +222,15 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
                 setProfileOpen(!profileOpen);
                 setDemoOpen(false);
               }}
-              className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
-                profileOpen
-                  ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
-                  : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
-              }`}
+              className={btnClass(profileOpen)}
             >
-              <User className="h-4.5 w-4.5" />
+              <User className={iconClass} />
             </button>
             <NavTooltip label="ACCOUNT" hidden={profileOpen} />
 
             {/* PROFILE POPOVER */}
             {profileOpen && (
-              <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 top-[calc(100%+8px)] z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150">
                 <div className="border-b border-slate-100 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-brand-50/30 dark:from-slate-850 dark:via-slate-900 dark:to-brand-950/20 px-4 py-3.5">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 via-sky-500 to-brand-600 text-xs font-bold text-white shadow-xs ring-2 ring-brand-100 dark:ring-brand-900/50">

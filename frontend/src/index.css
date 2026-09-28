@@ -605,30 +605,30 @@ html.dark body {
 }
 
 /* Base Surfaces & Cards */
-html.dark .bg-white {
+html.dark .bg-white:not([class*="dark:bg-"]) {
   background-color: #0f172a !important;
 }
 
-html.dark .bg-white\/95,
-html.dark .bg-white\/90,
-html.dark .bg-white\/80,
-html.dark .bg-white\/70,
-html.dark .bg-white\/60 {
+html.dark .bg-white\/95:not([class*="dark:bg-"]),
+html.dark .bg-white\/90:not([class*="dark:bg-"]),
+html.dark .bg-white\/80:not([class*="dark:bg-"]),
+html.dark .bg-white\/70:not([class*="dark:bg-"]),
+html.dark .bg-white\/60:not([class*="dark:bg-"]) {
   background-color: rgba(15, 23, 42, 0.94) !important;
   backdrop-filter: blur(12px);
 }
 
-html.dark .bg-slate-50,
-html.dark [class*="bg-slate-50/"] {
+html.dark .bg-slate-50:not([class*="dark:bg-"]),
+html.dark [class*="bg-slate-50/"]:not([class*="dark:bg-"]) {
   background-color: rgba(30, 41, 59, 0.5) !important;
 }
 
-html.dark .bg-slate-100,
-html.dark [class*="bg-slate-100/"] {
+html.dark .bg-slate-100:not([class*="dark:bg-"]),
+html.dark [class*="bg-slate-100/"]:not([class*="dark:bg-"]) {
   background-color: #1e293b !important;
 }
 
-html.dark .bg-slate-200 {
+html.dark .bg-slate-200:not([class*="dark:bg-"]) {
   background-color: #334155 !important;
 }
 
