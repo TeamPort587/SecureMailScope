@@ -240,7 +240,7 @@ export default function AnomalyDetectionCard({
   return (
     <div
       id="anomaly-detection-card"
-      className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-all duration-200"
+      className="w-full rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden transition-all duration-200"
     >
       {/* CARD HEADER */}
       <div className="border-b border-slate-100 dark:border-slate-800 bg-gradient-to-r from-slate-50 via-white to-indigo-50/20 dark:from-slate-900 dark:via-slate-850 dark:to-indigo-950/20 px-6 py-5">

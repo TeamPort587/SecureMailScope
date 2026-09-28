@@ -1,8 +1,9 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { isDemoAnalysisId } from '../mock/demoCaptures';
 
-export default function ProtectedRoute({ children }) {
+export default function ProtectedRoute({ children, allowDemo = false }) {
   const { user, loading } = useAuth();
   const location = useLocation();
 
@@ -17,9 +18,19 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (user) {
+    return children;
   }
 
-  return children;
-}
+  if (allowDemo) {
+    if (location.state?.analysis) {
+      return children;
+    }
+    const match = location.pathname.match(/\/analysis\/([^/]+)/);
+    if (match && match[1] && isDemoAnalysisId(match[1])) {
+      return children;
+    }
+  }
+
+  return <Navigate to="/login" state={{ from: location }} replace />;
+}

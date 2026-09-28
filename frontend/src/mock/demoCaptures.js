@@ -259,3 +259,20 @@ export const DEMO_PRESETS = [
     }
   }
 ];
+
+export function isDemoAnalysisId(analysisId) {
+  if (!analysisId) return false;
+  const idStr = String(analysisId).toLowerCase();
+  return (
+    DEMO_PRESETS.some(
+      (p) =>
+        String(p.id).toLowerCase() === idStr ||
+        String(p.data?.analysis_id).toLowerCase() === idStr
+    ) ||
+    idStr.startsWith('demo-') ||
+    idStr.startsWith('sec-') ||
+    idStr.startsWith('multi-') ||
+    idStr.startsWith('local-') ||
+    idStr === String(baseMock?.analysis_id).toLowerCase()
+  );
+}

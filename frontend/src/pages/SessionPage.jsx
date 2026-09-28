@@ -288,7 +288,7 @@ export default function SessionPage() {
 
   return (
     <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 pb-20 pt-6">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="w-full mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* =========================================================
             TOP BREADCRUMB & BACK NAVIGATION BAR

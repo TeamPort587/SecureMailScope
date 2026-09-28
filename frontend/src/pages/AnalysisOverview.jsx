@@ -158,7 +158,7 @@ export default function AnalysisOverview() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
+    <div className="w-full mx-auto max-w-7xl px-4 py-7 sm:px-6 lg:px-8">
 
       {/* PAGE HEADER HERO */}
       <div className="mb-8">

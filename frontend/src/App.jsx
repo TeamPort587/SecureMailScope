@@ -14,6 +14,7 @@ import { useAuth } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import { useAnalysis } from './hooks/useAnalysis';
+import ScrollToTop from './components/ScrollToTop';
 
 export default function App() {
 
@@ -45,28 +46,23 @@ export default function App() {
   return (
 
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+      <ScrollToTop />
 
-            {/* Sidebar — hidden on login */}
-      {location.pathname !== '/login' && (
-        <Navbar onLoadPreset={handleSelectPreset} onResetAnalysis={handleResetAnalysis} onLogout={logout} user={user} />
-      )}
+      {/* Global Navbar */}
+      <Navbar onLoadPreset={handleSelectPreset} onResetAnalysis={handleResetAnalysis} onLogout={logout} user={user} />
 
       {/* Main page content layout */}
       <div className="flex min-h-screen flex-col">
 
         {/* Page content */}
-        <main className="flex-1">
+        <main className="flex-1 w-full flex flex-col">
                     <Routes>
 
             <Route path="/login" element={<Login />} />
 
             <Route
               path="/"
-              element={
-                <ProtectedRoute>
-                  <Dashboard analysisHook={analysisHook} />
-                </ProtectedRoute>
-              }
+              element={<Dashboard analysisHook={analysisHook} />}
             />
 
             <Route
@@ -81,7 +77,7 @@ export default function App() {
             <Route
               path="/analysis/:id"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowDemo>
                   <Analysis />
                 </ProtectedRoute>
               }
@@ -90,7 +86,7 @@ export default function App() {
             <Route
               path="/analysis/:id/session/:sessionId"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowDemo>
                   <SessionPage />
                 </ProtectedRoute>
               }
@@ -99,7 +95,7 @@ export default function App() {
             <Route
               path="/analysis/:id/sessions/:sessionId"
               element={
-                <ProtectedRoute>
+                <ProtectedRoute allowDemo>
                   <SessionPage />
                 </ProtectedRoute>
               }

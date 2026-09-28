@@ -52,10 +52,15 @@ function isDemoId(analysisId) {
 }
 
 function findLocalAnalysis(analysisId) {
-  return localMockAnalyses.find(
+  const direct = localMockAnalyses.find(
     (analysis) =>
       String(analysis.analysis_id) === String(analysisId)
   );
+  if (direct) return direct;
+  const preset = DEMO_PRESETS.find(
+    (p) => String(p.id) === String(analysisId) || String(p.data?.analysis_id) === String(analysisId)
+  );
+  return preset?.data || null;
 }
 
 

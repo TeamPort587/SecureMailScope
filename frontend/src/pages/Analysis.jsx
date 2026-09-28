@@ -100,16 +100,41 @@ export default function Analysis() {
     navigate('?tab=sessions', { replace: true });
   };
   /* ============================================================
-     FETCH ANALYSIS
+     FETCH ANALYSIS & SCROLL POSITION RESET
   ============================================================ */
 
   useEffect(() => {
-
     if (id && (!initialData || String(initialData.analysis_id) !== String(id))) {
       fetchAnalysis(id);
     }
-
   }, [id, initialData, fetchAnalysis]);
+
+  useEffect(() => {
+    const resetScroll = () => {
+      const html = document.documentElement;
+      const originalScrollBehavior = html?.style?.scrollBehavior;
+      if (html) html.style.scrollBehavior = 'auto';
+
+      window.scrollTo(0, 0);
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+
+      if (html) {
+        requestAnimationFrame(() => {
+          html.style.scrollBehavior = originalScrollBehavior;
+        });
+      }
+    };
+
+    resetScroll();
+    const frameId = requestAnimationFrame(resetScroll);
+    const timerId = setTimeout(resetScroll, 60);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      clearTimeout(timerId);
+    };
+  }, [id, loading]);
 
 
   /* ============================================================
@@ -646,6 +671,7 @@ export default function Analysis() {
   return (
 
     <div className="
+      w-full
       mx-auto
       max-w-7xl
       px-4
@@ -1244,7 +1270,7 @@ export default function Analysis() {
 
       {activeTab === 'overview' && (
 
-        <div className="space-y-5">
+        <div className="w-full space-y-5">
 
 
           {/* PROTOCOL + ENCRYPTION */}
@@ -1647,6 +1673,7 @@ export default function Analysis() {
       {activeTab === 'sessions' && (
 
         <div className="
+          w-full
           overflow-hidden
           rounded-xl
           border border-slate-200 dark:border-slate-800
@@ -1679,22 +1706,24 @@ export default function Analysis() {
       ======================================================== */}
 
       {activeTab === 'anomalies' && (
-        <AnomalyDetectionCard
-          anomalyAssessment={analysis?.anomaly_assessment}
-          sessions={sessions}
-          findings={findings}
-          analysisId={analysis?.analysis_id || id}
-          onSelectSession={(session) => {
-            const sId = typeof session === 'string' ? session : session?.session_id;
-            if (sId) {
-              navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
-                state: { analysis, analysisId: analysis?.analysis_id || id, findings },
-              });
-            } else {
-              setActiveTab('sessions');
-            }
-          }}
-        />
+        <div className="w-full">
+          <AnomalyDetectionCard
+            anomalyAssessment={analysis?.anomaly_assessment}
+            sessions={sessions}
+            findings={findings}
+            analysisId={analysis?.analysis_id || id}
+            onSelectSession={(session) => {
+              const sId = typeof session === 'string' ? session : session?.session_id;
+              if (sId) {
+                navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
+                  state: { analysis, analysisId: analysis?.analysis_id || id, findings },
+                });
+              } else {
+                setActiveTab('sessions');
+              }
+            }}
+          />
+        </div>
       )}
 
 
@@ -1705,6 +1734,7 @@ export default function Analysis() {
       {activeTab === 'findings' && (
 
         <div className="
+          w-full
           overflow-hidden
           rounded-xl
           border border-slate-200 dark:border-slate-800
@@ -1747,6 +1777,7 @@ export default function Analysis() {
       {activeTab === 'recommendations' && (
 
         <div className="
+          w-full
           overflow-hidden
           rounded-xl
           border border-slate-200 dark:border-slate-800
@@ -1783,7 +1814,9 @@ export default function Analysis() {
       ======================================================== */}
 
       {activeTab === 'ai-assistance' && (
-        <CopilotChat analysis={analysis} />
+        <div className="w-full">
+          <CopilotChat analysis={analysis} />
+        </div>
       )}
 
 

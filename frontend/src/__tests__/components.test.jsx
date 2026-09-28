@@ -437,16 +437,16 @@ describe('Frontend Component Unit & Integration Tests', () => {
 
   // --- Navbar & ThemeToggle ---
   describe('Navbar & ThemeToggle', () => {
-    it('renders ThemeToggle in Navbar right after Demo button and toggles dark mode', () => {
+    it('renders ThemeToggle in Navbar, does not render Demo button, and toggles dark mode', () => {
       render(
         <BrowserRouter>
           <Navbar onLoadPreset={vi.fn()} onResetAnalysis={vi.fn()} onLogout={vi.fn()} user={{ email: 'analyst@test.local' }} />
         </BrowserRouter>
       );
 
-      // Verify Demo button is present
-      const demoBtn = screen.getByRole('button', { name: /demo/i });
-      expect(demoBtn).toBeInTheDocument();
+      // Verify Demo button is NOT present
+      const demoBtn = screen.queryByRole('button', { name: /demo/i });
+      expect(demoBtn).not.toBeInTheDocument();
 
       // Verify Theme toggle button is present
       const themeToggleBtn = screen.getByRole('button', { name: /switch to (dark|light) mode/i });
@@ -460,6 +460,35 @@ describe('Frontend Component Unit & Integration Tests', () => {
       // Toggle back
       fireEvent.click(themeToggleBtn);
       expect(document.documentElement.classList.contains('dark')).toBe(initialIsDark);
+    });
+
+    it('renders Home button to the left of Upload button in Navbar', () => {
+      render(
+        <BrowserRouter>
+          <Navbar onLoadPreset={vi.fn()} onResetAnalysis={vi.fn()} onLogout={vi.fn()} user={{ email: 'analyst@test.local' }} />
+        </BrowserRouter>
+      );
+
+      const homeLink = screen.getByRole('link', { name: /home/i });
+      expect(homeLink).toBeInTheDocument();
+
+      const uploadBtn = screen.getByRole('button', { name: /upload/i });
+      expect(uploadBtn).toBeInTheDocument();
+
+      // Verify Home comes before Upload in DOM order
+      expect(homeLink.compareDocumentPosition(uploadBtn)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    });
+
+    it('renders Sign In link when user is unauthenticated', () => {
+      render(
+        <BrowserRouter>
+          <Navbar onLoadPreset={vi.fn()} onResetAnalysis={vi.fn()} onLogout={vi.fn()} user={null} />
+        </BrowserRouter>
+      );
+
+      const signInLink = screen.getByRole('link', { name: /sign in/i });
+      expect(signInLink).toBeInTheDocument();
+      expect(signInLink).toHaveAttribute('href', '/login');
     });
   });
 
