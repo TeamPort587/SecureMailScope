@@ -287,17 +287,17 @@ export default function SessionPage() {
   const isPartial = session.security?.capture_completeness === 'PARTIAL';
 
   return (
-    <div className="min-h-screen bg-slate-50/70 pb-20 pt-6">
+    <div className="min-h-screen bg-slate-50/70 dark:bg-slate-950 pb-20 pt-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6">
 
         {/* =========================================================
             TOP BREADCRUMB & BACK NAVIGATION BAR
         ========================================================== */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
             <Link
               to="/analysis"
-              className="font-medium text-slate-600 hover:text-brand-600 transition-colors"
+              className="font-medium text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
             >
               Analyses
             </Link>
@@ -305,13 +305,13 @@ export default function SessionPage() {
             <Link
               to={`/analysis/${analysisId}?tab=sessions`}
               state={{ analysis }}
-              className="font-medium text-slate-600 hover:text-brand-600 transition-colors truncate max-w-[200px]"
+              className="font-medium text-slate-600 dark:text-slate-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors truncate max-w-[200px]"
               title={analysis?.pcap_filename || analysis?.filename || analysisId}
             >
               {analysis?.pcap_filename || analysis?.filename || `Capture #${analysisId?.slice(0, 8)}`}
             </Link>
             <ChevronRight className="h-3.5 w-3.5 text-slate-400" />
-            <span className="font-mono font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+            <span className="font-mono font-bold text-brand-700 bg-brand-50 dark:text-brand-300 dark:bg-brand-950/70 px-2 py-0.5 rounded border border-brand-200 dark:border-brand-800">
               {session.session_id}
             </span>
           </div>
@@ -320,9 +320,9 @@ export default function SessionPage() {
             <Link
               to={`/analysis/${analysisId}?tab=sessions`}
               state={{ analysis }}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/20"
+              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition-all hover:border-slate-300 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/20"
             >
-              <ArrowLeft className="h-4 w-4 text-slate-500" />
+              <ArrowLeft className="h-4 w-4 text-slate-500 dark:text-slate-400" />
               <span>Back to Analysis</span>
             </Link>
           </div>
@@ -331,7 +331,7 @@ export default function SessionPage() {
         {/* =========================================================
             SESSION HERO CARD
         ========================================================== */}
-        <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm">
+        <div className="relative overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm dark:shadow-soft-dark">
           {/* Subtle gradient banner top */}
           <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-brand-500 via-sky-500 to-indigo-500" />
 
@@ -343,10 +343,10 @@ export default function SessionPage() {
                 <div
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border ${
                     sessionRiskLevel === 'CRITICAL' || sessionRiskLevel === 'HIGH'
-                      ? 'border-red-200 bg-red-50 text-red-600'
+                      ? 'border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400'
                       : sessionRiskLevel === 'MEDIUM'
-                      ? 'border-amber-200 bg-amber-50 text-amber-600'
-                      : 'border-emerald-200 bg-emerald-50 text-emerald-600'
+                      ? 'border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'
+                      : 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
                   }`}
                 >
                   <Shield className="h-7 w-7" />
@@ -354,7 +354,7 @@ export default function SessionPage() {
 
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2.5">
-                    <h1 className="font-mono text-2xl font-black text-slate-900 tracking-tight">
+                    <h1 className="font-mono text-2xl font-black text-slate-900 dark:text-white tracking-tight">
                       {session.session_id}
                     </h1>
 
@@ -362,10 +362,10 @@ export default function SessionPage() {
                     <span
                       className={`inline-flex items-center rounded-lg border px-3 py-1 font-mono text-xs font-bold uppercase tracking-wider ${
                         enc.label?.toUpperCase().includes('PLAIN')
-                          ? 'border-red-200 bg-red-50 text-red-700'
+                          ? 'border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-400'
                           : enc.label?.toUpperCase().includes('STARTTLS')
-                          ? 'border-sky-200 bg-sky-50 text-sky-700'
-                          : 'border-yellow-200 bg-yellow-50 text-yellow-700'
+                          ? 'border-sky-200 dark:border-sky-800/60 bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300'
+                          : 'border-yellow-200 dark:border-yellow-800/60 bg-yellow-50 dark:bg-yellow-950/50 text-yellow-700 dark:text-yellow-300'
                       }`}
                     >
                       {enc.label}
@@ -373,25 +373,25 @@ export default function SessionPage() {
 
                     {/* Stream # */}
                     {session.tcp_stream !== null && session.tcp_stream !== undefined && (
-                      <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 font-mono text-xs font-semibold text-slate-700">
+                      <span className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">
                         Stream #{session.tcp_stream}
                       </span>
                     )}
 
                     {/* Protocol */}
-                    <span className="inline-flex items-center rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs font-bold text-slate-800">
+                    <span className="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 font-mono text-xs font-bold text-slate-800 dark:text-slate-200">
                       {session.protocol || 'TCP'}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-500 flex flex-wrap items-center gap-2">
-                    <span className="font-semibold text-slate-700">{session.service || 'email-service'}</span>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-2">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{session.service || 'email-service'}</span>
                     <span>•</span>
                     <span>Session Security Inspection & Protocol Forensics</span>
                     {session.packet_count && (
                       <>
                         <span>•</span>
-                        <span className="font-mono font-medium text-slate-600">{session.packet_count} packets captured</span>
+                        <span className="font-mono font-medium text-slate-600 dark:text-slate-400">{session.packet_count} packets captured</span>
                       </>
                     )}
                   </p>
@@ -399,49 +399,49 @@ export default function SessionPage() {
               </div>
 
               {/* Right: Risk Assessment Card */}
-              <div className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200/80 bg-slate-50/70 p-4 sm:gap-6">
+              <div className="flex flex-wrap items-center gap-4 rounded-xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/60 p-4 sm:gap-6">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Session Risk Verdict
                   </p>
                   <div className="mt-1 flex items-center gap-2">
                     <span
                       className={`inline-flex items-center rounded-lg border px-2.5 py-0.5 font-mono text-xs font-bold uppercase ${
                         sessionRiskLevel === 'CRITICAL'
-                          ? 'border-red-300 bg-red-100/70 text-red-800'
+                          ? 'border-red-300 dark:border-red-800 bg-red-100/70 dark:bg-red-950/60 text-red-800 dark:text-red-300'
                           : sessionRiskLevel === 'HIGH'
-                          ? 'border-orange-300 bg-orange-100/70 text-orange-800'
+                          ? 'border-orange-300 dark:border-orange-800 bg-orange-100/70 dark:bg-orange-950/60 text-orange-800 dark:text-orange-300'
                           : sessionRiskLevel === 'MEDIUM'
-                          ? 'border-amber-300 bg-amber-100/70 text-amber-800'
-                          : 'border-emerald-300 bg-emerald-100/70 text-emerald-800'
+                          ? 'border-amber-300 dark:border-amber-800 bg-amber-100/70 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
+                          : 'border-emerald-300 dark:border-emerald-800 bg-emerald-100/70 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
                       }`}
                     >
                       {sessionRiskLevel}
                     </span>
-                    <span className="font-mono text-sm font-extrabold text-slate-800">
+                    <span className="font-mono text-sm font-extrabold text-slate-800 dark:text-slate-100">
                       {sessionRiskScore}/100
                     </span>
                   </div>
                 </div>
 
-                <div className="h-8 w-px bg-slate-200" />
+                <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Confidence
                   </p>
-                  <p className="mt-1 font-mono text-sm font-semibold text-slate-700">
+                  <p className="mt-1 font-mono text-sm font-semibold text-slate-700 dark:text-slate-200">
                     {Math.round(sessionConfidence * 100)}%
                   </p>
                 </div>
 
-                <div className="h-8 w-px bg-slate-200" />
+                <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Completeness
                   </p>
-                  <p className="mt-1 font-mono text-xs font-semibold text-slate-700">
+                  <p className="mt-1 font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {session.security?.capture_completeness || 'COMPLETE'}
                   </p>
                 </div>
@@ -451,8 +451,8 @@ export default function SessionPage() {
 
             {/* PARTIAL CAPTURE WARNING BANNER */}
             {isPartial && (
-              <div className="mt-5 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/80 p-4 text-amber-800">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <div className="mt-5 flex items-start gap-3 rounded-xl border border-amber-200 dark:border-amber-800/60 bg-amber-50/80 dark:bg-amber-950/50 p-4 text-amber-800 dark:text-amber-300">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <div className="text-xs leading-relaxed">
                   <span className="font-bold">Completeness: PARTIAL</span> — The packet capture does not contain the complete session stream. Some cryptographic or protocol properties cannot be fully proven from the available frames. Missing evidence is not converted into a false negative verdict.
                 </div>
@@ -460,7 +460,7 @@ export default function SessionPage() {
             )}
 
             {downloadError && (
-              <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+              <div className="mt-4 rounded-xl border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 p-3 text-xs text-red-700 dark:text-red-300">
                 {downloadError}
               </div>
             )}
@@ -472,7 +472,7 @@ export default function SessionPage() {
         ========================================================== */}
         <nav
           aria-label="Session sections navigation"
-          className="sticky top-3 z-30 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200/90 bg-white/95 p-1.5 shadow-sm backdrop-blur-md transition-all"
+          className="sticky top-3 z-30 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-sm dark:shadow-soft-dark backdrop-blur-md transition-all"
         >
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
@@ -481,7 +481,7 @@ export default function SessionPage() {
               className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                 activeSection === 'section-forensics'
                   ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-600/20'
-                  : 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               <Network className="h-3.5 w-3.5" />
@@ -494,7 +494,7 @@ export default function SessionPage() {
               className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                 activeSection === 'section-standards'
                   ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-600/20'
-                  : 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               <Layers className="h-3.5 w-3.5" />
@@ -507,7 +507,7 @@ export default function SessionPage() {
               className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
                 activeSection === 'section-findings'
                   ? 'bg-brand-600 text-white shadow-sm ring-2 ring-brand-600/20'
-                  : 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                  : 'bg-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
               }`}
             >
               <FileCode className="h-3.5 w-3.5" />
@@ -517,8 +517,8 @@ export default function SessionPage() {
                   activeSection === 'section-findings'
                     ? 'bg-white/25 text-white'
                     : sessionFindings.length > 0
-                    ? 'bg-amber-100 text-amber-800'
-                    : 'bg-emerald-100 text-emerald-800'
+                    ? 'bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300'
+                    : 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300'
                 }`}
               >
                 {sessionFindings.length}
@@ -531,16 +531,16 @@ export default function SessionPage() {
             SECTION 1: SESSION FORENSICS & TELEMETRY
         ========================================================== */}
         <section id="section-forensics" className="space-y-4 scroll-mt-24 pt-2">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 pb-4 pt-2 gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 dark:border-slate-800 pb-4 pt-2 gap-3">
             <div className="flex items-center gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 border border-brand-200/80 text-brand-600 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950/60 border border-brand-200/80 dark:border-brand-800 text-brand-600 dark:text-brand-400 shadow-sm">
                 <Network className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Session Forensics & Network Telemetry
                 </h2>
-                <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
+                <p className="mt-0.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                   Traffic endpoints, protocol handshake negotiation, cryptographic parameters, and Wireshark trace
                 </p>
               </div>
@@ -550,7 +550,7 @@ export default function SessionPage() {
           {/* =========================================================
               FORENSIC EVIDENCE & WIRESHARK CARD
           ========================================================== */}
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark space-y-4">
           <SectionHeader
             icon={Terminal}
             title="Forensic Evidence & Wireshark Filter"
@@ -558,20 +558,20 @@ export default function SessionPage() {
             color="sky"
           />
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 sm:p-5">
+          <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/50 p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Wireshark Display Filter:
                   </span>
-                  <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2.5 py-1 rounded border border-brand-200 select-all">
+                  <span className="font-mono text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/70 px-2.5 py-1 rounded border border-brand-200 dark:border-brand-800 select-all">
                     {wiresharkFilter || 'N/A'}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   TCP Stream Index:{' '}
-                  <span className="font-mono font-semibold text-slate-800">
+                  <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">
                     {session.tcp_stream !== null && session.tcp_stream !== undefined
                       ? `#${session.tcp_stream}`
                       : 'None'}
@@ -585,17 +585,17 @@ export default function SessionPage() {
                   <button
                     type="button"
                     onClick={handleCopyFilter}
-                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 hover:border-slate-300"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
                     title="Copy Wireshark filter"
                   >
                     {copiedFilter ? (
                       <>
-                        <Check className="h-3.5 w-3.5 text-emerald-600" />
-                        <span className="text-emerald-700 font-bold">Copied!</span>
+                        <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                        <span className="text-emerald-700 dark:text-emerald-400 font-bold">Copied!</span>
                       </>
                     ) : (
                       <>
-                        <Copy className="h-3.5 w-3.5 text-slate-500" />
+                        <Copy className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                         <span>Copy Filter</span>
                       </>
                     )}
@@ -621,7 +621,7 @@ export default function SessionPage() {
         {/* =========================================================
             CONNECTION ENDPOINTS
         ========================================================== */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark space-y-4">
           <SectionHeader
             icon={Shield}
             title="Connection Endpoints"
@@ -631,56 +631,56 @@ export default function SessionPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* CLIENT */}
-            <div className="group relative rounded-xl border border-slate-200 bg-gradient-to-br from-brand-50/50 via-white to-white p-4 transition hover:border-brand-300">
+            <div className="group relative rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-brand-50/50 via-white to-white dark:from-brand-950/30 dark:via-slate-850 dark:to-slate-900 p-4 transition hover:border-brand-300 dark:hover:border-brand-700">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   Client · Source
                 </p>
                 <button
                   type="button"
                   onClick={handleCopyClient}
-                  className="text-slate-400 hover:text-slate-600 transition"
+                  className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition"
                   title="Copy client address"
                 >
                   {copiedClient ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
+                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   ) : (
                     <Copy className="h-3.5 w-3.5" />
                   )}
                 </button>
               </div>
 
-              <p className="mt-2 font-mono text-base font-bold text-slate-800">
+              <p className="mt-2 font-mono text-base font-bold text-slate-800 dark:text-slate-100">
                 {session.client_ip || '—'}
                 <span className="mx-1 text-slate-400 font-normal">:</span>
-                <span className="text-brand-600">{session.client_port || '—'}</span>
+                <span className="text-brand-600 dark:text-brand-400">{session.client_port || '—'}</span>
               </p>
             </div>
 
             {/* SERVER */}
-            <div className="group relative rounded-xl border border-slate-200 bg-gradient-to-br from-sky-50/50 via-white to-white p-4 transition hover:border-sky-300">
+            <div className="group relative rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-sky-50/50 via-white to-white dark:from-sky-950/30 dark:via-slate-850 dark:to-slate-900 p-4 transition hover:border-sky-300 dark:hover:border-sky-700">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   Server · Destination
                 </p>
                 <button
                   type="button"
                   onClick={handleCopyServer}
-                  className="text-slate-400 hover:text-slate-600 transition"
+                  className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition"
                   title="Copy server address"
                 >
                   {copiedServer ? (
-                    <Check className="h-3.5 w-3.5 text-emerald-600" />
+                    <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   ) : (
                     <Copy className="h-3.5 w-3.5" />
                   )}
                 </button>
               </div>
 
-              <p className="mt-2 font-mono text-base font-bold text-slate-800">
+              <p className="mt-2 font-mono text-base font-bold text-slate-800 dark:text-slate-100">
                 {session.server_ip || '—'}
                 <span className="mx-1 text-slate-400 font-normal">:</span>
-                <span className="text-sky-600">{session.server_port || '—'}</span>
+                <span className="text-sky-600 dark:text-sky-400">{session.server_port || '—'}</span>
               </p>
             </div>
           </div>
@@ -689,7 +689,7 @@ export default function SessionPage() {
         {/* =========================================================
             PROTOCOL HANDSHAKE & SECURITY CONTROLS
         ========================================================== */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark space-y-4">
           <SectionHeader
             icon={Lock}
             title="Protocol Handshake"
@@ -728,7 +728,7 @@ export default function SessionPage() {
         {/* =========================================================
             TLS PARAMETERS
         ========================================================== */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark space-y-4">
           <SectionHeader
             icon={Key}
             title="TLS Parameters"
@@ -737,19 +737,19 @@ export default function SessionPage() {
           />
 
           {session.tls ? (
-            <div className="rounded-xl border border-slate-200 bg-gradient-to-br from-sky-50/20 via-white to-white p-5">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-sky-50/20 via-white to-white dark:from-sky-950/20 dark:via-slate-850 dark:to-slate-900 p-5">
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     TLS Version
                   </p>
-                  <p className="mt-1 font-mono text-sm font-bold text-slate-800">
+                  <p className="mt-1 font-mono text-sm font-bold text-slate-800 dark:text-slate-100">
                     {session.tls.version || 'UNKNOWN'}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Forward Secrecy (PFS)
                   </p>
                   <div className="mt-1 flex items-center gap-1.5">
@@ -761,8 +761,8 @@ export default function SessionPage() {
                     <span
                       className={`font-mono text-sm font-bold ${
                         session.tls.pfs === 'YES'
-                          ? 'text-emerald-700'
-                          : 'text-slate-600'
+                          ? 'text-emerald-700 dark:text-emerald-400'
+                          : 'text-slate-600 dark:text-slate-400'
                       }`}
                     >
                       {session.tls.pfs || 'UNKNOWN'}
@@ -771,17 +771,17 @@ export default function SessionPage() {
                 </div>
 
                 <div className="sm:col-span-3">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Negotiated Cipher Suite
                   </p>
-                  <p className="mt-1 break-all font-mono text-xs font-semibold leading-relaxed text-slate-700 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                  <p className="mt-1 break-all font-mono text-xs font-semibold leading-relaxed text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/80 p-2.5 rounded-lg border border-slate-200 dark:border-slate-700">
                     {session.tls.cipher_suite || 'None / Not Negotiated'}
                   </p>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-slate-200 bg-white/60 px-4 py-6 text-center text-xs text-slate-500">
+            <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
               No TLS cryptographic parameters were negotiated for this session (Plaintext transmission).
             </div>
           )}
@@ -790,7 +790,7 @@ export default function SessionPage() {
         {/* =========================================================
             CERTIFICATE INFORMATION
         ========================================================== */}
-        <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm space-y-4">
+        <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark space-y-4">
           <SectionHeader
             icon={Award}
             title="Certificate Information"
@@ -799,68 +799,68 @@ export default function SessionPage() {
           />
 
           {session.certificate?.visibility === 'NOT_OBSERVABLE' ? (
-            <div className="flex items-start gap-3 rounded-xl border border-violet-200 bg-violet-50/70 p-4 text-violet-800">
-              <EyeOff className="mt-0.5 h-4 w-4 shrink-0 text-violet-600" />
+            <div className="flex items-start gap-3 rounded-xl border border-violet-200 dark:border-violet-800/60 bg-violet-50/70 dark:bg-violet-950/50 p-4 text-violet-800 dark:text-violet-300">
+              <EyeOff className="mt-0.5 h-4 w-4 shrink-0 text-violet-600 dark:text-violet-400" />
               <div className="text-xs leading-relaxed">
                 <span className="font-bold">Certificate Not Observable</span> — The certificate payload could not be inspected because TLS 1.3 encrypted the handshake or the packet capture commenced after certificate transmission.
               </div>
             </div>
           ) : session.certificate?.subject ? (
-            <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-4">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-5 space-y-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   Subject
                 </p>
-                <p className="mt-1 break-all font-mono text-xs font-semibold text-slate-800">
+                <p className="mt-1 break-all font-mono text-xs font-semibold text-slate-800 dark:text-slate-100">
                   {session.certificate.subject}
                 </p>
               </div>
 
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                   Issuer
                 </p>
-                <p className="mt-1 break-all font-mono text-xs font-semibold text-slate-600">
+                <p className="mt-1 break-all font-mono text-xs font-semibold text-slate-600 dark:text-slate-300">
                   {session.certificate.issuer || 'UNKNOWN'}
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-4 border-t border-slate-100 dark:border-slate-800 pt-4 sm:grid-cols-4">
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Valid From
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-700">
+                  <p className="mt-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {formatDate(session.certificate.valid_from)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Valid Until
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-700">
+                  <p className="mt-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {formatDate(session.certificate.valid_until)}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Key Algorithm
                   </p>
-                  <p className="mt-1 text-xs font-semibold text-slate-700">
+                  <p className="mt-1 text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {session.certificate.key_type || '—'}
                     {session.certificate.key_size ? ` (${session.certificate.key_size} bit)` : ''}
                   </p>
                 </div>
 
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                     Self-Signed
                   </p>
                   <p
                     className={`mt-1 text-xs font-bold ${
-                      session.certificate.self_signed ? 'text-amber-600' : 'text-slate-700'
+                      session.certificate.self_signed ? 'text-amber-600 dark:text-amber-400' : 'text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {session.certificate.self_signed === null
@@ -873,7 +873,7 @@ export default function SessionPage() {
               </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-slate-200 bg-white/60 px-4 py-6 text-center text-xs text-slate-500">
+            <div className="rounded-xl border border-dashed border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 px-4 py-6 text-center text-xs text-slate-500 dark:text-slate-400">
               No certificate payload was captured for this session.
             </div>
           )}
@@ -884,33 +884,33 @@ export default function SessionPage() {
             SECTION 2: STANDARDS CONTEXT & BASELINE COMPARISON
         ========================================================== */}
         <section id="section-standards" className="space-y-4 scroll-mt-24 pt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 pb-4 gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 dark:border-slate-800 pb-4 gap-3">
             <div className="flex items-center gap-3.5">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 border border-sky-200/80 text-sky-600 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sky-50 dark:bg-sky-950/60 border border-sky-200/80 dark:border-sky-800 text-sky-600 dark:text-sky-400 shadow-sm">
                 <Layers className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Standards Context & Baseline Comparison
                 </h2>
-                <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
+                <p className="mt-0.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                   Automated compliance verification against RFC standards and NIST/BSI security baseline criteria
                 </p>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs text-slate-500">
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-2.5 py-1 text-xs text-slate-500 dark:text-slate-400">
                 <Info className="h-3.5 w-3.5 text-brand-500 shrink-0" />
                 <span>Contextual guidance · Separate from risk scoring</span>
               </span>
-              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-1 font-mono text-xs font-semibold text-sky-700">
-                <Layers className="h-3.5 w-3.5 text-sky-600" />
+              <span className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-sky-200 dark:border-sky-800 bg-sky-50 dark:bg-sky-950/60 px-2.5 py-1 font-mono text-xs font-semibold text-sky-700 dark:text-sky-300">
+                <Layers className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400" />
                 RFC Standards
               </span>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark">
             <StandardsContextSection
               standardsContext={session.standards_context}
               session={session}
@@ -923,22 +923,22 @@ export default function SessionPage() {
             SECTION 3: SESSION SECURITY FINDINGS
         ========================================================== */}
         <section id="section-findings" className="space-y-4 scroll-mt-24 pt-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 pb-4 gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b-2 border-slate-200/80 dark:border-slate-800 pb-4 gap-3">
             <div className="flex items-center gap-3.5">
               <div
                 className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border shadow-sm ${
                   sessionFindings.length > 0
-                    ? 'bg-amber-50 border-amber-200/80 text-amber-600'
-                    : 'bg-emerald-50 border-emerald-200/80 text-emerald-600'
+                    ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-200/80 dark:border-amber-800 text-amber-600 dark:text-amber-400'
+                    : 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200/80 dark:border-emerald-800 text-emerald-600 dark:text-emerald-400'
                 }`}
               >
                 <FileCode className="h-5 w-5" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900">
+                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 dark:text-white">
                   Session Security Findings
                 </h2>
-                <p className="mt-0.5 text-xs sm:text-sm text-slate-500">
+                <p className="mt-0.5 text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                   Independently verifiable security findings mapped to this session's packet stream
                 </p>
               </div>
@@ -946,66 +946,66 @@ export default function SessionPage() {
             <span
               className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1 font-mono text-xs font-bold border shadow-sm ${
                 sessionFindings.length > 0
-                  ? 'bg-amber-50 text-amber-800 border-amber-200'
-                  : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+                  : 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
               }`}
             >
               {sessionFindings.length > 0 ? (
                 <>
-                  <AlertTriangle className="h-3.5 w-3.5 text-amber-600" />
+                  <AlertTriangle className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400" />
                   <span>{sessionFindings.length} {sessionFindings.length === 1 ? 'Finding' : 'Findings'}</span>
                 </>
               ) : (
                 <>
-                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
                   <span>0 Findings · Secure</span>
                 </>
               )}
             </span>
           </div>
 
-          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm">
+          <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm dark:shadow-soft-dark">
           {sessionFindings.length > 0 ? (
             <div className="space-y-3">
               {sessionFindings.map((finding) => (
                 <div
                   key={finding.finding_id || finding.id}
-                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-2.5 transition hover:border-slate-300"
+                  className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-4 shadow-sm space-y-2.5 transition hover:border-slate-300 dark:hover:border-slate-700"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <span
                         className={`inline-flex rounded-md border px-2 py-0.5 font-mono text-[10px] font-bold ${
                           finding.severity === 'CRITICAL'
-                            ? 'border-red-200 bg-red-50 text-red-700'
+                            ? 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300'
                             : finding.severity === 'HIGH'
-                            ? 'border-orange-200 bg-orange-50 text-orange-700'
+                            ? 'border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/60 text-orange-700 dark:text-orange-300'
                             : finding.severity === 'MEDIUM'
-                            ? 'border-amber-200 bg-amber-50 text-amber-700'
-                            : 'border-blue-200 bg-blue-50 text-blue-700'
+                            ? 'border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300'
+                            : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
                         }`}
                       >
                         {finding.severity}
                       </span>
-                      <h5 className="text-xs font-bold text-slate-800">
+                      <h5 className="text-xs font-bold text-slate-800 dark:text-slate-100">
                         {finding.title}
                       </h5>
                     </div>
-                    <span className="font-mono text-[10px] text-slate-400">
+                    <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500">
                       Confidence: {finding.confidence || 'OBSERVED'}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed">
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                     {finding.description}
                   </p>
 
                   {finding.evidence && (
-                    <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 p-3">
-                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">
+                    <div className="mt-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                         Packet Evidence Trace:
                       </p>
-                      <pre className="font-mono text-[11px] text-slate-700 whitespace-pre-wrap overflow-x-auto leading-relaxed">
+                      <pre className="font-mono text-[11px] text-slate-700 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto leading-relaxed">
                         {JSON.stringify(finding.evidence, null, 2)}
                       </pre>
                     </div>
@@ -1014,10 +1014,10 @@ export default function SessionPage() {
               ))}
             </div>
           ) : (
-            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-6 text-center text-xs text-slate-500">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 p-6 text-center text-xs text-slate-500 dark:text-slate-400">
               <ShieldCheck className="h-8 w-8 text-emerald-500 mx-auto mb-2" />
-              <p className="font-semibold text-slate-700">No security findings or policy violations detected</p>
-              <p className="mt-0.5 text-slate-500">This session satisfied all baseline protocol and TLS criteria.</p>
+              <p className="font-semibold text-slate-700 dark:text-slate-200">No security findings or policy violations detected</p>
+              <p className="mt-0.5 text-slate-500 dark:text-slate-400">This session satisfied all baseline protocol and TLS criteria.</p>
             </div>
           )}
         </div>
@@ -1026,13 +1026,13 @@ export default function SessionPage() {
         {/* =========================================================
             BOTTOM SESSION SWITCHER BAR
         ========================================================== */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200 bg-white px-6 py-4 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-4 shadow-sm dark:shadow-soft-dark">
           <div className="flex items-center gap-2">
             <button
               type="button"
               disabled={!prevSession}
               onClick={() => handleSwitchSession(prevSession)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none"
               title={prevSession ? `Previous session (${prevSession.session_id})` : undefined}
             >
               <ChevronLeft className="h-4 w-4" />
@@ -1043,7 +1043,7 @@ export default function SessionPage() {
               type="button"
               disabled={!nextSession}
               onClick={() => handleSwitchSession(nextSession)}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none"
               title={nextSession ? `Next session (${nextSession.session_id})` : undefined}
             >
               <span>Next</span>
@@ -1051,7 +1051,7 @@ export default function SessionPage() {
             </button>
           </div>
 
-          <div className="text-center font-mono text-xs font-medium text-slate-500">
+          <div className="text-center font-mono text-xs font-medium text-slate-500 dark:text-slate-400">
             {allSessions.length > 0 && currentIndex >= 0 ? (
               <span>Session {currentIndex + 1} of {allSessions.length}</span>
             ) : null}
@@ -1061,7 +1061,7 @@ export default function SessionPage() {
             <Link
               to={`/analysis/${analysisId}?tab=sessions`}
               state={{ analysis }}
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700 transition"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 transition"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <span>Back to Session Table</span>
@@ -1084,9 +1084,9 @@ function SectionHeader({
   color = 'brand',
 }) {
   const colorStyles = {
-    brand: 'bg-brand-500/10 border-brand-500/20 text-brand-600',
-    sky: 'bg-sky-50 border-sky-200 text-sky-600',
-    purple: 'bg-violet-50 border-violet-200 text-violet-600',
+    brand: 'bg-brand-500/10 border-brand-500/20 text-brand-600 dark:text-brand-400',
+    sky: 'bg-sky-50 dark:bg-sky-950/60 border-sky-200 dark:border-sky-800 text-sky-600 dark:text-sky-400',
+    purple: 'bg-violet-50 dark:bg-violet-950/60 border-violet-200 dark:border-violet-800 text-violet-600 dark:text-violet-400',
   };
 
   return (
@@ -1098,9 +1098,9 @@ function SectionHeader({
       </div>
 
       <div>
-        <h4 className="text-sm font-semibold text-slate-800">{title}</h4>
+        <h4 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{title}</h4>
         {description && (
-          <p className="mt-0.5 text-[11px] text-slate-500">{description}</p>
+          <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">{description}</p>
         )}
       </div>
     </div>
@@ -1117,11 +1117,11 @@ function ControlCard({
   vulnerable = false,
 }) {
   return (
-    <div className="rounded-xl border border-slate-200/90 bg-white px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.025)] transition hover:border-slate-300">
+    <div className="rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-850 px-4 py-3.5 shadow-[0_1px_2px_rgba(15,23,42,0.025)] transition hover:border-slate-300 dark:hover:border-slate-700">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-semibold text-slate-700">{title}</p>
-          <p className="mt-0.5 text-[10px] leading-4 text-slate-400 line-clamp-2">{description}</p>
+          <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">{title}</p>
+          <p className="mt-0.5 text-[10px] leading-4 text-slate-400 dark:text-slate-500 line-clamp-2">{description}</p>
         </div>
 
         <div className="shrink-0">
@@ -1140,16 +1140,16 @@ function TriStateBadge({ value, vulnerable = false }) {
   const isYes = state.text === 'YES';
   const isNo = state.text === 'NO';
 
-  let styles = 'border-slate-200 bg-slate-50 text-slate-600';
+  let styles = 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
 
   if (vulnerable && isYes) {
-    styles = 'border-red-200 bg-red-50 text-red-700 font-bold';
+    styles = 'border-red-200 dark:border-red-800/70 bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 font-bold';
   } else if (isYes) {
-    styles = 'border-emerald-200 bg-emerald-50 text-emerald-700 font-bold';
+    styles = 'border-emerald-200 dark:border-emerald-800/70 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold';
   } else if (isNo) {
-    styles = 'border-slate-200 bg-slate-100 text-slate-500';
+    styles = 'border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400';
   } else {
-    styles = 'border-amber-200 bg-amber-50 text-amber-700';
+    styles = 'border-amber-200 dark:border-amber-800/70 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300';
   }
 
   return (

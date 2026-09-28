@@ -15,7 +15,7 @@ function renderInline(text) {
       return (
         <code
           key={i}
-          className="rounded bg-slate-200/80 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-slate-800"
+          className="rounded bg-slate-200/80 dark:bg-slate-800 px-1.5 py-0.5 font-mono text-[11px] font-semibold text-slate-800 dark:text-slate-200"
         >
           {part.slice(1, -1)}
         </code>
@@ -27,7 +27,7 @@ function renderInline(text) {
     return boldParts.map((bPart, j) => {
       if (bPart.startsWith('**') && bPart.endsWith('**')) {
         return (
-          <strong key={`${i}-${j}`} className="font-semibold text-slate-900">
+          <strong key={`${i}-${j}`} className="font-semibold text-slate-900 dark:text-white">
             {bPart.slice(2, -2)}
           </strong>
         );
@@ -38,7 +38,7 @@ function renderInline(text) {
       return italicParts.map((iPart, k) => {
         if (iPart.startsWith('*') && iPart.endsWith('*') && !iPart.startsWith('**')) {
           return (
-            <em key={`${i}-${j}-${k}`} className="italic text-slate-800">
+            <em key={`${i}-${j}-${k}`} className="italic text-slate-800 dark:text-slate-200">
               {iPart.slice(1, -1)}
             </em>
           );
@@ -133,7 +133,7 @@ export default function MarkdownRenderer({ content }) {
   }
 
   return (
-    <div className="space-y-2 text-xs sm:text-sm leading-relaxed text-slate-800">
+    <div className="space-y-2 text-xs sm:text-sm leading-relaxed text-slate-800 dark:text-slate-100">
       {chunks.map((chunk, chunkIdx) => {
         if (chunk.type === 'code') {
           return (
@@ -155,7 +155,7 @@ export default function MarkdownRenderer({ content }) {
               elements.push(
                 <ul
                   key={`ul-${elements.length}`}
-                  className="my-2 ml-4 list-disc space-y-1 text-slate-700"
+                  className="my-2 ml-4 list-disc space-y-1 text-slate-700 dark:text-slate-200"
                 >
                   {currentList.items.map((item, i) => (
                     <li key={i}>{item}</li>
@@ -166,7 +166,7 @@ export default function MarkdownRenderer({ content }) {
               elements.push(
                 <ol
                   key={`ol-${elements.length}`}
-                  className="my-2 ml-4 list-decimal space-y-1.5 text-slate-700"
+                  className="my-2 ml-4 list-decimal space-y-1.5 text-slate-700 dark:text-slate-200"
                 >
                   {currentList.items.map((item, i) => (
                     <li key={i}>{item}</li>
@@ -192,7 +192,7 @@ export default function MarkdownRenderer({ content }) {
             elements.push(
               <h4
                 key={`h3-${lineIdx}`}
-                className="mt-3 mb-1 text-xs sm:text-sm font-bold text-slate-900 tracking-tight"
+                className="mt-3 mb-1 text-xs sm:text-sm font-bold text-slate-900 dark:text-white tracking-tight"
               >
                 {renderInline(line.slice(4))}
               </h4>
@@ -206,7 +206,7 @@ export default function MarkdownRenderer({ content }) {
             elements.push(
               <h3
                 key={`h2-${lineIdx}`}
-                className="mt-3.5 mb-1 text-sm font-bold text-slate-900 tracking-tight"
+                className="mt-3.5 mb-1 text-sm font-bold text-slate-900 dark:text-white tracking-tight"
               >
                 {renderInline(line.slice(3))}
               </h3>
@@ -220,7 +220,7 @@ export default function MarkdownRenderer({ content }) {
             elements.push(
               <h2
                 key={`h1-${lineIdx}`}
-                className="mt-4 mb-1.5 text-base font-bold text-slate-900 tracking-tight"
+                className="mt-4 mb-1.5 text-base font-bold text-slate-900 dark:text-white tracking-tight"
               >
                 {renderInline(line.slice(2))}
               </h2>

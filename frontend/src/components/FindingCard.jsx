@@ -10,43 +10,62 @@ import {
   Activity,
   Hash,
   Network,
+  ArrowUpRight,
 } from "lucide-react";
 
-export default function FindingCard({ finding }) {
+export default function FindingCard({ finding, onSelectSession = null }) {
   const [showEvidence, setShowEvidence] = useState(false);
+
+  const handleSessionRedirect = (e) => {
+    if (e) e.stopPropagation();
+    if (!finding?.session_id) return;
+
+    if (onSelectSession) {
+      onSelectSession(finding.session_id);
+      return;
+    }
+
+    // Fallback if rendered without onSelectSession prop
+    if (typeof window !== "undefined") {
+      const match = window.location.pathname.match(/\/analysis\/([^/]+)/);
+      if (match) {
+        window.location.href = `/analysis/${match[1]}/session/${finding.session_id}`;
+      }
+    }
+  };
 
   const severity = (finding?.severity || "INFO").toUpperCase();
 
   const severityStyles = {
     CRITICAL: {
       accent: "bg-red-500",
-      icon: "border-red-200 bg-red-50 text-red-600",
-      soft: "bg-red-50/50",
-      border: "border-red-200",
+      icon: "border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400",
+      soft: "bg-red-50/50 dark:bg-red-950/30",
+      border: "border-red-200 dark:border-red-900/50",
     },
     HIGH: {
       accent: "bg-orange-500",
-      icon: "border-orange-200 bg-orange-50 text-orange-600",
-      soft: "bg-orange-50/50",
-      border: "border-orange-200",
+      icon: "border-orange-200 dark:border-orange-900/60 bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400",
+      soft: "bg-orange-50/50 dark:bg-orange-950/30",
+      border: "border-orange-200 dark:border-orange-900/50",
     },
     MEDIUM: {
       accent: "bg-amber-500",
-      icon: "border-amber-200 bg-amber-50 text-amber-600",
-      soft: "bg-amber-50/50",
-      border: "border-amber-200",
+      icon: "border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400",
+      soft: "bg-amber-50/50 dark:bg-amber-950/30",
+      border: "border-amber-200 dark:border-amber-900/50",
     },
     LOW: {
       accent: "bg-yellow-500",
-      icon: "border-yellow-200 bg-yellow-50 text-yellow-600",
-      soft: "bg-yellow-50/50",
-      border: "border-yellow-200",
+      icon: "border-yellow-200 dark:border-yellow-900/60 bg-yellow-50 dark:bg-yellow-950/40 text-yellow-600 dark:text-yellow-400",
+      soft: "bg-yellow-50/50 dark:bg-yellow-950/30",
+      border: "border-yellow-200 dark:border-yellow-900/50",
     },
     INFO: {
       accent: "bg-blue-500",
-      icon: "border-blue-200 bg-blue-50 text-blue-600",
-      soft: "bg-blue-50/50",
-      border: "border-blue-200",
+      icon: "border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400",
+      soft: "bg-blue-50/50 dark:bg-blue-950/30",
+      border: "border-blue-200 dark:border-blue-900/50",
     },
   };
 
@@ -60,11 +79,11 @@ export default function FindingCard({ finding }) {
     <article
       className="
         group relative overflow-hidden
-        rounded-xl border border-slate-200
-        bg-white
-        shadow-[0_2px_10px_rgba(15,23,42,0.025)]
+        rounded-xl border border-slate-200 dark:border-slate-800
+        bg-white dark:bg-slate-900
+        shadow-[0_2px_10px_rgba(15,23,42,0.025)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]
         transition-all duration-200
-        hover:border-slate-300
+        hover:border-slate-300 dark:hover:border-slate-700
         hover:shadow-[0_6px_24px_rgba(15,23,42,0.055)]
       "
     >
@@ -92,12 +111,12 @@ export default function FindingCard({ finding }) {
               <RiskBadge level={severity} size="sm" />
             </div>
 
-            <h3 className="mt-3 text-[16px] font-semibold leading-6 text-slate-900">
+            <h3 className="mt-3 text-[16px] font-semibold leading-6 text-slate-900 dark:text-white">
               {finding?.title || "Security finding detected"}
             </h3>
 
             {finding?.description && (
-              <p className="mt-1.5 max-w-4xl text-sm leading-6 text-slate-600">
+              <p className="mt-1.5 max-w-4xl text-sm leading-6 text-slate-600 dark:text-slate-300">
                 {finding.description}
               </p>
             )}
@@ -119,14 +138,14 @@ export default function FindingCard({ finding }) {
     sm:inline-flex
     ${
       showEvidence
-        ? 'border-blue-200 bg-blue-50 text-blue-700'
+        ? 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300'
         : `
-            border-slate-200
-            bg-white
-            text-slate-600
-            hover:border-blue-200
-            hover:bg-blue-50/50
-            hover:text-blue-700
+            border-slate-200 dark:border-slate-700
+            bg-white dark:bg-slate-800
+            text-slate-600 dark:text-slate-300
+            hover:border-blue-200 dark:hover:border-blue-700
+            hover:bg-blue-50/50 dark:hover:bg-blue-950/40
+            hover:text-blue-700 dark:hover:text-blue-300
           `
     }
   `}
@@ -137,8 +156,8 @@ export default function FindingCard({ finding }) {
       rounded-lg
       ${
         showEvidence
-          ? 'bg-blue-100'
-          : 'bg-slate-100'
+          ? 'bg-blue-100 dark:bg-blue-900/60'
+          : 'bg-slate-100 dark:bg-slate-700'
       }
     `}
   >
@@ -147,8 +166,8 @@ export default function FindingCard({ finding }) {
         h-3.5 w-3.5
         ${
           showEvidence
-            ? 'text-blue-600'
-            : 'text-slate-500'
+            ? 'text-blue-600 dark:text-blue-400'
+            : 'text-slate-500 dark:text-slate-400'
         }
       `}
     />
@@ -167,7 +186,7 @@ export default function FindingCard({ finding }) {
   </div>
 
   {showEvidence ? (
-    <ChevronUp className="ml-1 h-3.5 w-3.5 text-blue-500" />
+    <ChevronUp className="ml-1 h-3.5 w-3.5 text-blue-500 dark:text-blue-400" />
   ) : (
     <ChevronDown className="ml-1 h-3.5 w-3.5 text-slate-400" />
   )}
@@ -190,8 +209,8 @@ export default function FindingCard({ finding }) {
               sm:hidden
               ${
                 showEvidence
-                  ? `${style.border} ${style.soft} text-slate-800`
-                  : "border-slate-200 bg-slate-50 text-slate-600"
+                  ? `${style.border} ${style.soft} text-slate-800 dark:text-slate-200`
+                  : "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300"
               }
             `}
           >
@@ -213,7 +232,7 @@ export default function FindingCard({ finding }) {
         <div
           className="
             grid grid-cols-1 gap-2
-            border-t border-slate-100
+            border-t border-slate-100 dark:border-slate-800
             pt-4
             sm:grid-cols-2
             lg:grid-cols-3
@@ -225,7 +244,7 @@ export default function FindingCard({ finding }) {
               label="Finding type"
               value={finding.finding_type}
               mono
-              gradient="from-slate-100/70 via-white to-blue-50/70"
+              gradient="from-slate-100/70 via-white to-blue-50/70 dark:from-slate-800/80 dark:via-slate-900 dark:to-slate-800/60"
             />
           )}
 
@@ -235,7 +254,11 @@ export default function FindingCard({ finding }) {
               label="Session"
               value={finding.session_id}
               mono
-              gradient="from-slate-100/70 via-white to-blue-50/70"
+              isClickable={Boolean(onSelectSession || finding?.session_id)}
+              onClick={handleSessionRedirect}
+              title={`Click to inspect session ${finding.session_id}`}
+              actionHint="Inspect"
+              gradient="from-slate-100/70 via-white to-blue-50/70 dark:from-slate-800/80 dark:via-slate-900 dark:to-slate-800/60"
             />
           )}
 
@@ -244,7 +267,7 @@ export default function FindingCard({ finding }) {
               icon={Activity}
               label="Confidence"
               value={finding.confidence}
-              gradient="from-slate-100/70 via-white to-blue-50/70"
+              gradient="from-slate-100/70 via-white to-blue-50/70 dark:from-slate-800/80 dark:via-slate-900 dark:to-slate-800/60"
             />
           )}
         </div>
@@ -254,7 +277,7 @@ export default function FindingCard({ finding }) {
       {showEvidence && (
   <div
     className="
-      border-t border-slate-100
+      border-t border-slate-100 dark:border-slate-800
       px-5 py-5
       pl-6
       sm:px-6
@@ -263,16 +286,16 @@ export default function FindingCard({ finding }) {
   >
     <div className="mb-3 flex items-center justify-between">
       <div>
-        <p className="text-sm font-semibold text-slate-800">
+        <p className="text-sm font-semibold text-slate-800 dark:text-white">
           Technical evidence
         </p>
 
-        <p className="mt-0.5 text-[11px] text-slate-500">
+        <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
           Supporting attributes extracted during session inspection
         </p>
       </div>
 
-      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-medium text-slate-500">
+      <span className="rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-2.5 py-1 text-[10px] font-medium text-slate-500 dark:text-slate-400">
         {evidenceCount} attributes
       </span>
     </div>
@@ -293,67 +316,111 @@ function MetadataCard({
   label,
   value,
   mono = false,
-  gradient = "from-slate-100/80 via-white to-slate-50",
+  gradient = "from-slate-100/80 via-white to-slate-50 dark:from-slate-800/80 dark:via-slate-900 dark:to-slate-800/60",
+  onClick = null,
+  isClickable = false,
+  actionHint = null,
+  title = null,
 }) {
+  const Component = isClickable ? "button" : "div";
+
   return (
-    <div
+    <Component
+      type={isClickable ? "button" : undefined}
+      onClick={onClick}
+      title={title || (isClickable ? `Click to inspect ${value}` : undefined)}
       className={`
-    flex min-h-[66px]
-    items-center gap-3
-    rounded-lg
-    border border-slate-200
-    border-l-[3px] border-l-brand-400
-    bg-gradient-to-br ${gradient}
-    px-3.5 py-3
-    transition-all duration-200
-    hover:border-slate-300
-    hover:border-l-brand-500
-    hover:shadow-sm
-  `}
+        group/meta flex min-h-[66px] w-full
+        items-center justify-between gap-3
+        rounded-lg
+        border border-slate-200 dark:border-slate-800
+        border-l-[3px] border-l-brand-400 dark:border-l-brand-500
+        bg-gradient-to-br ${gradient}
+        px-3.5 py-3
+        text-left
+        transition-all duration-200
+        ${
+          isClickable
+            ? `cursor-pointer
+               hover:border-slate-300 dark:hover:border-slate-700
+               hover:border-l-brand-500 dark:hover:border-l-brand-400
+               hover:shadow-sm hover:scale-[1.01] active:scale-[0.99]`
+            : `hover:border-slate-300 dark:hover:border-slate-700
+               hover:border-l-brand-500 hover:shadow-sm`
+        }
+      `}
     >
-      {/* Icon */}
-      <div
-        className="
-          flex h-9 w-9 shrink-0
-          items-center justify-center
-          rounded-lg
-          border border-slate-200
-          bg-white/90
-          shadow-sm
-        "
-      >
-        <Icon className="h-4 w-4 text-slate-500" />
-      </div>
-
-      {/* Content */}
-      <div className="min-w-0">
-        <p
-          className="
-            text-[11px]
-            font-bold
-            uppercase
-            tracking-[0.08em]
-            text-slate-500
-          "
-        >
-          {label}
-        </p>
-
-        <p
+      <div className="flex items-center gap-3 min-w-0">
+        {/* Icon */}
+        <div
           className={`
-            mt-1
-            truncate
-            text-[13px]
-            font-semibold
-            leading-4
-            text-slate-900
-            ${mono ? "font-mono" : ""}
+            flex h-9 w-9 shrink-0
+            items-center justify-center
+            rounded-lg
+            border border-slate-200 dark:border-slate-700
+            bg-white/90 dark:bg-slate-800/90
+            shadow-sm transition-colors
+            ${
+              isClickable
+                ? "group-hover/meta:border-brand-300 dark:group-hover/meta:border-brand-500 group-hover/meta:bg-brand-50 dark:group-hover/meta:bg-brand-950/60"
+                : ""
+            }
           `}
-          title={value}
         >
-          {value}
-        </p>
+          <Icon
+            className={`h-4 w-4 transition-colors ${
+              isClickable
+                ? "text-slate-500 dark:text-slate-400 group-hover/meta:text-brand-600 dark:group-hover/meta:text-brand-400"
+                : "text-slate-500 dark:text-slate-400"
+            }`}
+          />
+        </div>
+
+        {/* Content */}
+        <div className="min-w-0">
+          <p
+            className="
+              text-[11px]
+              font-bold
+              uppercase
+              tracking-[0.08em]
+              text-slate-500 dark:text-slate-400
+            "
+          >
+            {label}
+          </p>
+
+          <p
+            className={`
+              mt-1
+              truncate
+              text-[13px]
+              font-semibold
+              leading-4
+              text-slate-900 dark:text-white
+              ${mono ? "font-mono" : ""}
+              ${
+                isClickable
+                  ? "group-hover/meta:text-brand-600 dark:group-hover/meta:text-brand-400"
+                  : ""
+              }
+            `}
+            title={value}
+          >
+            {value}
+          </p>
+        </div>
       </div>
-    </div>
+
+      {/* Redirect Indicator */}
+      {isClickable && (
+        <div className="flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-[11px] font-semibold text-brand-600 dark:text-brand-400 group-hover/meta:bg-brand-50 dark:group-hover/meta:bg-brand-950/60 transition-all">
+          <span className="hidden sm:inline text-[10px] font-sans font-bold uppercase tracking-wider">
+            {actionHint || "Inspect"}
+          </span>
+          <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/meta:-translate-y-0.5 group-hover/meta:translate-x-0.5" />
+        </div>
+      )}
+    </Component>
   );
 }

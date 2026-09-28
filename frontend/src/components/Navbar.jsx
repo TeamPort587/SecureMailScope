@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 
 import { DEMO_PRESETS } from '../mock/demoCaptures';
+import { useTheme } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }) {
   const [demoOpen, setDemoOpen] = useState(false);
@@ -20,6 +22,8 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
 
   const demoRef = useRef(null);
   const profileRef = useRef(null);
+
+  const { isDark } = useTheme();
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -43,7 +47,7 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
   const displayName = rawUsername.charAt(0).toUpperCase() + rawUsername.slice(1);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md transition-colors duration-200">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         
         {/* LEFT: BRAND LOGO */}
@@ -58,10 +62,10 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
             className="h-11 w-11 shrink-0 object-contain drop-shadow-sm transition-transform group-hover:scale-105"
           />
           <div className="flex flex-col justify-center">
-            <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-tight text-slate-900">
-              Secure<span className="text-brand-600">Mail</span>Scope
+            <span className="text-lg sm:text-xl font-extrabold tracking-tight leading-tight text-slate-900 dark:text-slate-100">
+              Secure<span className="text-brand-600 dark:text-brand-400">Mail</span>Scope
             </span>
-            <span className="mt-0.5 text-xs font-medium text-slate-500 tracking-tight leading-none">
+            <span className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400 tracking-tight leading-none">
               Email Security Analysis
             </span>
           </div>
@@ -79,8 +83,8 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
               className={({ isActive }) =>
                 `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
                   isActive
-                    ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
-                    : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                    ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
+                    : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
                 }`
               }
             >
@@ -96,8 +100,8 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
               className={({ isActive }) =>
                 `relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
                   isActive
-                    ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
-                    : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                    ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
+                    : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
                 }`
               }
             >
@@ -110,14 +114,16 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
           <div className="relative group" ref={demoRef}>
             <button
               type="button"
+              aria-label="Demo Captures"
+              title="Demo Captures"
               onClick={() => {
                 setDemoOpen(!demoOpen);
                 setProfileOpen(false);
               }}
               className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
                 demoOpen
-                  ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
-                  : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                  ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
+                  : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
               }`}
             >
               <FlaskConical className="h-4.5 w-4.5" />
@@ -126,13 +132,13 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
 
             {/* DEMO POPOVER */}
             {demoOpen && (
-              <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl animate-in fade-in zoom-in-95 duration-150">
-                <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-3">
+              <div className="absolute right-0 top-12 z-50 w-80 overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl animate-in fade-in zoom-in-95 duration-150">
+                <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850 px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <FlaskConical className="h-4 w-4 text-brand-600" />
-                    <p className="text-xs font-semibold text-slate-900">Demo PCAP Captures</p>
+                    <FlaskConical className="h-4 w-4 text-brand-600 dark:text-brand-400" />
+                    <p className="text-xs font-semibold text-slate-900 dark:text-slate-100">Demo PCAP Captures</p>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-0.5">
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
                     Inspect realistic email security traffic captures
                   </p>
                 </div>
@@ -143,20 +149,20 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
                       key={preset.id}
                       type="button"
                       onClick={() => handlePreset(preset)}
-                      className="group/item flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left transition-colors hover:bg-brand-50/60"
+                      className="group/item flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left transition-colors hover:bg-brand-50/60 dark:hover:bg-slate-800/60"
                     >
-                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-brand-100 bg-brand-50 text-brand-600 transition-colors group-hover/item:bg-brand-100">
+                      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-brand-100 dark:border-brand-900/60 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 transition-colors group-hover/item:bg-brand-100 dark:group-hover/item:bg-brand-900/80">
                         <Database className="h-3.5 w-3.5" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-semibold text-slate-800 group-hover/item:text-brand-700">
+                        <p className="truncate text-xs font-semibold text-slate-800 dark:text-slate-200 group-hover/item:text-brand-700 dark:group-hover/item:text-brand-400">
                           {preset.name.split(':')[1]?.trim() || preset.name}
                         </p>
-                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-4 text-slate-500">
+                        <p className="mt-0.5 line-clamp-2 text-[10px] leading-4 text-slate-500 dark:text-slate-400">
                           {preset.description}
                         </p>
                       </div>
-                      <ArrowRight className="mt-1 h-3.5 w-3.5 text-slate-300 opacity-0 transition-all group-hover/item:translate-x-0.5 group-hover/item:opacity-100 group-hover/item:text-brand-600" />
+                      <ArrowRight className="mt-1 h-3.5 w-3.5 text-slate-300 dark:text-slate-600 opacity-0 transition-all group-hover/item:translate-x-0.5 group-hover/item:opacity-100 group-hover/item:text-brand-600 dark:group-hover/item:text-brand-400" />
                     </button>
                   ))}
                 </div>
@@ -164,18 +170,26 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
             )}
           </div>
 
-          {/* 4. USER PROFILE */}
+          {/* 4. THEME TOGGLE (DARK / LIGHT MODE) */}
+          <div className="relative group">
+            <ThemeToggle />
+            <NavTooltip label={isDark ? 'LIGHT' : 'DARK'} />
+          </div>
+
+          {/* 5. USER PROFILE */}
           <div className="relative group" ref={profileRef}>
             <button
               type="button"
+              aria-label="User Account"
+              title="User Account"
               onClick={() => {
                 setProfileOpen(!profileOpen);
                 setDemoOpen(false);
               }}
               className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-150 hover:-translate-y-0.5 active:translate-y-0 ${
                 profileOpen
-                  ? 'border-brand-400 bg-brand-50 text-brand-600 shadow-[0_2px_0_0_#38bdf8]'
-                  : 'border-slate-200/90 bg-white/90 text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 hover:shadow-[0_2px_0_0_#cbd5e1]'
+                  ? 'border-brand-400 dark:border-brand-500 bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 shadow-[0_2px_0_0_#38bdf8]'
+                  : 'border-slate-200/90 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white hover:shadow-[0_2px_0_0_#cbd5e1] dark:hover:shadow-[0_2px_0_0_#334155]'
               }`}
             >
               <User className="h-4.5 w-4.5" />
@@ -184,15 +198,15 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
 
             {/* PROFILE POPOVER */}
             {profileOpen && (
-              <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-2xl ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150">
-                <div className="border-b border-slate-100 bg-gradient-to-br from-slate-50 via-white to-brand-50/30 px-4 py-3.5">
+              <div className="absolute right-0 top-12 z-50 w-60 overflow-hidden rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl ring-1 ring-slate-900/5 animate-in fade-in zoom-in-95 duration-150">
+                <div className="border-b border-slate-100 dark:border-slate-800 bg-gradient-to-br from-slate-50 via-white to-brand-50/30 dark:from-slate-850 dark:via-slate-900 dark:to-brand-950/20 px-4 py-3.5">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 via-sky-500 to-brand-600 text-xs font-bold text-white shadow-xs ring-2 ring-brand-100">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 via-sky-500 to-brand-600 text-xs font-bold text-white shadow-xs ring-2 ring-brand-100 dark:ring-brand-900/50">
                       {displayName.charAt(0)}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="flex items-center gap-1.5 truncate text-xs font-bold text-slate-800 leading-tight">
-                        <span>Hi, <span className="text-brand-600">{displayName}</span></span>
+                      <p className="flex items-center gap-1.5 truncate text-xs font-bold text-slate-800 dark:text-slate-200 leading-tight">
+                        <span>Hi, <span className="text-brand-600 dark:text-brand-400">{displayName}</span></span>
                         <ShieldCheck className="h-3.5 w-3.5 text-brand-500 shrink-0" />
                       </p>
                     </div>
@@ -203,18 +217,18 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
                   <Link
                     to="/analysis"
                     onClick={() => setProfileOpen(false)}
-                    className="group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:text-slate-900"
+                    className="group flex w-full items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-300 transition-all hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/60 bg-slate-100/80 text-slate-500 transition-colors group-hover:border-brand-200 group-hover:bg-brand-50 group-hover:text-brand-600">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200/60 dark:border-slate-700 bg-slate-100/80 dark:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors group-hover:border-brand-200 dark:group-hover:border-brand-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/60 group-hover:text-brand-600 dark:group-hover:text-brand-400">
                         <History className="h-3.5 w-3.5" />
                       </div>
                       <span>Upload History</span>
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 text-slate-300 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-brand-600" />
+                    <ArrowRight className="h-3.5 w-3.5 text-slate-300 dark:text-slate-600 opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100 group-hover:text-brand-600 dark:group-hover:text-brand-400" />
                   </Link>
 
-                  <div className="my-1 border-t border-slate-100" />
+                  <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
                   <button
                     type="button"
@@ -222,9 +236,9 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
                       setProfileOpen(false);
                       if (onLogout) onLogout();
                     }}
-                    className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 transition-all hover:bg-rose-50"
+                    className="group flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-rose-600 dark:text-rose-400 transition-all hover:bg-rose-50 dark:hover:bg-rose-950/40"
                   >
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 bg-rose-50 text-rose-500 transition-colors group-hover:bg-rose-100 group-hover:text-rose-600">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-rose-100 dark:border-rose-900/60 bg-rose-50 dark:bg-rose-950/60 text-rose-500 dark:text-rose-400 transition-colors group-hover:bg-rose-100 dark:group-hover:bg-rose-900/80 group-hover:text-rose-600 dark:group-hover:text-rose-300">
                       <LogOut className="h-3.5 w-3.5" />
                     </div>
                     <span>Sign out</span>
@@ -249,9 +263,9 @@ function NavTooltip({ label, hidden = false }) {
 
   return (
     <div className="pointer-events-none absolute left-1/2 top-[calc(100%+8px)] -translate-x-1/2 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 translate-y-1 transition-all duration-150 z-50 whitespace-nowrap">
-      <div className="relative flex items-center justify-center rounded-lg border border-slate-700/90 bg-slate-900/95 px-2.5 py-1 shadow-xl backdrop-blur-sm">
+      <div className="relative flex items-center justify-center rounded-lg border border-slate-700/90 dark:border-slate-600 bg-slate-900/95 dark:bg-slate-850 px-2.5 py-1 shadow-xl backdrop-blur-sm">
         {/* Top triangular arrow pointer */}
-        <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-l border-t border-slate-700/90 bg-slate-900" />
+        <div className="absolute -top-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-l border-t border-slate-700/90 dark:border-slate-600 bg-slate-900 dark:bg-slate-850" />
         {/* Label text in high-contrast vibrant electric sky cyan */}
         <span className="relative z-10 text-[10px] font-bold tracking-wider text-sky-400 select-none">
           {label}

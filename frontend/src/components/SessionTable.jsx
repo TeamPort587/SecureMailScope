@@ -290,13 +290,13 @@ export default function SessionTable({
         <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
           {/* SEARCH */}
           <div className="relative w-full sm:w-60 md:w-72 lg:w-80 shrink-0 min-w-[200px]">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
             <input
               type="text"
               placeholder="Search sessions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="h-9 w-full rounded-xl border border-slate-200 bg-white pl-9 pr-3 text-xs text-slate-700 shadow-sm transition placeholder:text-slate-400 hover:border-slate-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10"
+              className="h-9 w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 pl-9 pr-3 text-xs text-slate-700 dark:text-slate-200 shadow-sm transition placeholder:text-slate-400 dark:placeholder:text-slate-500 hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10"
               aria-label="Search sessions"
             />
           </div>
@@ -308,7 +308,7 @@ export default function SessionTable({
               setProtocolFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
+            className="h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm transition hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
             aria-label="Filter by protocol"
           >
             <option value="ALL">All protocols</option>
@@ -324,7 +324,7 @@ export default function SessionTable({
               setEncryptionFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
+            className="h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm transition hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
             aria-label="Filter by encryption"
           >
             <option value="ALL">All encryption</option>
@@ -340,7 +340,7 @@ export default function SessionTable({
               setRiskFilter(e.target.value);
               setCurrentPage(1);
             }}
-            className="h-9 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
+            className="h-9 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm transition hover:border-slate-300 dark:hover:border-slate-700 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500/10 cursor-pointer shrink-0"
             aria-label="Filter by risk"
           >
             <option value="ALL">All risk levels</option>
@@ -354,11 +354,11 @@ export default function SessionTable({
             <button
               type="button"
               onClick={resetAll}
-              className="h-9 inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 text-xs font-medium text-slate-600 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition shrink-0"
+              className="h-9 inline-flex items-center gap-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-xs font-medium text-slate-600 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition shrink-0"
               title="Reset all filters and sorting"
               aria-label="Reset all filters and sorting"
             >
-              <RotateCcw className="h-3.5 w-3.5 text-slate-400" />
+              <RotateCcw className="h-3.5 w-3.5 text-slate-400 dark:text-slate-400" />
               <span>Reset</span>
             </button>
           )}
@@ -368,11 +368,11 @@ export default function SessionTable({
       {/* =========================================================
           TABLE
       ========================================================== */}
-      <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full min-w-[980px] text-left">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/80">
+              <tr className="border-b border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-850/80">
                 <TableHeader
                   sortKey="session_id"
                   currentSort={sortBy}
@@ -509,7 +509,7 @@ export default function SessionTable({
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none"
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none"
                 aria-label="Previous page"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
@@ -526,7 +526,7 @@ export default function SessionTable({
                   ) {
                     if (pageNum === 2 || pageNum === totalPages - 1) {
                       return (
-                        <span key={pageNum} className="px-1 text-xs text-slate-400">
+                        <span key={pageNum} className="px-1 text-xs text-slate-400 dark:text-slate-500">
                           …
                         </span>
                       );
@@ -543,7 +543,7 @@ export default function SessionTable({
                       className={`h-7 min-w-[28px] rounded-lg px-2 text-xs font-semibold transition ${
                         isActive
                           ? 'border border-brand-600 bg-brand-600 text-white shadow-sm'
-                          : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                          : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                       }`}
                       aria-current={isActive ? 'page' : undefined}
                     >
@@ -557,7 +557,7 @@ export default function SessionTable({
                 type="button"
                 disabled={currentPage >= totalPages}
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40 disabled:pointer-events-none"
+                className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-300 shadow-sm transition hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none"
                 aria-label="Next page"
               >
                 <span className="hidden sm:inline">Next</span>
@@ -821,10 +821,10 @@ function SessionRow({
             event.stopPropagation();
             onInspect();
           }}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-semibold text-slate-600 shadow-sm transition-all hover:border-brand-200 hover:bg-brand-50 hover:text-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/20"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-[10px] font-semibold text-slate-600 dark:text-slate-300 shadow-sm transition-all hover:border-brand-200 dark:hover:border-brand-700 hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-700 dark:hover:text-brand-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/20"
           aria-label={`Inspect session ${session.session_id}`}
         >
-          <Eye className="h-3.5 w-3.5 text-brand-600" />
+          <Eye className="h-3.5 w-3.5 text-brand-600 dark:text-brand-400" />
           Inspect
         </button>
       </td>

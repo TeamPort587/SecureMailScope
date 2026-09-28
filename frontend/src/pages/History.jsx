@@ -35,11 +35,12 @@ export default function History() {
       <div className="mb-6">
   <div className="
     relative overflow-hidden
-    rounded-2xl border border-slate-100
-        bg-gradient-to-br from-white via-slate-50/80 to-brand-50/40
+    rounded-2xl border border-slate-100 dark:border-slate-800/80
+    bg-gradient-to-br from-white via-slate-50/80 to-brand-50/40
+    dark:from-slate-900/90 dark:via-slate-900/80 dark:to-slate-950/90
     px-6 py-2 sm:px-8 sm:py-3
-    shadow-sm
-    border-l-2 border-t-2 border-brand-200/60
+    shadow-sm dark:shadow-soft-dark
+    border-l-2 border-t-2 border-brand-200/60 dark:border-l-brand-500/40 dark:border-t-brand-500/40
   ">
     {/* orb glows */}
     <div className="pointer-events-none absolute inset-0">
@@ -66,7 +67,7 @@ export default function History() {
       <button
         onClick={() => refresh()}
         disabled={loading}
-        className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white/80 backdrop-blur-sm px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition-colors hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex items-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white/80 dark:bg-slate-800/90 backdrop-blur-sm px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 shadow-sm transition-colors hover:bg-white dark:hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
         Refresh
@@ -79,21 +80,21 @@ export default function History() {
       {/* LEFT — text */}
       <div className="max-w-xl">
 
-        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50/80 px-3 py-1 backdrop-blur-sm">
-          <HistoryIcon className="h-3 w-3 text-brand-500" />
-          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-600">
+        <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 dark:border-brand-800/60 bg-brand-50/80 dark:bg-brand-950/60 px-3 py-1 backdrop-blur-sm">
+          <HistoryIcon className="h-3 w-3 text-brand-500 dark:text-brand-400" />
+          <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-300">
             Analysis Records
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+        <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-4xl">
           Analysis{' '}
           <span className="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">
             History
           </span>
         </h1>
 
-        <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
+        <p className="mt-3 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
           Review previously analyzed email captures and their
           detected security posture.
         </p>
@@ -173,9 +174,9 @@ export default function History() {
         className="
           overflow-hidden
           rounded-2xl
-          border border-slate-200
-          bg-white
-          shadow-sm
+          border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-900
+          shadow-sm dark:shadow-soft-dark
         "
       >
 
@@ -187,7 +188,7 @@ export default function History() {
             flex flex-col
             justify-between
             gap-4
-            border-b border-slate-100
+            border-b border-slate-100 dark:border-slate-800
             px-5 py-4
             sm:flex-row
             sm:items-center
@@ -202,12 +203,12 @@ export default function History() {
                 flex h-9 w-9
                 items-center justify-center
                 rounded-lg
-                border border-brand-100
-                bg-brand-50
+                border border-brand-100 dark:border-brand-900/60
+                bg-brand-50 dark:bg-brand-950/50
               "
             >
 
-              <ClipboardList className="h-4 w-4 text-brand-600" />
+              <ClipboardList className="h-4 w-4 text-brand-600 dark:text-brand-400" />
 
             </div>
 
@@ -218,7 +219,7 @@ export default function History() {
                 className="
                   text-sm
                   font-semibold
-                  text-slate-900
+                  text-slate-900 dark:text-white
                 "
               >
                 Completed Analyses
@@ -229,7 +230,7 @@ export default function History() {
                 className="
                   mt-0.5
                   text-[11px]
-                  text-slate-500
+                  text-slate-500 dark:text-slate-400
                 "
               >
                 Previously processed PCAP captures
@@ -250,20 +251,20 @@ export default function History() {
                 gap-2
                 self-start
                 rounded-lg
-                border border-slate-100
-                bg-slate-50
+                border border-slate-100 dark:border-slate-800
+                bg-slate-50 dark:bg-slate-800/60
                 px-3 py-2
                 sm:self-auto
               "
             >
 
-              <Database className="h-3.5 w-3.5 text-slate-400" />
+              <Database className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
 
               <span
                 className="
                   text-xs
                   font-medium
-                  text-slate-500
+                  text-slate-500 dark:text-slate-400
                 "
               >
                 Total
@@ -274,7 +275,7 @@ export default function History() {
                   font-mono
                   text-sm
                   font-semibold
-                  text-slate-900
+                  text-slate-900 dark:text-white
                 "
               >
                 {pagination.total ?? 0}
@@ -306,8 +307,8 @@ export default function History() {
               flex flex-col
               justify-between
               gap-2
-              border-t border-slate-100
-              bg-slate-50/50
+              border-t border-slate-100 dark:border-slate-800
+              bg-slate-50/50 dark:bg-slate-850/50
               px-5 py-3
               text-xs
               sm:flex-row
@@ -316,17 +317,17 @@ export default function History() {
             "
           >
 
-            <span className="text-slate-500">
+            <span className="text-slate-500 dark:text-slate-400">
 
               Showing{' '}
 
-              <span className="font-semibold text-slate-700">
+              <span className="font-semibold text-slate-700 dark:text-slate-200">
                 {items.length}
               </span>
 
               {' '}of{' '}
 
-              <span className="font-semibold text-slate-700">
+              <span className="font-semibold text-slate-700 dark:text-slate-200">
                 {pagination.total}
               </span>
 
@@ -339,7 +340,7 @@ export default function History() {
               className="
                 font-mono
                 text-[11px]
-                text-slate-400
+                text-slate-400 dark:text-slate-500
               "
             >
               Page {pagination.page}

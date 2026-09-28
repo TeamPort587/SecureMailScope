@@ -12,6 +12,7 @@ import EvidencePanel from '../components/EvidencePanel';
 import Recommendations from '../components/Recommendations';
 import HistoryTable from '../components/HistoryTable';
 import CopilotChat from '../components/CopilotChat';
+import Navbar from '../components/Navbar';
 import { copilotApi } from '../api/copilotApi';
 
 import mockAnalysis from '../mock/mockAnalysis.json';
@@ -258,6 +259,17 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(screen.getByText(/supporting evidence/i)).toBeInTheDocument();
       expect(screen.getByText(/server port/i)).toBeInTheDocument();
     });
+
+    it('triggers onSelectSession callback when session button is clicked', () => {
+      const finding = mockAnalysis.findings[0];
+      const handleSelect = vi.fn();
+      render(<FindingCard finding={finding} onSelectSession={handleSelect} />);
+
+      const sessionCard = screen.getByRole('button', { name: new RegExp(finding.session_id, 'i') });
+      fireEvent.click(sessionCard);
+
+      expect(handleSelect).toHaveBeenCalledWith(finding.session_id);
+    });
   });
 
   // --- Recommendations ---
@@ -351,4 +363,33 @@ describe('Frontend Component Unit & Integration Tests', () => {
       expect(screen.getAllByText(/source: ollama/i).length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  // --- Navbar & ThemeToggle ---
+  describe('Navbar & ThemeToggle', () => {
+    it('renders ThemeToggle in Navbar right after Demo button and toggles dark mode', () => {
+      render(
+        <BrowserRouter>
+          <Navbar onLoadPreset={vi.fn()} onResetAnalysis={vi.fn()} onLogout={vi.fn()} user={{ email: 'analyst@test.local' }} />
+        </BrowserRouter>
+      );
+
+      // Verify Demo button is present
+      const demoBtn = screen.getByRole('button', { name: /demo/i });
+      expect(demoBtn).toBeInTheDocument();
+
+      // Verify Theme toggle button is present
+      const themeToggleBtn = screen.getByRole('button', { name: /switch to (dark|light) mode/i });
+      expect(themeToggleBtn).toBeInTheDocument();
+
+      // Click to toggle
+      const initialIsDark = document.documentElement.classList.contains('dark');
+      fireEvent.click(themeToggleBtn);
+      expect(document.documentElement.classList.contains('dark')).toBe(!initialIsDark);
+
+      // Toggle back
+      fireEvent.click(themeToggleBtn);
+      expect(document.documentElement.classList.contains('dark')).toBe(initialIsDark);
+    });
+  });
 });
+

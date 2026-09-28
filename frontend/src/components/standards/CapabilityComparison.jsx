@@ -95,9 +95,9 @@ export default function CapabilityComparison({ result }) {
 
               <div className="mt-3 pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between">
                 {isObs ? (
-                  <span className="inline-flex items-center gap-1 rounded bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                    <Check className="h-3 w-3 stroke-[3]" />
-                    <span>Observed in Session</span>
+                  <span className="inline-flex items-center gap-1 rounded bg-slate-900 dark:bg-sky-600 text-white px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider border border-transparent dark:border-sky-400 shadow-xs dark:shadow-[0_0_10px_rgba(14,165,233,0.4)]">
+                    <Check className="h-3 w-3 stroke-[3] text-sky-400 dark:text-white" />
+                    <span className="text-white">Observed in Session</span>
                   </span>
                 ) : (
                   <span className="text-[10px] text-slate-400">

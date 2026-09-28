@@ -59,19 +59,19 @@ function SectionHeader() {
           flex h-8 w-8 shrink-0
           items-center justify-center
           rounded-lg
-          border border-yellow-200
-          bg-yellow-50
+          border border-yellow-200 dark:border-yellow-900/50
+          bg-yellow-50 dark:bg-yellow-950/40
         "
       >
-        <Lightbulb className="h-4 w-4 text-yellow-600" />
+        <Lightbulb className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
       </div>
 
       <div>
-        <h3 className="text-[15px] font-semibold text-slate-900">
+        <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
           Remediation & Hardening
         </h3>
 
-        <p className="mt-0.5 text-xs leading-5 text-slate-500">
+        <p className="mt-0.5 text-xs leading-5 text-slate-500 dark:text-slate-400">
           Actions required to address the security weaknesses observed in this capture.
         </p>
       </div>
@@ -98,52 +98,52 @@ function RecommendationCard({
   const styles = {
     CRITICAL: {
       accent: 'bg-red-500',
-      tint: 'from-red-50/35 via-white to-white',
+      tint: 'from-red-50/35 via-white to-white dark:from-red-950/30 dark:via-slate-900 dark:to-slate-900',
 
-      actionBg: 'bg-red-50/55',
-      actionBorder: 'border-red-200',
-      actionIcon: 'border-red-200 bg-white text-red-600',
-      actionLabel: 'text-red-700',
+      actionBg: 'bg-red-50/55 dark:bg-red-950/30',
+      actionBorder: 'border-red-200 dark:border-red-900/50',
+      actionIcon: 'border-red-200 bg-white text-red-600 dark:border-red-900/60 dark:bg-slate-800 dark:text-red-400',
+      actionLabel: 'text-red-700 dark:text-red-400',
     },
 
     HIGH: {
       accent: 'bg-orange-500',
-      tint: 'from-orange-50/30 via-white to-white',
+      tint: 'from-orange-50/30 via-white to-white dark:from-orange-950/30 dark:via-slate-900 dark:to-slate-900',
 
-      actionBg: 'bg-orange-50/50',
-      actionBorder: 'border-orange-200',
-      actionIcon: 'border-orange-200 bg-white text-orange-600',
-      actionLabel: 'text-orange-700',
+      actionBg: 'bg-orange-50/50 dark:bg-orange-950/30',
+      actionBorder: 'border-orange-200 dark:border-orange-900/50',
+      actionIcon: 'border-orange-200 bg-white text-orange-600 dark:border-orange-900/60 dark:bg-slate-800 dark:text-orange-400',
+      actionLabel: 'text-orange-700 dark:text-orange-400',
     },
 
     MEDIUM: {
       accent: 'bg-amber-500',
-      tint: 'from-amber-50/25 via-white to-white',
+      tint: 'from-amber-50/25 via-white to-white dark:from-amber-950/30 dark:via-slate-900 dark:to-slate-900',
 
-      actionBg: 'bg-amber-50/45',
-      actionBorder: 'border-amber-200',
-      actionIcon: 'border-amber-200 bg-white text-amber-600',
-      actionLabel: 'text-amber-700',
+      actionBg: 'bg-amber-50/45 dark:bg-amber-950/30',
+      actionBorder: 'border-amber-200 dark:border-amber-900/50',
+      actionIcon: 'border-amber-200 bg-white text-amber-600 dark:border-amber-900/60 dark:bg-slate-800 dark:text-amber-400',
+      actionLabel: 'text-amber-700 dark:text-amber-400',
     },
 
     LOW: {
       accent: 'bg-yellow-500',
-      tint: 'from-yellow-50/25 via-white to-white',
+      tint: 'from-yellow-50/25 via-white to-white dark:from-yellow-950/30 dark:via-slate-900 dark:to-slate-900',
 
-      actionBg: 'bg-yellow-50/45',
-      actionBorder: 'border-yellow-200',
-      actionIcon: 'border-yellow-200 bg-white text-yellow-600',
-      actionLabel: 'text-yellow-700',
+      actionBg: 'bg-yellow-50/45 dark:bg-yellow-950/30',
+      actionBorder: 'border-yellow-200 dark:border-yellow-900/50',
+      actionIcon: 'border-yellow-200 bg-white text-yellow-600 dark:border-yellow-900/60 dark:bg-slate-800 dark:text-yellow-400',
+      actionLabel: 'text-yellow-700 dark:text-yellow-400',
     },
 
     INFO: {
       accent: 'bg-blue-500',
-      tint: 'from-blue-50/25 via-white to-white',
+      tint: 'from-blue-50/25 via-white to-white dark:from-blue-950/30 dark:via-slate-900 dark:to-slate-900',
 
-      actionBg: 'bg-blue-50/40',
-      actionBorder: 'border-blue-200',
-      actionIcon: 'border-blue-200 bg-white text-blue-600',
-      actionLabel: 'text-blue-700',
+      actionBg: 'bg-blue-50/40 dark:bg-blue-950/30',
+      actionBorder: 'border-blue-200 dark:border-blue-900/50',
+      actionIcon: 'border-blue-200 bg-white text-blue-600 dark:border-blue-900/60 dark:bg-slate-800 dark:text-blue-400',
+      actionLabel: 'text-blue-700 dark:text-blue-400',
     },
   };
 
@@ -154,11 +154,11 @@ function RecommendationCard({
       className="
         group relative overflow-hidden
         rounded-xl
-        border border-slate-200
-        bg-white
-        shadow-[0_2px_10px_rgba(15,23,42,0.025)]
+        border border-slate-200 dark:border-slate-800
+        bg-white dark:bg-slate-900
+        shadow-[0_2px_10px_rgba(15,23,42,0.025)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.3)]
         transition-all duration-200
-        hover:border-slate-300
+        hover:border-slate-300 dark:hover:border-slate-700
         hover:shadow-[0_6px_20px_rgba(15,23,42,0.05)]
       "
     >
@@ -185,13 +185,13 @@ function RecommendationCard({
             <span
               className="
                 rounded-md
-                border border-slate-200
-                bg-white/75
+                border border-slate-200 dark:border-slate-700
+                bg-white/75 dark:bg-slate-800/80
                 px-2 py-1
                 font-mono
                 text-[10px]
                 font-medium
-                text-slate-500
+                text-slate-500 dark:text-slate-400
               "
             >
               {recommendation.recommendation_id}
@@ -206,7 +206,7 @@ function RecommendationCard({
             text-[16px]
             font-semibold
             leading-6
-            text-slate-900
+            text-slate-900 dark:text-white
           "
         >
           {recommendation?.title ||
@@ -221,7 +221,7 @@ function RecommendationCard({
               max-w-3xl
               text-sm
               leading-6
-              text-slate-600
+              text-slate-600 dark:text-slate-300
             "
           >
             {recommendation.description}
@@ -245,25 +245,25 @@ function RecommendationCard({
           if (!guidance) return null;
 
           return (
-            <div className="mt-3 flex items-center gap-2 rounded-lg border border-sky-200/80 bg-sky-50/60 px-3 py-1.5 text-xs text-sky-900">
-              <BookOpen className="h-3.5 w-3.5 text-sky-600 shrink-0" />
+            <div className="mt-3 flex items-center gap-2 rounded-lg border border-sky-200/80 dark:border-sky-900/50 bg-sky-50/60 dark:bg-sky-950/40 px-3 py-1.5 text-xs text-sky-900 dark:text-sky-200">
+              <BookOpen className="h-3.5 w-3.5 text-sky-600 dark:text-sky-400 shrink-0" />
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="font-mono font-bold text-sky-800">{guidance.doc}:</span>
-                <span className="text-sky-700">{guidance.note}</span>
+                <span className="font-mono font-bold text-sky-800 dark:text-sky-300">{guidance.doc}:</span>
+                <span className="text-sky-700 dark:text-sky-300">{guidance.note}</span>
               </div>
             </div>
           );
         })()}
 
         {/* Affected / Target Sessions */}
-        <div className="mt-4 pt-3.5 border-t border-slate-200/60">
+        <div className="mt-4 pt-3.5 border-t border-slate-200/60 dark:border-slate-800">
           <div className="flex items-center justify-between gap-2 mb-2">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-              <Network className="h-3.5 w-3.5 text-slate-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
+              <Network className="h-3.5 w-3.5 text-slate-400 dark:text-slate-500" />
               Impacted Sessions
             </span>
             {affectedSessions.length > 0 && (
-              <span className="text-[11px] font-medium text-slate-400">
+              <span className="text-[11px] font-medium text-slate-400 dark:text-slate-500">
                 {affectedSessions.length === 1
                   ? '1 session affected'
                   : `${affectedSessions.length} sessions affected`}
@@ -293,15 +293,16 @@ function RecommendationCard({
                     className="
                       group/chip inline-flex items-center gap-1.5
                       rounded-lg
-                      border border-slate-200/90
-                      bg-white
+                      border border-slate-200/90 dark:border-slate-700
+                      bg-white dark:bg-slate-800
                       px-2.5 py-1
                       font-mono
                       text-[11px]
                       font-medium
-                      text-slate-700
+                      text-slate-700 dark:text-slate-300
                       shadow-xs
                       hover:border-brand-400 hover:bg-brand-50/70 hover:text-brand-700
+                      dark:hover:border-brand-500 dark:hover:bg-brand-950/60 dark:hover:text-brand-300
                       transition-all
                     "
                     title={`Click to inspect session ${sessionId}`}
@@ -428,8 +429,8 @@ function RequiredAction({
             <span
               className="
                 rounded
-                border border-slate-200/80
-                bg-white/70
+                border border-slate-200/80 dark:border-slate-700
+                bg-white/70 dark:bg-slate-800/70
                 px-1.5 py-0.5
                 text-[8px]
                 font-bold
@@ -448,7 +449,7 @@ function RequiredAction({
               text-[13px]
               font-semibold
               leading-5
-              text-slate-800
+              text-slate-800 dark:text-slate-200
             "
           >
             {recommendation?.action ||

@@ -13,8 +13,8 @@ export default function Footer() {
   return (
 
     <footer className="
-      border-t border-slate-100
-      bg-white px-5 py-4 sm:px-7
+      border-t border-slate-100 dark:border-slate-800
+      bg-white dark:bg-slate-900 px-5 py-4 sm:px-7
     ">
 
       <div className="
@@ -33,11 +33,11 @@ export default function Footer() {
 
           <div className="flex flex-col justify-center leading-none translate-y-1">
             <p className="text-[13px] font-bold tracking-tight leading-tight">
-              <span className="text-slate-700">Secure</span>
-              <span className="text-brand-600">Mail</span>
-              <span className="text-slate-700">Scope</span>
+              <span className="text-slate-700 dark:text-slate-200">Secure</span>
+              <span className="text-brand-600 dark:text-brand-400">Mail</span>
+              <span className="text-slate-700 dark:text-slate-200">Scope</span>
             </p>
-            <p className="text-[9px] text-slate-400 mt-[3px]">
+            <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-[3px]">
               Email traffic security analysis
             </p>
           </div>

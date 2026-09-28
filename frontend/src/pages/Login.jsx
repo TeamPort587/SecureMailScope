@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import {
   ShieldCheck,
   Mail,
@@ -17,6 +18,7 @@ import {
 
 export default function Login() {
   const { login, register } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const from = '/';
@@ -55,8 +57,13 @@ export default function Login() {
   };
 
   return (
-            <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
-      style={{ background: 'linear-gradient(160deg, #dbeafe 0%, #eff6ff 25%, #f8faff 50%, #eef2ff 75%, #dbeafe 100%)' }}
+    <div
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden"
+      style={{
+        background: isDark
+          ? 'linear-gradient(160deg, #0b1120 0%, #0f172a 40%, #1e293b 80%, #0b1120 100%)'
+          : 'linear-gradient(160deg, #dbeafe 0%, #eff6ff 25%, #f8faff 50%, #eef2ff 75%, #dbeafe 100%)',
+      }}
     >
 
       {/* ── BACKGROUND ── */}
@@ -110,7 +117,7 @@ export default function Login() {
 
         {/* brand */}
         <div className="mb-7 flex flex-col items-center gap-2.5">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 bg-white shadow-md shadow-blue-100/50">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl border border-blue-100 dark:border-blue-900/60 bg-white dark:bg-slate-800 shadow-md shadow-blue-100/50 dark:shadow-black/50">
             <img
               src="/SMS.png"
               alt="SecureMailScope"
@@ -118,20 +125,20 @@ export default function Login() {
             />
           </div>
           <div className="text-center">
-            <p className="text-[15px] font-bold tracking-tight text-slate-900">
-              Secure<span className="text-blue-600">Mail</span>Scope
+            <p className="text-[15px] font-bold tracking-tight text-slate-900 dark:text-white">
+              Secure<span className="text-blue-600 dark:text-blue-400">Mail</span>Scope
             </p>
-            <p className="mt-0.5 text-[11px] text-slate-400">
+            <p className="mt-0.5 text-[11px] text-slate-400 dark:text-slate-500">
               Email Security Analysis Platform
             </p>
           </div>
         </div>
 
         {/* main card */}
-        <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xl shadow-slate-200/60">
+        <div className="overflow-hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl dark:shadow-2xl shadow-slate-200/60 dark:shadow-black/60">
 
           {/* mode tabs */}
-          <div className="relative flex border-b border-slate-100">
+          <div className="relative flex border-b border-slate-100 dark:border-slate-800">
             {['login', 'register'].map((m) => (
               <button
                 key={m}
@@ -139,8 +146,8 @@ export default function Login() {
                 onClick={() => { setMode(m); setError(''); setSuccess(''); }}
                 className={`flex-1 py-3.5 text-xs font-semibold transition-all ${
                   mode === m
-                    ? 'text-blue-600'
-                    : 'text-slate-400 hover:text-slate-600'
+                    ? 'text-blue-600 dark:text-blue-400'
+                    : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'
                 }`}
               >
                 {m === 'login' ? 'Sign in' : 'Create account'}
@@ -148,7 +155,7 @@ export default function Login() {
             ))}
             {/* sliding underline */}
             <div
-              className="absolute bottom-0 h-[2px] w-1/2 rounded-full bg-blue-600 transition-all duration-300"
+              className="absolute bottom-0 h-[2px] w-1/2 rounded-full bg-blue-600 dark:bg-blue-400 transition-all duration-300"
               style={{ left: mode === 'login' ? '0%' : '50%' }}
             />
           </div>
@@ -157,10 +164,10 @@ export default function Login() {
 
             {/* heading */}
             <div className="mb-6">
-              <h2 className="text-[18px] font-bold tracking-tight text-slate-900">
+              <h2 className="text-[18px] font-bold tracking-tight text-slate-900 dark:text-white">
                 {mode === 'login' ? 'Welcome back' : 'Get started'}
               </h2>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
+              <p className="mt-1 text-xs leading-5 text-slate-500 dark:text-slate-400">
                 {mode === 'login'
                   ? 'Sign in to inspect email captures and security posture.'
                   : 'Create an account to begin analyzing PCAP captures.'}
@@ -169,17 +176,17 @@ export default function Login() {
 
             {/* error */}
             {error && (
-              <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-100 bg-red-50 px-3.5 py-3">
+              <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-red-100 dark:border-red-900/60 bg-red-50 dark:bg-red-950/40 px-3.5 py-3">
                 <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
-                <p className="text-xs font-medium text-red-600">{error}</p>
+                <p className="text-xs font-medium text-red-600 dark:text-red-400">{error}</p>
               </div>
             )}
 
             {/* success */}
             {success && (
-              <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-yellow-100 bg-yellow-50 px-3.5 py-3">
-                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-yellow-600" />
-                <p className="text-xs font-medium text-yellow-700">{success}</p>
+              <div className="mb-5 flex items-start gap-2.5 rounded-xl border border-yellow-100 dark:border-yellow-900/60 bg-yellow-50 dark:bg-yellow-950/40 px-3.5 py-3">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-yellow-600 dark:text-yellow-400" />
+                <p className="text-xs font-medium text-yellow-700 dark:text-yellow-300">{success}</p>
               </div>
             )}
 
@@ -188,7 +195,7 @@ export default function Login() {
 
               {/* email */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                <label className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                   Email address
                 </label>
                 <div className="relative">
@@ -201,12 +208,12 @@ export default function Login() {
                     placeholder="you@example.com"
                     autoComplete="email"
                     className="
-                      w-full rounded-xl border border-slate-200
-                      bg-slate-50 py-2.5 pl-10 pr-4
-                      text-sm text-slate-900 placeholder-slate-400
+                      w-full rounded-xl border border-slate-200 dark:border-slate-700
+                      bg-slate-50 dark:bg-slate-800/80 py-2.5 pl-10 pr-4
+                      text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500
                       outline-none transition-all
-                      focus:border-blue-400 focus:bg-white focus:ring-3 focus:ring-blue-100
-                      hover:border-slate-300
+                      focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 focus:ring-3 focus:ring-blue-100 dark:focus:ring-blue-900/30
+                      hover:border-slate-300 dark:hover:border-slate-600
                     "
                   />
                 </div>
@@ -214,7 +221,7 @@ export default function Login() {
 
               {/* password */}
               <div>
-                <label className="mb-1.5 block text-xs font-semibold text-slate-600">
+                <label className="mb-1.5 block text-xs font-semibold text-slate-600 dark:text-slate-300">
                   Password
                 </label>
                 <div className="relative">
@@ -227,18 +234,18 @@ export default function Login() {
                     placeholder="••••••••"
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                     className="
-                      w-full rounded-xl border border-slate-200
-                      bg-slate-50 py-2.5 pl-10 pr-10
-                      text-sm text-slate-900 placeholder-slate-400
+                      w-full rounded-xl border border-slate-200 dark:border-slate-700
+                      bg-slate-50 dark:bg-slate-800/80 py-2.5 pl-10 pr-10
+                      text-sm text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500
                       outline-none transition-all
-                      focus:border-blue-400 focus:bg-white focus:ring-3 focus:ring-blue-100
-                      hover:border-slate-300
+                      focus:border-blue-400 focus:bg-white dark:focus:bg-slate-800 focus:ring-3 focus:ring-blue-100 dark:focus:ring-blue-900/30
+                      hover:border-slate-300 dark:hover:border-slate-600
                     "
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-200"
                   >
                     {showPassword
                       ? <EyeOff className="h-3.5 w-3.5" />

@@ -152,12 +152,12 @@ export default function SessionDetails({
         </div>
 
         <div>
-          <h4 className="text-sm font-semibold text-slate-800">
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-white">
             {title}
           </h4>
 
           {description && (
-            <p className="mt-0.5 text-[11px] text-slate-500">
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
               {description}
             </p>
           )}
@@ -176,21 +176,21 @@ export default function SessionDetails({
       <div
         className="
           rounded-xl
-          border border-slate-200/90
-          bg-white
+          border border-slate-200/90 dark:border-slate-800
+          bg-white dark:bg-slate-850
           px-4 py-3.5
           shadow-[0_1px_2px_rgba(15,23,42,0.025)]
           transition-colors
-          hover:border-slate-300
+          hover:border-slate-300 dark:hover:border-slate-700
         "
       >
         <div className="flex items-center justify-between gap-4">
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-700">
+            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
               {title}
             </p>
 
-            <p className="mt-1 text-[11px] leading-5 text-slate-500">
+            <p className="mt-1 text-[11px] leading-5 text-slate-500 dark:text-slate-400">
               {description}
             </p>
           </div>
@@ -211,7 +211,7 @@ export default function SessionDetails({
       className="
         fixed inset-0 z-50
         flex items-center justify-center
-        bg-slate-900/25
+        bg-slate-950/70
         p-4
         backdrop-blur-sm
         animate-in fade-in duration-150
@@ -224,8 +224,8 @@ export default function SessionDetails({
         className="
           relative flex w-full max-w-4xl flex-col
           overflow-hidden rounded-2xl
-          border border-slate-200
-          bg-[#f8fafc]
+          border border-slate-200 dark:border-slate-800
+          bg-[#f8fafc] dark:bg-slate-900
           shadow-[0_24px_80px_rgba(15,23,42,0.18)]
           max-h-[90vh]
         "
@@ -235,11 +235,14 @@ export default function SessionDetails({
         <div
           className="
             flex items-center justify-between
-            border-b border-slate-200
+            border-b border-slate-200 dark:border-slate-800
             bg-gradient-to-r
             from-brand-500/[0.035]
             via-white
             to-white
+            dark:from-slate-900
+            dark:via-slate-900
+            dark:to-slate-950
             px-6 py-5
           "
         >
@@ -252,7 +255,7 @@ export default function SessionDetails({
                 bg-brand-500/[0.07]
               "
             >
-              <Shield className="h-5 w-5 text-brand-600" />
+              <Shield className="h-5 w-5 text-brand-600 dark:text-brand-400" />
             </div>
 
             <div>
@@ -261,7 +264,7 @@ export default function SessionDetails({
                   id="session-modal-title"
                   className="
                     font-mono text-base
-                    font-bold text-slate-800
+                    font-bold text-slate-800 dark:text-white
                   "
                 >
                   {session.session_id}
@@ -278,20 +281,20 @@ export default function SessionDetails({
     font-semibold
     uppercase
     tracking-wide
-    text-brand-600
+    text-brand-600 dark:text-brand-300
   "
                 >
                   {enc.label}
                 </span>
 
                 {session.tcp_stream !== null && session.tcp_stream !== undefined && (
-                  <span className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-100 px-2.5 py-1 text-[10px] font-mono font-semibold text-slate-600">
+                  <span className="inline-flex items-center rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 text-[10px] font-mono font-semibold text-slate-600 dark:text-slate-300">
                     Stream #{session.tcp_stream}
                   </span>
                 )}
               </div>
 
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 {session.protocol}
                 {' · '}
                 {session.service || 'email-service'}
@@ -307,11 +310,11 @@ export default function SessionDetails({
               flex h-9 w-9 items-center justify-center
               rounded-xl
               border border-transparent
-              text-slate-400
+              text-slate-400 dark:text-slate-400
               transition-all
-              hover:border-slate-200
-              hover:bg-slate-100
-              hover:text-slate-700
+              hover:border-slate-200 dark:hover:border-slate-700
+              hover:bg-slate-100 dark:hover:bg-slate-800
+              hover:text-slate-700 dark:hover:text-white
             "
             aria-label="Close session details"
           >
@@ -353,11 +356,11 @@ export default function SessionDetails({
                   {sessionRiskLevel}
                 </span>
 
-                <span className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs font-semibold text-slate-700">
+                <span className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 font-mono text-xs font-semibold text-slate-700 dark:text-slate-200">
                   Score: {sessionRiskScore}/100
                 </span>
 
-                <span className="rounded-lg border border-slate-200 bg-white px-2.5 py-1 font-mono text-xs text-slate-500">
+                <span className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1 font-mono text-xs text-slate-500 dark:text-slate-400">
                   Conf: {Math.round(sessionConfidence * 100)}%
                 </span>
               </div>
@@ -365,8 +368,8 @@ export default function SessionDetails({
 
             {/* PARTIAL CAPTURE WARNING */}
             {isPartial && (
-              <div className="flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50/70 p-3.5 text-amber-800">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+              <div className="flex items-start gap-3 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/70 dark:bg-amber-950/40 p-3.5 text-amber-800 dark:text-amber-300">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <div className="text-xs leading-5">
                   <span className="font-semibold">Completeness: PARTIAL</span> — The capture does not contain the complete session. Some security properties cannot be established from the available evidence. Missing evidence is not converted into a negative security verdict.
                 </div>
@@ -383,20 +386,20 @@ export default function SessionDetails({
               color="sky"
             />
 
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-4 shadow-sm">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       Wireshark Display Filter:
                     </span>
-                    <span className="font-mono text-xs font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded border border-brand-200">
+                    <span className="font-mono text-xs font-bold text-brand-700 dark:text-brand-300 bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 rounded border border-brand-200 dark:border-brand-800">
                       {wiresharkFilter || 'N/A'}
                     </span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
                     TCP Stream Index:{' '}
-                    <span className="font-mono font-semibold text-slate-700">
+                    <span className="font-mono font-semibold text-slate-700 dark:text-slate-200">
                       {session.tcp_stream !== null && session.tcp_stream !== undefined ? `#${session.tcp_stream}` : 'None'}
                     </span>
                     {session.packet_count ? ` · ${session.packet_count} packets captured` : ''}
@@ -408,17 +411,17 @@ export default function SessionDetails({
                     <button
                       type="button"
                       onClick={handleCopyFilter}
-                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
                       title="Copy Wireshark filter to clipboard"
                     >
                       {copiedFilter ? (
                         <>
-                          <Check className="h-3.5 w-3.5 text-emerald-600" />
-                          <span className="text-emerald-700">Copied!</span>
+                          <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-emerald-700 dark:text-emerald-300">Copied!</span>
                         </>
                       ) : (
                         <>
-                          <Copy className="h-3.5 w-3.5 text-slate-500" />
+                          <Copy className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
                           <span>Copy Filter</span>
                         </>
                       )}
@@ -441,7 +444,7 @@ export default function SessionDetails({
               </div>
 
               {downloadError && (
-                <p className="mt-2 text-xs text-red-600">{downloadError}</p>
+                <p className="mt-2 text-xs text-red-600 dark:text-red-400">{downloadError}</p>
               )}
             </div>
           </section>
@@ -466,10 +469,12 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-slate-200
+                  border border-slate-200 dark:border-slate-800
                   bg-gradient-to-br
                   from-brand-500/[0.045]
                   to-white
+                  dark:from-slate-850
+                  dark:to-slate-900
                   p-4
                 "
               >
@@ -477,7 +482,7 @@ export default function SessionDetails({
                   className="
                     text-[10px]
                     font-semibold uppercase
-                    tracking-wider text-slate-400
+                    tracking-wider text-slate-400 dark:text-slate-500
                   "
                 >
                   Client · Source
@@ -487,11 +492,11 @@ export default function SessionDetails({
                   className="
                     mt-2
                     font-mono text-sm
-                    font-semibold text-slate-700
+                    font-semibold text-slate-700 dark:text-slate-200
                   "
                 >
                   {session.client_ip || '—'}
-                  <span className="mx-1 text-slate-400">
+                  <span className="mx-1 text-slate-400 dark:text-slate-500">
                     :
                   </span>
                   {session.client_port || '—'}
@@ -503,10 +508,12 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-slate-200
+                  border border-slate-200 dark:border-slate-800
                   bg-gradient-to-br
                   from-sky-500/[0.04]
                   to-white
+                  dark:from-slate-850
+                  dark:to-slate-900
                   p-4
                 "
               >
@@ -514,7 +521,7 @@ export default function SessionDetails({
                   className="
                     text-[10px]
                     font-semibold uppercase
-                    tracking-wider text-slate-400
+                    tracking-wider text-slate-400 dark:text-slate-500
                   "
                 >
                   Server · Destination
@@ -524,11 +531,11 @@ export default function SessionDetails({
                   className="
                     mt-2
                     font-mono text-sm
-                    font-semibold text-slate-700
+                    font-semibold text-slate-700 dark:text-slate-200
                   "
                 >
                   {session.server_ip || '—'}
-                  <span className="mx-1 text-slate-400">
+                  <span className="mx-1 text-slate-400 dark:text-slate-500">
                     :
                   </span>
                   {session.server_port || '—'}
@@ -588,19 +595,19 @@ export default function SessionDetails({
                 className="
                   sm:col-span-2
                   rounded-xl
-                  border border-slate-200
-                  bg-white
+                  border border-slate-200 dark:border-slate-800
+                  bg-white dark:bg-slate-850
                   px-4 py-3.5
                   shadow-[0_1px_2px_rgba(15,23,42,0.025)]
                 "
               >
                 <div className="flex items-center justify-between gap-4">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                       Capture Completeness
                     </p>
 
-                    <p className="mt-1 text-[11px] text-slate-500">
+                    <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                       TCP handshake and stream teardown
                       availability
                     </p>
@@ -609,11 +616,11 @@ export default function SessionDetails({
                   <span
                     className="
                       shrink-0 rounded-lg
-                      border border-slate-200
-                      bg-slate-50
+                      border border-slate-200 dark:border-slate-700
+                      bg-slate-50 dark:bg-slate-800
                       px-2.5 py-1
                       font-mono text-[11px]
-                      font-semibold text-slate-600
+                      font-semibold text-slate-600 dark:text-slate-300
                     "
                   >
                     {session.security
@@ -638,11 +645,11 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-slate-200
+                  border border-slate-200 dark:border-slate-800
                   bg-gradient-to-br
-                  from-sky-500/[0.035]
-                  via-white
-                  to-white
+                  from-sky-500/[0.035] dark:from-sky-950/20
+                  via-white dark:via-slate-850
+                  to-white dark:to-slate-850
                   p-4
                 "
               >
@@ -657,7 +664,7 @@ export default function SessionDetails({
                       TLS Version
                     </p>
 
-                    <p className="mt-1.5 font-mono text-sm font-semibold text-slate-700">
+                    <p className="mt-1.5 font-mono text-sm font-semibold text-slate-700 dark:text-slate-200">
                       {session.tls.version || 'UNKNOWN'}
                     </p>
                   </div>
@@ -678,8 +685,8 @@ export default function SessionDetails({
                         className={`
                           font-mono text-sm font-semibold
                           ${session.tls.pfs === 'YES'
-                            ? 'text-yellow-600'
-                            : 'text-slate-600'
+                            ? 'text-yellow-600 dark:text-yellow-400'
+                            : 'text-slate-600 dark:text-slate-300'
                           }
                         `}
                       >
@@ -697,7 +704,7 @@ export default function SessionDetails({
                       className="
                         mt-1.5
                         break-all font-mono
-                        text-xs leading-6 text-slate-600
+                        text-xs leading-6 text-slate-600 dark:text-slate-300
                       "
                     >
                       {session.tls.cipher_suite ||
@@ -710,10 +717,10 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-dashed border-slate-200
-                  bg-white/60
+                  border border-dashed border-slate-200 dark:border-slate-800
+                  bg-white/60 dark:bg-slate-900/60
                   px-4 py-5
-                  text-sm text-slate-500
+                  text-sm text-slate-500 dark:text-slate-400
                 "
               >
                 No TLS cryptographic parameters were
@@ -738,10 +745,10 @@ export default function SessionDetails({
                 className="
                   flex items-start gap-3
                   rounded-xl
-                  border border-violet-200
+                  border border-violet-200 dark:border-violet-800/60
                   bg-gradient-to-r
-                  from-violet-50
-                  to-white
+                  from-violet-50 dark:from-violet-950/30
+                  to-white dark:to-slate-850
                   p-4
                 "
               >
@@ -750,19 +757,19 @@ export default function SessionDetails({
                     flex h-9 w-9 shrink-0
                     items-center justify-center
                     rounded-lg
-                    border border-violet-200
-                    bg-white
+                    border border-violet-200 dark:border-violet-700/60
+                    bg-white dark:bg-slate-800
                   "
                 >
-                  <EyeOff className="h-4 w-4 text-violet-600" />
+                  <EyeOff className="h-4 w-4 text-violet-600 dark:text-violet-400" />
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-violet-800">
+                  <p className="text-sm font-semibold text-violet-800 dark:text-violet-300">
                     Certificate Not Observable
                   </p>
 
-                  <p className="mt-1 text-[11px] leading-5 text-violet-600/80">
+                  <p className="mt-1 text-[11px] leading-5 text-violet-600/80 dark:text-violet-400/80">
                     The certificate payload could not be
                     inspected because the TLS handshake was
                     encrypted or the capture began after
@@ -774,8 +781,8 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-slate-200
-                  bg-white
+                  border border-slate-200 dark:border-slate-800
+                  bg-white dark:bg-slate-850
                   p-4
                 "
               >
@@ -785,7 +792,7 @@ export default function SessionDetails({
                       Subject
                     </p>
 
-                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-700">
+                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-700 dark:text-slate-200">
                       {session.certificate.subject}
                     </p>
                   </div>
@@ -795,7 +802,7 @@ export default function SessionDetails({
                       Issuer
                     </p>
 
-                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-600">
+                    <p className="mt-1.5 break-all font-mono text-xs leading-5 text-slate-600 dark:text-slate-300">
                       {session.certificate.issuer ||
                         'UNKNOWN'}
                     </p>
@@ -804,7 +811,7 @@ export default function SessionDetails({
                   <div
                     className="
                       grid grid-cols-2 gap-4
-                      border-t border-slate-100
+                      border-t border-slate-100 dark:border-slate-800
                       pt-4
                       sm:grid-cols-4
                     "
@@ -814,7 +821,7 @@ export default function SessionDetails({
                         Valid From
                       </p>
 
-                      <p className="mt-1 text-xs font-medium text-slate-600">
+                      <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                         {formatDate(
                           session.certificate.valid_from
                         )}
@@ -826,7 +833,7 @@ export default function SessionDetails({
                         Valid Until
                       </p>
 
-                      <p className="mt-1 text-xs font-medium text-slate-600">
+                      <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                         {formatDate(
                           session.certificate.valid_until
                         )}
@@ -838,7 +845,7 @@ export default function SessionDetails({
                         Key Algorithm
                       </p>
 
-                      <p className="mt-1 text-xs font-medium text-slate-600">
+                      <p className="mt-1 text-xs font-medium text-slate-600 dark:text-slate-300">
                         {session.certificate.key_type || '—'}
 
                         {session.certificate.key_size
@@ -856,8 +863,8 @@ export default function SessionDetails({
                         className={`
                           mt-1 text-xs font-semibold
                           ${session.certificate.self_signed
-                            ? 'text-amber-600'
-                            : 'text-slate-600'
+                            ? 'text-amber-600 dark:text-amber-400'
+                            : 'text-slate-600 dark:text-slate-300'
                           }
                         `}
                       >
@@ -875,10 +882,10 @@ export default function SessionDetails({
               <div
                 className="
                   rounded-xl
-                  border border-dashed border-slate-200
-                  bg-white/60
+                  border border-dashed border-slate-200 dark:border-slate-800
+                  bg-white/60 dark:bg-slate-900/60
                   px-4 py-5
-                  text-sm text-slate-500
+                  text-sm text-slate-500 dark:text-slate-400
                 "
               >
                 No certificate payload was captured for this
@@ -907,42 +914,42 @@ export default function SessionDetails({
                 {sessionFindings.map((finding) => (
                   <div
                     key={finding.finding_id || finding.id}
-                    className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-2"
+                    className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-4 shadow-sm space-y-2"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
                         <span
                           className={`inline-flex rounded-md border px-2 py-0.5 font-mono text-[10px] font-bold ${
                             finding.severity === 'CRITICAL'
-                              ? 'border-red-200 bg-red-50 text-red-700'
+                              ? 'border-red-200 dark:border-red-800/70 bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300'
                               : finding.severity === 'HIGH'
-                              ? 'border-orange-200 bg-orange-50 text-orange-700'
+                              ? 'border-orange-200 dark:border-orange-800/70 bg-orange-50 dark:bg-orange-950/40 text-orange-700 dark:text-orange-300'
                               : finding.severity === 'MEDIUM'
-                              ? 'border-amber-200 bg-amber-50 text-amber-700'
-                              : 'border-blue-200 bg-blue-50 text-blue-700'
+                              ? 'border-amber-200 dark:border-amber-800/70 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
+                              : 'border-blue-200 dark:border-blue-800/70 bg-blue-50 dark:bg-blue-950/40 text-blue-700 dark:text-blue-300'
                           }`}
                         >
                           {finding.severity}
                         </span>
-                        <h5 className="text-xs font-bold text-slate-800">
+                        <h5 className="text-xs font-bold text-slate-800 dark:text-white">
                           {finding.title}
                         </h5>
                       </div>
-                      <span className="font-mono text-[10px] text-slate-400">
+                      <span className="font-mono text-[10px] text-slate-400 dark:text-slate-500">
                         Confidence: {finding.confidence || 'OBSERVED'}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-600 leading-relaxed">
+                    <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
                       {finding.description}
                     </p>
 
                     {finding.evidence && (
-                      <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 p-2.5">
-                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1">
+                      <div className="mt-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-2.5">
+                        <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                           Packet Evidence Trace:
                         </p>
-                        <pre className="font-mono text-[11px] text-slate-700 whitespace-pre-wrap overflow-x-auto">
+                        <pre className="font-mono text-[11px] text-slate-700 dark:text-slate-300 whitespace-pre-wrap overflow-x-auto">
                           {JSON.stringify(finding.evidence, null, 2)}
                         </pre>
                       </div>
@@ -951,7 +958,7 @@ export default function SessionDetails({
                 ))}
               </div>
             ) : (
-              <div className="rounded-xl border border-slate-200 bg-white p-4 text-center text-xs text-slate-500">
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 p-4 text-center text-xs text-slate-500 dark:text-slate-400">
                 No security findings or policy violations detected for this session.
               </div>
             )}
@@ -963,8 +970,8 @@ export default function SessionDetails({
         <div
           className="
             flex justify-end
-            border-t border-slate-200
-            bg-white
+            border-t border-slate-200 dark:border-slate-800
+            bg-white dark:bg-slate-900
             px-6 py-4
           "
         >
@@ -972,14 +979,14 @@ export default function SessionDetails({
             onClick={onClose}
             className="
               rounded-xl
-              border border-slate-200
-              bg-white
+              border border-slate-200 dark:border-slate-700
+              bg-white dark:bg-slate-800
               px-4 py-2
-              text-xs font-semibold text-slate-600
+              text-xs font-semibold text-slate-600 dark:text-slate-200
               transition-all
-              hover:border-slate-300
-              hover:bg-slate-50
-              hover:text-slate-800
+              hover:border-slate-300 dark:hover:border-slate-600
+              hover:bg-slate-50 dark:hover:bg-slate-700
+              hover:text-slate-800 dark:hover:text-white
             "
           >
             Close Details

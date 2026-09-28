@@ -24,6 +24,7 @@ const FILTERS = [
 
 export default function FindingsList({
   findings = [],
+  onSelectSession = null,
 }) {
   const [severityFilter, setSeverityFilter] =
     useState('ALL');
@@ -97,27 +98,27 @@ export default function FindingsList({
 
         <div className="flex items-center gap-3">
 
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-200 bg-amber-50">
-            <Bug className="h-4 w-4 text-amber-600" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/40">
+            <Bug className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           </div>
 
           <div>
 
             <div className="flex items-center gap-2">
 
-              <h2 className="text-sm font-semibold text-slate-900 sm:text-[15px]">
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-white sm:text-[15px]">
                 Security findings
               </h2>
 
               {findings.length > 0 && (
-                <span className="rounded-md bg-slate-100 px-2 py-0.5 font-mono text-[10px] font-semibold text-slate-600">
+                <span className="rounded-md bg-slate-100 dark:bg-slate-800 px-2 py-0.5 font-mono text-[10px] font-semibold text-slate-600 dark:text-slate-300">
                   {findings.length}
                 </span>
               )}
 
             </div>
 
-            <p className="mt-0.5 text-xs text-slate-500">
+            <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
               Detected security weaknesses requiring attention.
             </p>
 
@@ -127,7 +128,7 @@ export default function FindingsList({
 
 
         {findings.length === 0 && (
-          <span className="inline-flex items-center gap-2 rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-700">
+          <span className="inline-flex items-center gap-2 rounded-lg border border-yellow-200 dark:border-yellow-900/60 bg-yellow-50 dark:bg-yellow-950/40 px-3 py-2 text-xs font-medium text-yellow-700 dark:text-yellow-300">
 
             <ShieldCheck className="h-3.5 w-3.5" />
 
@@ -185,7 +186,7 @@ export default function FindingsList({
                       ? getFilterClasses(
                           filter.key
                         )
-                      : 'border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                      : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200'
                   }
                 `}
               >
@@ -204,8 +205,8 @@ export default function FindingsList({
                     text-[10px]
                     ${
                       active
-                        ? 'bg-white/70 text-current'
-                        : 'text-slate-400'
+                        ? 'bg-white/70 dark:bg-white/20 text-current'
+                        : 'text-slate-400 dark:text-slate-500'
                     }
                   `}
                 >
@@ -223,7 +224,7 @@ export default function FindingsList({
               onClick={() =>
                 setSeverityFilter('ALL')
               }
-              className="ml-1 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-700"
+              className="ml-1 inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-[11px] font-medium text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-700 dark:hover:text-slate-200"
             >
               <X className="h-3 w-3" />
               Clear
@@ -240,9 +241,9 @@ export default function FindingsList({
 
       {hasFilter &&
         filteredFindings.length > 0 && (
-          <div className="mb-3 text-[11px] text-slate-500">
+          <div className="mb-3 text-[11px] text-slate-500 dark:text-slate-400">
             Showing{' '}
-            <span className="font-mono font-semibold text-slate-700">
+            <span className="font-mono font-semibold text-slate-700 dark:text-slate-200">
               {filteredFindings.length}
             </span>{' '}
             {severityFilter.toLowerCase()}{' '}
@@ -270,6 +271,7 @@ export default function FindingsList({
                   `${finding.session_id}-${finding.title}`
                 }
                 finding={finding}
+                onSelectSession={onSelectSession}
               />
             )
           )}
@@ -286,17 +288,17 @@ export default function FindingsList({
 
       ) : (
 
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-14 text-center">
+        <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-14 text-center">
 
-          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50">
-            <SlidersHorizontal className="h-4 w-4 text-slate-500" />
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+            <SlidersHorizontal className="h-4 w-4 text-slate-500 dark:text-slate-400" />
           </div>
 
-          <h3 className="mt-4 text-sm font-semibold text-slate-900">
+          <h3 className="mt-4 text-sm font-semibold text-slate-900 dark:text-white">
             No {severityFilter.toLowerCase()} findings
           </h3>
 
-          <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-slate-500">
+          <p className="mx-auto mt-1 max-w-md text-xs leading-5 text-slate-500 dark:text-slate-400">
             No findings match the selected severity.
           </p>
 
@@ -326,21 +328,21 @@ export default function FindingsList({
 function getFilterClasses(severity) {
   switch (severity) {
     case 'CRITICAL':
-      return 'border-red-200 bg-red-50 text-red-700';
+      return 'border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300';
 
     case 'HIGH':
-      return 'border-orange-200 bg-orange-50 text-orange-700';
+      return 'border-orange-200 dark:border-orange-900/60 bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300';
 
     case 'MEDIUM':
-      return 'border-amber-200 bg-amber-50 text-amber-700';
+      return 'border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300';
 
     case 'LOW':
-      return 'border-yellow-200 bg-yellow-50 text-yellow-700';
+      return 'border-yellow-200 dark:border-yellow-900/60 bg-yellow-50 dark:bg-yellow-950/50 text-yellow-700 dark:text-yellow-300';
 
     case 'INFO':
-      return 'border-blue-200 bg-blue-50 text-blue-700';
+      return 'border-blue-200 dark:border-blue-900/60 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300';
 
     default:
-      return 'border-brand-200 bg-brand-50 text-brand-700';
+      return 'border-brand-200 dark:border-brand-900/60 bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300';
   }
 }

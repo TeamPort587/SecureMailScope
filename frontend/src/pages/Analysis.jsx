@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 
 import { useAnalysis } from '../hooks/useAnalysis';
+import { useTheme } from '../context/ThemeContext';
 
 import SessionTable from '../components/SessionTable';
 import FindingsList from '../components/FindingsList';
@@ -49,6 +50,7 @@ export default function Analysis() {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const initialData = location.state?.analysis || null;
 
   const {
@@ -608,7 +610,7 @@ export default function Analysis() {
 
 
   const riskStyles =
-    getRiskStyles(riskLevel);
+    getRiskStyles(riskLevel, isDark);
 
 
   const formattedDate =
@@ -773,8 +775,8 @@ export default function Analysis() {
       <div className="
         mb-6
         rounded-xl
-        border border-slate-200
-        bg-white
+        border border-slate-200 dark:border-slate-800
+        bg-white dark:bg-slate-900
         px-5 py-4
         shadow-sm
       ">
@@ -798,12 +800,12 @@ export default function Analysis() {
                 flex h-8 w-8
                 items-center justify-center
                 rounded-lg
-                bg-brand-50
+                bg-brand-50 dark:bg-brand-950/60
               ">
 
                 <Database className="
                   h-4 w-4
-                  text-brand-600
+                  text-brand-600 dark:text-brand-400
                 " />
 
               </div>
@@ -815,7 +817,7 @@ export default function Analysis() {
                   truncate
                   text-sm
                   font-semibold
-                  text-slate-900
+                  text-slate-900 dark:text-white
                 ">
                   {analysis.filename ||
                     'Captured Analysis'}
@@ -825,7 +827,7 @@ export default function Analysis() {
                 <p className="
                   mt-0.5
                   text-[10px]
-                  text-slate-400
+                  text-slate-400 dark:text-slate-400
                 ">
                   Network capture security assessment
                 </p>
@@ -840,7 +842,7 @@ export default function Analysis() {
               flex flex-wrap
               gap-x-5 gap-y-2
               text-[11px]
-              text-slate-500
+              text-slate-500 dark:text-slate-400
             ">
 
               <span>
@@ -849,10 +851,10 @@ export default function Analysis() {
 
                 <span className="
                   rounded
-                  bg-slate-100
+                  bg-slate-100 dark:bg-slate-800
                   px-1.5 py-0.5
                   font-mono
-                  text-slate-600
+                  text-slate-600 dark:text-slate-300
                 ">
                   {analysis.analysis_id}
                 </span>
@@ -913,7 +915,7 @@ export default function Analysis() {
           mb-6
           overflow-hidden
           rounded-2xl
-          border
+          border dark:border-slate-800
           shadow-sm
         "
         style={riskStyles.heroBorder}
@@ -988,7 +990,7 @@ export default function Analysis() {
 
                 <span className="
                   text-[11px]
-                  text-slate-400
+                  text-slate-400 dark:text-slate-400
                 ">
                   Overall security posture
                 </span>
@@ -1000,7 +1002,7 @@ export default function Analysis() {
                 mt-3
                 text-lg
                 font-semibold
-                text-slate-900
+                text-slate-900 dark:text-white
               ">
                 {getRiskTitle(riskLevel)}
               </h2>
@@ -1011,7 +1013,7 @@ export default function Analysis() {
                 max-w-2xl
                 text-sm
                 leading-6
-                text-slate-500
+                text-slate-500 dark:text-slate-300
               ">
                 {analysis?.risk?.description ||
                   analysis?.summary?.description ||
@@ -1031,14 +1033,15 @@ export default function Analysis() {
             items-center
             gap-4
             rounded-xl
-            border border-slate-200
-            bg-slate-50
+            border border-slate-200 dark:border-slate-800
+            bg-slate-50/80 dark:bg-slate-900/90
             px-4 py-3
           ">
 
             <RiskScoreRing
               score={riskScore}
               riskStyles={riskStyles}
+              isDark={isDark}
             />
 
             <div>
@@ -1048,7 +1051,7 @@ export default function Analysis() {
                 font-bold
                 uppercase
                 tracking-wide
-                text-slate-400
+                text-slate-400 dark:text-slate-500
               ">
                 Risk Score
               </p>
@@ -1059,7 +1062,7 @@ export default function Analysis() {
                 max-w-[160px]
                 text-xs
                 leading-5
-                text-slate-600
+                text-slate-600 dark:text-slate-300
               ">
                 Higher scores indicate greater observed
                 security risk.
@@ -1136,8 +1139,8 @@ export default function Analysis() {
             items-center
             gap-1
             rounded-xl
-            border border-slate-200
-            bg-slate-100/80
+            border border-slate-200 dark:border-slate-800
+            bg-slate-100/80 dark:bg-slate-900/80
             p-1.5
           ">
 
@@ -1291,15 +1294,15 @@ export default function Analysis() {
           <div className="
             overflow-hidden
             rounded-xl
-            border border-slate-200
-            bg-white
+            border border-slate-200 dark:border-slate-800
+            bg-white dark:bg-slate-900
             shadow-sm
           ">
 
             <div className="
               flex flex-col
               gap-3
-              border-b border-slate-100
+              border-b border-slate-100 dark:border-slate-800
               px-5 py-4
               sm:flex-row
               sm:items-center
@@ -1317,12 +1320,12 @@ export default function Analysis() {
                     flex h-8 w-8
                     items-center justify-center
                     rounded-lg
-                    bg-amber-50
+                    bg-amber-50 dark:bg-amber-950/60
                   ">
 
                     <ShieldAlert className="
                       h-4 w-4
-                      text-amber-600
+                      text-amber-600 dark:text-amber-400
                     " />
 
                   </div>
@@ -1333,7 +1336,7 @@ export default function Analysis() {
                     <h2 className="
                       text-sm
                       font-semibold
-                      text-slate-900
+                      text-slate-900 dark:text-white
                     ">
                       Security Highlights
                     </h2>
@@ -1342,7 +1345,7 @@ export default function Analysis() {
                     <p className="
                       mt-0.5
                       text-xs
-                      text-slate-500
+                      text-slate-500 dark:text-slate-400
                     ">
                       Most important weaknesses identified
                       during analysis.
@@ -1403,6 +1406,11 @@ export default function Analysis() {
                       finding={finding}
                       onViewDetails={
                         setSelectedFinding
+                      }
+                      onSelectSession={(sId) =>
+                        navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
+                          state: { analysis, analysisId: analysis?.analysis_id || id, findings },
+                        })
                       }
                     />
 
@@ -1596,8 +1604,8 @@ export default function Analysis() {
         <div className="
           overflow-hidden
           rounded-xl
-          border border-slate-200
-          bg-white
+          border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-900
           shadow-sm
         ">
 
@@ -1628,8 +1636,8 @@ export default function Analysis() {
         <div className="
           overflow-hidden
           rounded-xl
-          border border-slate-200
-          bg-white
+          border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-900
           shadow-sm
         ">
 
@@ -1640,6 +1648,11 @@ export default function Analysis() {
 
             <FindingsList
               findings={findings}
+              onSelectSession={(sId) =>
+                navigate(`/analysis/${analysis?.analysis_id || id}/session/${sId}`, {
+                  state: { analysis, analysisId: analysis?.analysis_id || id, findings },
+                })
+              }
             />
 
           </div>
@@ -1658,8 +1671,8 @@ export default function Analysis() {
         <div className="
           overflow-hidden
           rounded-xl
-          border border-slate-200
-          bg-white
+          border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-900
           shadow-sm
         ">
 
@@ -1733,8 +1746,8 @@ function MetricCard({
     <div className="
       group
       rounded-xl
-      border border-slate-200
-      bg-white
+      border border-slate-200 dark:border-slate-800
+      bg-white dark:bg-slate-900
       p-4
       shadow-sm
       transition-all
@@ -1755,7 +1768,7 @@ function MetricCard({
             font-semibold
             uppercase
             tracking-[0.08em]
-            text-slate-400
+            text-slate-400 dark:text-slate-500
           ">
             {label}
           </p>
@@ -1766,7 +1779,7 @@ function MetricCard({
             text-2xl
             font-bold
             tracking-tight
-            text-slate-900
+            text-slate-900 dark:text-white
           ">
             {value}
           </p>
@@ -1829,16 +1842,16 @@ function AnalysisTab({
         ${
           active
             ? `
-              bg-white
-              text-brand-700
+              bg-white dark:bg-slate-800
+              text-brand-700 dark:text-brand-300
               shadow-sm
               ring-1
-              ring-slate-200
+              ring-slate-200 dark:ring-slate-700
             `
             : `
-              text-slate-500
-              hover:bg-white/70
-              hover:text-slate-800
+              text-slate-500 dark:text-slate-400
+              hover:bg-white/70 dark:hover:bg-slate-800/60
+              hover:text-slate-800 dark:hover:text-slate-200
             `
         }
       `}
@@ -1853,11 +1866,11 @@ function AnalysisTab({
           ${
             active
               ? `
-                bg-brand-50
-                text-brand-600
+                bg-brand-50 dark:bg-brand-950/70
+                text-brand-600 dark:text-brand-400
               `
               : `
-                text-slate-400
+                text-slate-400 dark:text-slate-500
               `
           }
         `}
@@ -1885,12 +1898,12 @@ function AnalysisTab({
             ${
               active
                 ? `
-                  bg-brand-50
-                  text-brand-700
+                  bg-brand-50 dark:bg-brand-950/70
+                  text-brand-700 dark:text-brand-300
                 `
                 : `
-                  bg-slate-200
-                  text-slate-500
+                  bg-slate-200 dark:bg-slate-800
+                  text-slate-500 dark:text-slate-400
                 `
             }
           `}
@@ -1924,15 +1937,15 @@ function OverviewCard({
     <div className="
       overflow-hidden
       rounded-xl
-      border border-slate-200
-      bg-white
+      border border-slate-200 dark:border-slate-800
+      bg-white dark:bg-slate-900
       shadow-sm
     ">
 
       <div className="
         flex items-center
         gap-3
-        border-b border-slate-100
+        border-b border-slate-100 dark:border-slate-800
         px-5 py-4
       ">
 
@@ -1953,7 +1966,7 @@ function OverviewCard({
           <h2 className="
             text-sm
             font-semibold
-            text-slate-900
+            text-slate-900 dark:text-white
           ">
             {title}
           </h2>
@@ -1962,7 +1975,7 @@ function OverviewCard({
           <p className="
             mt-0.5
             text-[10px]
-            text-slate-500
+            text-slate-500 dark:text-slate-400
           ">
             {subtitle}
           </p>
@@ -1974,7 +1987,7 @@ function OverviewCard({
 
       <div className="
         divide-y
-        divide-slate-100
+        divide-slate-100 dark:divide-slate-800
         px-5
       ">
         {children}
@@ -2027,8 +2040,8 @@ function ProtocolRow({
 
             ${
               danger
-                ? 'text-rose-700'
-                : 'text-slate-700'
+                ? 'text-rose-700 dark:text-rose-400'
+                : 'text-slate-700 dark:text-slate-300'
             }
           `}
         >
@@ -2041,12 +2054,12 @@ function ProtocolRow({
       <span className="
         min-w-[30px]
         rounded-md
-        bg-slate-50
+        bg-slate-50 dark:bg-slate-800
         px-2 py-1
         text-center
         text-xs
         font-semibold
-        text-slate-700
+        text-slate-700 dark:text-slate-300
       ">
         {count}
       </span>
@@ -2065,6 +2078,7 @@ function ProtocolRow({
 function FindingHighlight({
   finding,
   onViewDetails,
+  onSelectSession = null,
 }) {
 
   const severity =
@@ -2099,7 +2113,7 @@ function FindingHighlight({
       gap-3
       px-5 py-4
       transition-colors
-      hover:bg-slate-50/60
+      hover:bg-slate-50/60 dark:hover:bg-slate-800/40
       sm:flex-row
       sm:items-center
       sm:justify-between
@@ -2168,13 +2182,41 @@ function FindingHighlight({
               {severity}
             </span>
 
+            {finding?.session_id && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (onSelectSession) {
+                    onSelectSession(finding.session_id);
+                  }
+                }}
+                className="
+                  group/sbtn
+                  inline-flex items-center gap-1
+                  rounded-full px-2 py-0.5
+                  text-[9px] font-mono font-medium
+                  border border-slate-200 dark:border-slate-700
+                  bg-slate-50 dark:bg-slate-800/80
+                  text-slate-600 dark:text-slate-300
+                  hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400
+                  hover:bg-brand-50/50 dark:hover:bg-brand-950/40
+                  transition-all cursor-pointer
+                "
+                title={`Inspect session ${finding.session_id}`}
+              >
+                <span>{finding.session_id}</span>
+                <ArrowUpRight className="h-2.5 w-2.5 text-slate-400 group-hover/sbtn:text-brand-600 dark:group-hover/sbtn:text-brand-400 transition-transform group-hover/sbtn:-translate-y-0.5 group-hover/sbtn:translate-x-0.5" />
+              </button>
+            )}
+
           </div>
 
 
           <h3 className="
             text-sm
             font-semibold
-            text-slate-800
+            text-slate-800 dark:text-slate-100
             leading-snug
           ">
             {title}
@@ -2185,7 +2227,7 @@ function FindingHighlight({
             mt-1
             text-xs
             leading-5
-            text-slate-500
+            text-slate-500 dark:text-slate-400
             line-clamp-2
           ">
             {description}
@@ -2208,17 +2250,17 @@ function FindingHighlight({
           gap-1.5
           self-start
           rounded-lg
-          border border-slate-200
-          bg-white
+          border border-slate-200 dark:border-slate-700
+          bg-white dark:bg-slate-800
           px-3 py-1.5
           text-[11px]
           font-semibold
-          text-slate-600
+          text-slate-600 dark:text-slate-300
           shadow-sm
           transition-all
-          hover:border-brand-200
-          hover:bg-brand-50
-          hover:text-brand-700
+          hover:border-brand-200 dark:hover:border-brand-700
+          hover:bg-brand-50 dark:hover:bg-brand-950/60
+          hover:text-brand-700 dark:hover:text-brand-300
           sm:self-auto
         "
       >
@@ -2282,11 +2324,11 @@ function RecommendationPreview({
       relative
       overflow-hidden
       rounded-xl
-      border border-slate-200
-      bg-white
+      border border-slate-200 dark:border-slate-800
+      bg-white dark:bg-slate-900
       p-4
       transition-all
-      hover:border-brand-200
+      hover:border-brand-200 dark:hover:border-brand-800
       hover:shadow-sm
     ">
 
@@ -2324,7 +2366,7 @@ function RecommendationPreview({
       <h3 className="
         text-sm
         font-semibold
-        text-slate-800
+        text-slate-800 dark:text-slate-100
         leading-snug
       ">
         {title}
@@ -2335,7 +2377,7 @@ function RecommendationPreview({
         mt-1.5
         text-xs
         leading-5
-        text-slate-500
+        text-slate-500 dark:text-slate-400
         line-clamp-2
       ">
         {description}
@@ -2344,7 +2386,7 @@ function RecommendationPreview({
       {/* Target sessions pills */}
       {affectedSessions.length > 0 && (
         <div className="mt-2.5 flex flex-wrap items-center gap-1">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mr-0.5">
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500 mr-0.5">
             Sessions:
           </span>
           {affectedSessions.map((sId) => (
@@ -2358,14 +2400,14 @@ function RecommendationPreview({
               className="
                 inline-flex items-center gap-1
                 rounded
-                border border-slate-200
-                bg-slate-50
+                border border-slate-200 dark:border-slate-700
+                bg-slate-50 dark:bg-slate-800
                 px-1.5 py-0.5
                 font-mono
                 text-[10px]
                 font-medium
-                text-slate-600
-                hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700
+                text-slate-600 dark:text-slate-300
+                hover:border-brand-300 dark:hover:border-brand-600 hover:bg-brand-50 dark:hover:bg-brand-950/60 hover:text-brand-700 dark:hover:text-brand-300
                 transition-colors
               "
               title={`View session ${sId}`}
@@ -2383,7 +2425,7 @@ function RecommendationPreview({
         flex items-start
         gap-2
         rounded-lg
-        bg-brand-50
+        bg-brand-50 dark:bg-brand-950/50
         px-3 py-2.5
       ">
 
@@ -2391,13 +2433,13 @@ function RecommendationPreview({
           mt-0.5
           h-3 w-3
           shrink-0
-          text-brand-500
+          text-brand-500 dark:text-brand-400
         " />
 
         <p className="
           text-xs
           leading-5
-          text-brand-800
+          text-brand-800 dark:text-brand-300
           font-medium
         ">
           {action}
@@ -2466,7 +2508,7 @@ function FindingDetailsModal({
         z-50
         flex items-end
         justify-center
-        bg-slate-950/30
+        bg-slate-950/40 dark:bg-slate-950/80
         p-4
         backdrop-blur-sm
         sm:items-center
@@ -2480,8 +2522,8 @@ function FindingDetailsModal({
           max-w-2xl
           overflow-hidden
           rounded-2xl
-          border border-slate-200
-          bg-white
+          border border-slate-200 dark:border-slate-800
+          bg-white dark:bg-slate-900
           shadow-2xl
         "
         onClick={(event) =>
@@ -2496,7 +2538,7 @@ function FindingDetailsModal({
           flex items-start
           justify-between
           gap-4
-          border-b border-slate-100
+          border-b border-slate-100 dark:border-slate-800
           px-6 py-5
         ">
 
@@ -2550,7 +2592,7 @@ function FindingDetailsModal({
 
                 <span className="
                   text-[10px]
-                  text-slate-400
+                  text-slate-400 dark:text-slate-400
                 ">
                   Security Finding
                 </span>
@@ -2562,7 +2604,7 @@ function FindingDetailsModal({
                 mt-2
                 text-base
                 font-semibold
-                text-slate-900
+                text-slate-900 dark:text-white
               ">
                 {title}
               </h2>
@@ -2582,8 +2624,8 @@ function FindingDetailsModal({
               rounded-lg
               text-slate-400
               transition-colors
-              hover:bg-slate-100
-              hover:text-slate-700
+              hover:bg-slate-100 dark:hover:bg-slate-800
+              hover:text-slate-700 dark:hover:text-slate-200
             "
           >
 
@@ -2613,7 +2655,7 @@ function FindingDetailsModal({
               font-bold
               uppercase
               tracking-wide
-              text-slate-400
+              text-slate-400 dark:text-slate-500
             ">
               Description
             </p>
@@ -2623,7 +2665,7 @@ function FindingDetailsModal({
               mt-2
               text-sm
               leading-6
-              text-slate-600
+              text-slate-600 dark:text-slate-300
             ">
               {description}
             </p>
@@ -2635,8 +2677,8 @@ function FindingDetailsModal({
 
           <div className="
             rounded-xl
-            border border-slate-200
-            bg-slate-50
+            border border-slate-200 dark:border-slate-800
+            bg-slate-50 dark:bg-slate-950
             p-4
           ">
 
@@ -2647,13 +2689,13 @@ function FindingDetailsModal({
 
               <Database className="
                 h-4 w-4
-                text-brand-600
+                text-brand-600 dark:text-brand-400
               " />
 
               <p className="
                 text-xs
                 font-semibold
-                text-slate-800
+                text-slate-800 dark:text-slate-200
               ">
                 Evidence & Context
               </p>
@@ -2667,7 +2709,7 @@ function FindingDetailsModal({
               break-words
               text-xs
               leading-6
-              text-slate-600
+              text-slate-600 dark:text-slate-300
               font-sans
             ">
               {typeof evidence === 'string'
@@ -2686,8 +2728,8 @@ function FindingDetailsModal({
 
           <div className="
             rounded-xl
-            border border-brand-100
-            bg-brand-50/50
+            border border-brand-100 dark:border-brand-900/60
+            bg-brand-50/50 dark:bg-brand-950/40
             p-4
           ">
 
@@ -2698,7 +2740,7 @@ function FindingDetailsModal({
 
               <Sparkles className="
                 h-4 w-4
-                text-brand-600
+                text-brand-600 dark:text-brand-400
               " />
 
               <p className="
@@ -2706,7 +2748,7 @@ function FindingDetailsModal({
                 font-bold
                 uppercase
                 tracking-wide
-                text-brand-700
+                text-brand-700 dark:text-brand-300
               ">
                 Recommended Action
               </p>
@@ -2719,7 +2761,7 @@ function FindingDetailsModal({
               text-sm
               font-medium
               leading-6
-              text-slate-700
+              text-slate-700 dark:text-slate-300
             ">
               {recommendation}
             </p>
@@ -2733,7 +2775,7 @@ function FindingDetailsModal({
 
         <div className="
           flex justify-end
-          border-t border-slate-100
+          border-t border-slate-100 dark:border-slate-800
           px-6 py-4
         ">
 
@@ -2742,14 +2784,14 @@ function FindingDetailsModal({
             onClick={onClose}
             className="
               rounded-lg
-              border border-slate-200
-              bg-white
+              border border-slate-200 dark:border-slate-700
+              bg-white dark:bg-slate-800
               px-4 py-2
               text-xs
               font-semibold
-              text-slate-700
+              text-slate-700 dark:text-slate-300
               transition-colors
-              hover:bg-slate-50
+              hover:bg-slate-50 dark:hover:bg-slate-700
             "
           >
             Close
@@ -2770,117 +2812,86 @@ function FindingDetailsModal({
    RISK STYLES
 =============================================================== */
 
-function getRiskStyles(level) {
+function getRiskStyles(level, isDark = false) {
+  const normalized = String(level).toUpperCase();
 
-  const normalized =
-    String(level).toUpperCase();
-
-
-  if (
-    normalized.includes('CRITICAL')
-  ) {
-
+  if (normalized.includes('CRITICAL')) {
     return {
-
-      iconBg: 'bg-rose-50',
-      iconText: 'text-rose-600',
-
-      badge:
-        'border-rose-200 bg-rose-50 text-rose-700',
-
+      iconBg: isDark ? 'bg-rose-950/60' : 'bg-rose-50',
+      iconText: isDark ? 'text-rose-400' : 'text-rose-600',
+      badge: isDark
+        ? 'border-rose-800/60 bg-rose-950/70 text-rose-300'
+        : 'border-rose-200 bg-rose-50 text-rose-700',
       scoreBorder: 'border-rose-500',
       scoreColor: '#f43f5e',
-
       heroGradient: {
-        background:
-          'linear-gradient(135deg, rgba(255,241,242,0.9) 0%, rgba(255,255,255,1) 60%)',
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(69, 10, 10, 0.45) 0%, rgba(15, 23, 42, 0.95) 70%)'
+          : 'linear-gradient(135deg, rgba(255,241,242,0.9) 0%, rgba(255,255,255,1) 60%)',
       },
       heroBorder: {
-        borderColor: '#fecdd3',
+        borderColor: isDark ? 'rgba(239, 68, 68, 0.35)' : '#fecdd3',
       },
-
     };
-
   }
 
-
-  if (
-    normalized.includes('HIGH')
-  ) {
-
+  if (normalized.includes('HIGH')) {
     return {
-
-      iconBg: 'bg-orange-50',
-      iconText: 'text-orange-600',
-
-      badge:
-        'border-orange-200 bg-orange-50 text-orange-700',
-
+      iconBg: isDark ? 'bg-orange-950/60' : 'bg-orange-50',
+      iconText: isDark ? 'text-orange-400' : 'text-orange-600',
+      badge: isDark
+        ? 'border-orange-800/60 bg-orange-950/70 text-orange-300'
+        : 'border-orange-200 bg-orange-50 text-orange-700',
       scoreBorder: 'border-orange-500',
       scoreColor: '#f97316',
-
       heroGradient: {
-        background:
-          'linear-gradient(135deg, rgba(255,247,237,0.9) 0%, rgba(255,255,255,1) 60%)',
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(67, 20, 7, 0.45) 0%, rgba(15, 23, 42, 0.95) 70%)'
+          : 'linear-gradient(135deg, rgba(255,247,237,0.9) 0%, rgba(255,255,255,1) 60%)',
       },
       heroBorder: {
-        borderColor: '#fed7aa',
+        borderColor: isDark ? 'rgba(249, 115, 22, 0.35)' : '#fed7aa',
       },
-
     };
-
   }
 
-
-  if (
-    normalized.includes('MEDIUM')
-  ) {
-
+  if (normalized.includes('MEDIUM')) {
     return {
-
-      iconBg: 'bg-amber-50',
-      iconText: 'text-amber-600',
-
-      badge:
-        'border-amber-200 bg-amber-50 text-amber-700',
-
+      iconBg: isDark ? 'bg-amber-950/60' : 'bg-amber-50',
+      iconText: isDark ? 'text-amber-400' : 'text-amber-600',
+      badge: isDark
+        ? 'border-amber-800/60 bg-amber-950/70 text-amber-300'
+        : 'border-amber-200 bg-amber-50 text-amber-700',
       scoreBorder: 'border-amber-500',
       scoreColor: '#f59e0b',
-
       heroGradient: {
-        background:
-          'linear-gradient(135deg, rgba(255,251,235,0.9) 0%, rgba(255,255,255,1) 60%)',
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(66, 32, 6, 0.45) 0%, rgba(15, 23, 42, 0.95) 70%)'
+          : 'linear-gradient(135deg, rgba(255,251,235,0.9) 0%, rgba(255,255,255,1) 60%)',
       },
       heroBorder: {
-        borderColor: '#fde68a',
+        borderColor: isDark ? 'rgba(245, 158, 11, 0.35)' : '#fde68a',
       },
-
     };
-
   }
 
-
   return {
-
-    iconBg: 'bg-yellow-50',
-    iconText: 'text-yellow-600',
-
-    badge:
-      'border-yellow-200 bg-yellow-50 text-yellow-700',
-
+    iconBg: isDark ? 'bg-sky-950/60' : 'bg-yellow-50',
+    iconText: isDark ? 'text-sky-400' : 'text-yellow-600',
+    badge: isDark
+      ? 'border-sky-800/60 bg-sky-950/70 text-sky-300'
+      : 'border-yellow-200 bg-yellow-50 text-yellow-700',
     scoreBorder: 'border-yellow-500',
     scoreColor: '#ca8a04',
-
-          heroGradient: {
-        background:
-          'linear-gradient(135deg, rgba(254,252,232,0.9) 0%, rgba(255,255,255,1) 60%)',
-      },
-    heroBorder: {
-      borderColor: '#fde047',
+    heroGradient: {
+      background: isDark
+        ? 'linear-gradient(135deg, rgba(8, 47, 73, 0.45) 0%, rgba(15, 23, 42, 0.95) 70%)'
+        : 'linear-gradient(135deg, rgba(254,252,232,0.9) 0%, rgba(255,255,255,1) 60%)',
     },
-
+    heroBorder: {
+      borderColor: isDark ? 'rgba(14, 165, 233, 0.35)' : '#fde047',
+    },
   };
-
 }
 
 
@@ -2939,7 +2950,7 @@ function getRiskTitle(level) {
    RISK SCORE RING
 =============================================================== */
 
-function RiskScoreRing({ score, riskStyles }) {
+function RiskScoreRing({ score, riskStyles, isDark = false }) {
 
   const size = 72;
   const strokeWidth = 6;
@@ -2968,7 +2979,7 @@ function RiskScoreRing({ score, riskStyles }) {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="#e2e8f0"
+          stroke={isDark ? '#334155' : '#e2e8f0'}
           strokeWidth={strokeWidth}
         />
 
@@ -2998,7 +3009,7 @@ function RiskScoreRing({ score, riskStyles }) {
           text-lg
           font-bold
           leading-none
-          text-slate-900
+          text-slate-900 dark:text-white
         ">
           {score}
         </p>
@@ -3009,7 +3020,7 @@ function RiskScoreRing({ score, riskStyles }) {
           font-bold
           uppercase
           tracking-wider
-          text-slate-400
+          text-slate-400 dark:text-slate-500
         ">
           /100
         </p>

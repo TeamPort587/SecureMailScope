@@ -169,12 +169,12 @@ export default function UploadForm({ onUpload, loading = false }) {
 
           {/* Main copy */}
           <div className="relative">
-            <p className="text-sm font-semibold text-slate-900 sm:text-[15px]">
+            <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 sm:text-[15px]">
               {isDragging ? (
                 'Drop your capture here'
               ) : (
                 <>
-                  <span className="text-brand-600">
+                  <span className="text-brand-600 dark:text-brand-400">
                     Choose a PCAP file
                   </span>{' '}
                   or drag and drop
@@ -182,7 +182,7 @@ export default function UploadForm({ onUpload, loading = false }) {
               )}
             </p>
 
-            <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-slate-500">
+            <p className="mx-auto mt-2 max-w-md text-xs leading-5 text-slate-500 dark:text-slate-400">
               Upload a network capture to reconstruct email
               sessions and evaluate protocol security.
             </p>
@@ -197,7 +197,7 @@ export default function UploadForm({ onUpload, loading = false }) {
               •
             </span>
 
-            <span className="text-[10px] font-medium text-slate-500">
+            <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
               Maximum 100 MB
             </span>
           </div>
@@ -213,18 +213,18 @@ export default function UploadForm({ onUpload, loading = false }) {
            SELECTED FILE
         ====================================================== */
 
-        <div className="rounded-2xl border border-brand-200 bg-brand-50/40 p-4 sm:p-5">
+        <div className="rounded-2xl border border-brand-200 dark:border-brand-800/80 bg-brand-50/40 dark:bg-brand-950/40 p-4 sm:p-5">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             {/* File information */}
             <div className="flex min-w-0 items-center gap-4">
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-brand-200 bg-white shadow-sm">
-                <FileCheck2 className="h-5 w-5 text-brand-600" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-brand-200 dark:border-brand-800 bg-white dark:bg-slate-800 shadow-sm">
+                <FileCheck2 className="h-5 w-5 text-brand-600 dark:text-brand-400" />
               </div>
 
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <p
-                    className="max-w-[420px] truncate text-sm font-semibold text-slate-900"
+                    className="max-w-[420px] truncate text-sm font-semibold text-slate-900 dark:text-slate-100"
                     title={file.name}
                   >
                     {file.name}
@@ -235,7 +235,7 @@ export default function UploadForm({ onUpload, loading = false }) {
                   </span>
                 </div>
 
-                <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500">
+                <div className="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
                   <span>
                     {(
                       file.size /
@@ -330,7 +330,7 @@ export default function UploadForm({ onUpload, loading = false }) {
 
 function FormatBadge({ label }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-[10px] font-semibold text-slate-600 shadow-sm">
+    <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-850 px-2.5 py-1.5 text-[10px] font-semibold text-slate-600 dark:text-slate-300 shadow-sm">
       <FileCode2 className="h-3 w-3 text-brand-500" />
       {label}
     </span>

@@ -20,32 +20,32 @@ const SEVERITY_ICONS = {
 const SEVERITY_STYLES = {
   CRITICAL: {
     badge:
-      'border-red-200 bg-red-50 text-red-700',
-    icon: 'text-red-600',
+      'border-red-200 dark:border-red-800/70 bg-red-50 dark:bg-red-950/50 text-red-700 dark:text-red-300',
+    icon: 'text-red-600 dark:text-red-400',
   },
 
   HIGH: {
     badge:
-      'border-orange-200 bg-orange-50 text-orange-700',
-    icon: 'text-orange-600',
+      'border-orange-200 dark:border-orange-800/70 bg-orange-50 dark:bg-orange-950/50 text-orange-700 dark:text-orange-300',
+    icon: 'text-orange-600 dark:text-orange-400',
   },
 
   MEDIUM: {
     badge:
-      'border-amber-200 bg-amber-50 text-amber-700',
-    icon: 'text-amber-600',
+      'border-amber-200 dark:border-amber-800/70 bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300',
+    icon: 'text-amber-600 dark:text-amber-400',
   },
 
   LOW: {
     badge:
-      'border-yellow-200 bg-yellow-50 text-yellow-700',
-    icon: 'text-yellow-600',
+      'border-yellow-200 dark:border-yellow-800/70 bg-yellow-50 dark:bg-yellow-950/50 text-yellow-700 dark:text-yellow-300',
+    icon: 'text-yellow-600 dark:text-yellow-400',
   },
 
   INFO: {
     badge:
-      'border-blue-200 bg-blue-50 text-blue-700',
-    icon: 'text-blue-600',
+      'border-blue-200 dark:border-blue-800/70 bg-blue-50 dark:bg-blue-950/50 text-blue-700 dark:text-blue-300',
+    icon: 'text-blue-600 dark:text-blue-400',
   },
 };
 

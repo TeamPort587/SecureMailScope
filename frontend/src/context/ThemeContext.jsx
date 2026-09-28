@@ -4,19 +4,26 @@ const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
   const [theme, setThemeState] = useState(() => {
-    return localStorage.getItem('sms_theme') || 'dark';
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('sms_theme');
+      if (saved === 'dark' || saved === 'light') return saved;
+      return 'light';
+    }
+    return 'light';
   });
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'light') {
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
       root.classList.remove('dark');
       root.classList.add('light');
-    } else {
-      root.classList.remove('light');
-      root.classList.add('dark');
     }
-    localStorage.setItem('sms_theme', theme);
+    try {
+      localStorage.setItem('sms_theme', theme);
+    } catch (e) {}
   }, [theme]);
 
   const toggleTheme = useCallback(() => {
@@ -42,11 +49,29 @@ export function ThemeProvider({ children }) {
 export function useTheme() {
   const context = useContext(ThemeContext);
   if (!context) {
+    const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
     return {
-      theme: 'dark',
-      isDark: true,
-      toggleTheme: () => {},
-      setTheme: () => {},
+      theme: isDark ? 'dark' : 'light',
+      isDark,
+      toggleTheme: () => {
+        if (typeof document !== 'undefined') {
+          const root = document.documentElement;
+          const next = !root.classList.contains('dark');
+          root.classList.toggle('dark', next);
+          try {
+            localStorage.setItem('sms_theme', next ? 'dark' : 'light');
+          } catch (e) {}
+        }
+      },
+      setTheme: (t) => {
+        if (typeof document !== 'undefined') {
+          const root = document.documentElement;
+          root.classList.toggle('dark', t === 'dark');
+          try {
+            localStorage.setItem('sms_theme', t);
+          } catch (e) {}
+        }
+      },
     };
   }
   return context;

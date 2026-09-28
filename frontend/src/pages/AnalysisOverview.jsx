@@ -163,13 +163,14 @@ export default function AnalysisOverview() {
       {/* PAGE HEADER HERO */}
       <div className="mb-8">
         <div className="
-    relative overflow-hidden
-    rounded-2xl border border-slate-100
-        bg-gradient-to-br from-white via-slate-50/80 to-brand-50/40
-    px-6 py-2 sm:px-8 sm:py-3
-    shadow-sm
-    border-l-2 border-t-2 border-brand-200/60
-  ">
+          relative overflow-hidden
+          rounded-2xl border border-slate-100 dark:border-slate-800/80
+          bg-gradient-to-br from-white via-slate-50/80 to-brand-50/40
+          dark:from-slate-900/90 dark:via-slate-900/80 dark:to-slate-950/90
+          px-6 py-2 sm:px-8 sm:py-3
+          shadow-sm dark:shadow-soft-dark
+          border-l-2 border-t-2 border-brand-200/60 dark:border-l-brand-500/40 dark:border-t-brand-500/40
+        ">
           {/* orb glows */}
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-brand-400/[0.07] blur-[100px]" />
@@ -197,21 +198,21 @@ export default function AnalysisOverview() {
             {/* LEFT — text & CTA */}
             <div className="max-w-xl py-2">
 
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50/80 px-3 py-1 backdrop-blur-sm">
-                <FileSearch className="h-3 w-3 text-brand-500" />
-                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-600">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-100 dark:border-brand-800/60 bg-brand-50/80 dark:bg-brand-950/60 px-3 py-1 backdrop-blur-sm">
+                <FileSearch className="h-3 w-3 text-brand-500 dark:text-brand-400" />
+                <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-600 dark:text-brand-300">
                   Security Workspace
                 </span>
               </div>
 
-              <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
+              <h1 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white sm:text-4xl">
                 Analysis{' '}
                 <span className="bg-gradient-to-r from-brand-600 to-brand-400 bg-clip-text text-transparent">
                   Center
                 </span>
               </h1>
 
-              <p className="mt-3 max-w-md text-sm leading-6 text-slate-500">
+              <p className="mt-3 max-w-md text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Review completed email security analyses, inspect captured
                 sessions, investigate findings, and track the overall
                 security posture of your network traffic.
@@ -243,7 +244,7 @@ export default function AnalysisOverview() {
 
                 {/* shield */}
                 <path d="M110 42 L148 58 L148 96 C148 118 110 138 110 138 C110 138 72 118 72 96 L72 58 Z"
-                  fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.4" strokeLinejoin="round" />
+                  fill="#eff6ff" stroke="#bfdbfe" strokeWidth="1.4" strokeLinejoin="round" className="hero-shield-body" />
 
                 {/* shield checkmark */}
                 <path d="M94 90 L105 101 L126 78"
@@ -260,8 +261,8 @@ export default function AnalysisOverview() {
                 <line x1="154" y1="100" x2="174" y2="100" stroke="#bfdbfe" strokeWidth="1" strokeLinecap="round" />
 
                 {/* stat badge top-right */}
-                <rect x="138" y="38" width="46" height="18" rx="5" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" />
-                <text x="161" y="51" textAnchor="middle" fontSize="7" fontWeight="700" fill="#2563eb" fontFamily="monospace">ANALYSIS</text>
+                <rect x="138" y="38" width="46" height="18" rx="5" fill="#dbeafe" stroke="#93c5fd" strokeWidth="1" className="hero-badge-bg" />
+                <text x="161" y="51" textAnchor="middle" fontSize="7" fontWeight="700" fill="#2563eb" fontFamily="monospace" className="hero-badge-text">ANALYSIS</text>
 
                 {/* floating dots */}
                 <circle cx="34" cy="54" r="3" fill="#bfdbfe" opacity="0.5" />
@@ -287,8 +288,8 @@ export default function AnalysisOverview() {
           label="Total Analyses"
           value={stats.totalAnalyses}
           description="Available security reports"
-          iconBg="bg-brand-100"
-          iconText="text-brand-600"
+          iconBg="bg-brand-100 dark:bg-brand-950/70"
+          iconText="text-brand-600 dark:text-brand-400"
           glow="shadow-[0_0_18px_4px_rgba(14,165,233,0.13)]"
           topBar="from-brand-300 via-brand-400 to-brand-300"
         />
@@ -297,8 +298,8 @@ export default function AnalysisOverview() {
           label="High / Critical Risk"
           value={stats.highRiskCount}
           description="Elevated risk posture"
-          iconBg="bg-rose-100"
-          iconText="text-rose-600"
+          iconBg="bg-rose-100 dark:bg-rose-950/70"
+          iconText="text-rose-600 dark:text-rose-400"
           glow="shadow-[0_0_18px_4px_rgba(239,68,68,0.13)]"
           topBar="from-rose-300 via-rose-400 to-rose-300"
         />
@@ -307,8 +308,8 @@ export default function AnalysisOverview() {
           label="Captured Sessions"
           value={stats.totalSessions}
           description="Across all analyses"
-          iconBg="bg-sky-100"
-          iconText="text-sky-600"
+          iconBg="bg-sky-100 dark:bg-sky-950/70"
+          iconText="text-sky-600 dark:text-sky-400"
           glow="shadow-[0_0_18px_4px_rgba(14,165,233,0.13)]"
           topBar="from-sky-300 via-sky-400 to-sky-300"
         />
@@ -317,8 +318,8 @@ export default function AnalysisOverview() {
           label="Security Findings"
           value={stats.totalFindings}
           description="Issues requiring review"
-          iconBg="bg-amber-100"
-          iconText="text-amber-600"
+          iconBg="bg-amber-100 dark:bg-amber-950/70"
+          iconText="text-amber-600 dark:text-amber-400"
           glow="shadow-[0_0_18px_4px_rgba(245,158,11,0.13)]"
           topBar="from-amber-300 via-amber-400 to-amber-300"
         />
@@ -326,27 +327,27 @@ export default function AnalysisOverview() {
 
 
       {/* ANALYSIS RECORDS */}
-      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
 
         {/* SECTION HEADER & TOOLBAR */}
-        <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 border-b border-slate-100 dark:border-slate-800 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
             <div className="flex items-center gap-2">
-              <Server className="h-4 w-4 text-brand-600" />
+              <Server className="h-4 w-4 text-brand-600 dark:text-brand-400" />
 
-              <h2 className="text-sm font-semibold text-slate-900">
+              <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                 Available Analyses
               </h2>
             </div>
 
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               Select a capture to view its complete security report.
             </p>
           </div>
 
           {isFetching && (
-            <div className="flex items-center gap-1.5 text-xs text-brand-600 animate-pulse self-start sm:self-auto">
+            <div className="flex items-center gap-1.5 text-xs text-brand-600 dark:text-brand-400 animate-pulse self-start sm:self-auto">
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
               <span className="text-[11px] font-medium">Updating...</span>
             </div>
@@ -355,7 +356,7 @@ export default function AnalysisOverview() {
         </div>
 
         {/* SEARCH & DATE FILTER BAR */}
-        <div className="border-b border-slate-100 bg-slate-50/60 px-5 py-3 sm:px-6">
+        <div className="border-b border-slate-100 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-850/60 px-5 py-3 sm:px-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             
             {/* Search by filename or ID */}
@@ -366,7 +367,7 @@ export default function AnalysisOverview() {
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search by capture name or ID..."
-                className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-8 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
+                className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-9 pr-8 py-1.5 text-xs text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
               />
               {searchTerm && (
                 <button
@@ -388,7 +389,7 @@ export default function AnalysisOverview() {
                   type="date"
                   value={searchDate}
                   onChange={(e) => handleDateChange(e.target.value)}
-                  className="rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-1.5 text-xs text-slate-700 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
+                  className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 pl-9 pr-3 py-1.5 text-xs text-slate-700 dark:text-slate-200 focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 shadow-sm"
                   title="Filter by capture date"
                 />
               </div>
@@ -397,7 +398,7 @@ export default function AnalysisOverview() {
                 <button
                   type="button"
                   onClick={handleClearFilters}
-                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white transition-colors"
                   title="Reset all filters"
                 >
                   <X className="h-3 w-3" />
@@ -466,7 +467,7 @@ export default function AnalysisOverview() {
         ) : (
 
           <div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100 dark:divide-slate-800">
 
               {analyses.map((item) => {
 
@@ -480,7 +481,7 @@ export default function AnalysisOverview() {
                     onClick={() =>
                       navigate(`/analysis/${item.analysis_id}`)
                     }
-                    className="group w-full px-5 py-5 text-left transition-all hover:bg-slate-50"
+                    className="group w-full px-5 py-5 text-left transition-all hover:bg-slate-50 dark:hover:bg-slate-800/60"
                   >
 
                     <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
@@ -488,23 +489,23 @@ export default function AnalysisOverview() {
                       {/* FILE */}
                       <div className="flex min-w-0 flex-1 items-center gap-4">
 
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 bg-brand-50 transition-transform group-hover:scale-[1.03]">
-                          <FileSearch className="h-4.5 w-4.5 text-brand-600" />
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-brand-100 dark:border-brand-800/60 bg-brand-50 dark:bg-brand-950/60 transition-transform group-hover:scale-[1.03]">
+                          <FileSearch className="h-4.5 w-4.5 text-brand-600 dark:text-brand-400" />
                         </div>
 
                         <div className="min-w-0">
 
-                          <p className="truncate text-sm font-semibold text-slate-800">
+                          <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
                             {item.filename || 'Untitled Capture'}
                           </p>
 
-                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500">
+                          <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-500 dark:text-slate-400">
 
-                            <span className="font-mono text-slate-400">
+                            <span className="font-mono text-slate-400 dark:text-slate-500">
                               {item.analysis_id}
                             </span>
 
-                            <span className="hidden text-slate-300 sm:inline">
+                            <span className="hidden text-slate-300 dark:text-slate-700 sm:inline">
                               •
                             </span>
 
@@ -531,7 +532,7 @@ export default function AnalysisOverview() {
                         {/* RISK */}
                         <div className="min-w-[95px]">
 
-                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                             Risk Level
                           </p>
 
@@ -549,11 +550,11 @@ export default function AnalysisOverview() {
                         {/* SESSIONS */}
                         <div className="min-w-[75px]">
 
-                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                             Sessions
                           </p>
 
-                          <p className="mt-2 text-sm font-semibold text-slate-800">
+                          <p className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                             {item.session_count || 0}
                           </p>
 
@@ -563,11 +564,11 @@ export default function AnalysisOverview() {
                         {/* FINDINGS */}
                         <div className="min-w-[75px]">
 
-                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400">
+                          <p className="text-[9px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                             Findings
                           </p>
 
-                          <p className="mt-2 text-sm font-semibold text-slate-800">
+                          <p className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-200">
                             {item.finding_count || 0}
                           </p>
 
@@ -577,7 +578,7 @@ export default function AnalysisOverview() {
                         {/* OPEN */}
                         <div className="flex items-center justify-end">
 
-                          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-400 transition-all group-hover:border-brand-100 group-hover:bg-brand-50 group-hover:text-brand-600">
+                          <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-300 transition-all group-hover:border-brand-100 dark:group-hover:border-brand-800 group-hover:bg-brand-50 dark:group-hover:bg-brand-950/60 group-hover:text-brand-600 dark:group-hover:text-brand-400">
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                           </div>
 
@@ -595,11 +596,11 @@ export default function AnalysisOverview() {
 
             {/* PAGINATION FOOTER */}
             {pagination.total > 0 && (
-              <div className="flex flex-col gap-3 border-t border-slate-100 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 bg-slate-50/40">
-                <p className="text-xs text-slate-500">
-                  Showing <span className="font-semibold text-slate-700">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{' '}
-                  <span className="font-semibold text-slate-700">{Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)}</span> of{' '}
-                  <span className="font-semibold text-slate-700">{pagination.total}</span> captures
+              <div className="flex flex-col gap-3 border-t border-slate-100 dark:border-slate-800 px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 bg-slate-50/40 dark:bg-slate-850/40">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Showing <span className="font-semibold text-slate-700 dark:text-slate-200">{(currentPage - 1) * ITEMS_PER_PAGE + 1}</span> to{' '}
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">{Math.min(currentPage * ITEMS_PER_PAGE, pagination.total)}</span> of{' '}
+                  <span className="font-semibold text-slate-700 dark:text-slate-200">{pagination.total}</span> captures
                 </p>
 
                 {totalPages > 1 && (
@@ -608,7 +609,7 @@ export default function AnalysisOverview() {
                       type="button"
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1 || isFetching}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 shadow-sm transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Previous Page"
                     >
                       <ChevronLeft className="h-4 w-4" />
@@ -625,7 +626,7 @@ export default function AnalysisOverview() {
                           className={`inline-flex h-8 min-w-[32px] px-2 items-center justify-center rounded-lg text-xs font-semibold shadow-sm transition-colors ${
                             isCurrent
                               ? 'bg-brand-600 text-white border border-brand-600'
-                              : 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
+                              : 'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700'
                           }`}
                         >
                           {pageNum}
@@ -637,7 +638,7 @@ export default function AnalysisOverview() {
                       type="button"
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       disabled={currentPage === totalPages || isFetching}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm transition-colors hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 shadow-sm transition-colors hover:bg-slate-50 dark:hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40"
                       aria-label="Next Page"
                     >
                       <ChevronRight className="h-4 w-4" />
@@ -659,7 +660,7 @@ export default function AnalysisOverview() {
 
 function StatCard({ icon, label, value, description, iconBg, iconText, glow, topBar }) {
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-soft-hover">
+    <div className="group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-5 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:border-slate-300 dark:hover:border-slate-700 hover:shadow-soft-hover dark:shadow-soft-dark">
 
       {/* coloured top bar */}
       <div className={`absolute inset-x-0 top-0 h-[3px] rounded-t-xl bg-gradient-to-r opacity-60 transition-opacity duration-200 group-hover:opacity-100 ${topBar}`} />
@@ -674,12 +675,12 @@ function StatCard({ icon, label, value, description, iconBg, iconText, glow, top
 
       </div>
 
-            {/* value + label inline */}
+      {/* value + label inline */}
       <div className="mt-4 flex items-end justify-between">
         <div>
-          <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
-          <p className="mt-0.5 text-xs font-semibold text-slate-700">{label}</p>
-          <p className="mt-0.5 text-[10px] text-slate-400">{description}</p>
+          <p className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">{value}</p>
+          <p className="mt-0.5 text-xs font-semibold text-slate-700 dark:text-slate-300">{label}</p>
+          <p className="mt-0.5 text-[10px] text-slate-400 dark:text-slate-500">{description}</p>
         </div>
       </div>
 

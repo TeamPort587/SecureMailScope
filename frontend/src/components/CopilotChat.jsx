@@ -164,13 +164,13 @@ export default function CopilotChat({ analysis }) {
   };
 
   return (
-    <div className="flex h-[750px] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="flex h-[750px] flex-col overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
       {/* =========================================================
           CHAT HEADER
       ========================================================== */}
-      <div className="flex flex-wrap items-center justify-between border-b border-slate-100 bg-slate-50/70 px-5 py-3.5">
+      <div className="flex flex-wrap items-center justify-between border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/80 px-5 py-3.5">
         <div className="flex items-center gap-3">
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm">
             <img
               src="/Agent_SMS_logo.jpeg"
               alt="Agent SMS"
@@ -180,16 +180,16 @@ export default function CopilotChat({ analysis }) {
 
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-sm font-bold text-slate-800">
+              <h2 className="text-sm font-bold text-slate-800 dark:text-white">
                 Agent SMS
               </h2>
-              <span className="rounded-md border border-brand-200 bg-brand-50 px-2 py-0.5 text-[10px] font-semibold text-brand-700">
+              <span className="rounded-md border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-950/60 px-2 py-0.5 text-[10px] font-semibold text-brand-700 dark:text-brand-300">
                 OLLAMA
               </span>
             </div>
-            <p className="text-[11px] text-slate-500">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400">
               Grounded in active capture:{' '}
-              <span className="font-mono font-medium text-slate-700">
+              <span className="font-mono font-medium text-slate-700 dark:text-slate-200">
                 {filename}
               </span>
             </p>
@@ -201,8 +201,8 @@ export default function CopilotChat({ analysis }) {
           <div
             className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium ${
               status.online
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                : 'border-amber-200 bg-amber-50 text-amber-700'
+                ? 'border-emerald-200 dark:border-emerald-800/60 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300'
+                : 'border-amber-200 dark:border-amber-800/60 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300'
             }`}
           >
             <span
@@ -231,7 +231,7 @@ export default function CopilotChat({ analysis }) {
               className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
             >
               {!isUser && (
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm mt-0.5">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm mt-0.5">
                   <img
                     src="/Agent_SMS_logo.jpeg"
                     alt="Agent SMS"
@@ -245,7 +245,7 @@ export default function CopilotChat({ analysis }) {
                   className={`rounded-2xl px-4 py-3 text-xs sm:text-sm leading-relaxed ${
                     isUser
                       ? 'rounded-br-sm bg-brand-600 text-white shadow-sm'
-                      : 'rounded-tl-sm border border-slate-200/80 bg-slate-50/60 text-slate-800'
+                      : 'rounded-tl-sm border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/80 text-slate-800 dark:text-slate-100'
                   }`}
                 >
                   {isUser ? (
@@ -259,7 +259,7 @@ export default function CopilotChat({ analysis }) {
 
                 {/* Assistant Metadata: model & source */}
                 {!isUser && (msg.source || msg.model) && (
-                  <div className="mt-1.5 flex items-center gap-2 px-1 text-[10px] text-slate-400">
+                  <div className="mt-1.5 flex items-center gap-2 px-1 text-[10px] text-slate-400 dark:text-slate-500">
                     <span className="flex items-center gap-1 font-mono">
                       <Cpu className="h-3 w-3" />
                       {msg.model || status.model}
@@ -282,7 +282,7 @@ export default function CopilotChat({ analysis }) {
         {/* Loading / Generating State */}
         {loading && (
           <div className="flex gap-3 justify-start">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-white shadow-sm mt-0.5">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm mt-0.5">
               <img
                 src="/Agent_SMS_logo.jpeg"
                 alt="Agent SMS"
@@ -290,9 +290,9 @@ export default function CopilotChat({ analysis }) {
               />
             </div>
 
-            <div className="rounded-2xl rounded-tl-sm border border-slate-200 bg-slate-50/80 px-4 py-3 text-slate-700 shadow-sm">
-              <div className="flex items-center gap-2 text-xs font-medium text-slate-600">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-brand-600" />
+            <div className="rounded-2xl rounded-tl-sm border border-slate-200 dark:border-slate-800 bg-slate-50/80 dark:bg-slate-800 px-4 py-3 text-slate-700 dark:text-slate-200 shadow-sm">
+              <div className="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-brand-600 dark:text-brand-400" />
                 <span>Thinking & inspecting packet context with {status.model}...</span>
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function CopilotChat({ analysis }) {
 
         {/* Error Banner */}
         {error && (
-          <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-3 text-xs text-rose-700 flex items-center gap-2">
+          <div className="rounded-xl border border-rose-200 dark:border-rose-900/60 bg-rose-50/80 dark:bg-rose-950/40 p-3 text-xs text-rose-700 dark:text-rose-300 flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" />
             <span className="flex-1">{error}</span>
           </div>
@@ -314,8 +314,8 @@ export default function CopilotChat({ analysis }) {
           SUGGESTED QUESTIONS (Quick-Prompts)
       ========================================================== */}
       {suggestions.length > 0 && (
-        <div className="border-t border-slate-100 bg-slate-50/40 px-4 py-2.5">
-          <div className="flex items-center gap-1.5 mb-2 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="border-t border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/40 px-4 py-2.5">
+          <div className="flex items-center gap-1.5 mb-2 text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
             <HelpCircle className="h-3 w-3 text-brand-500" />
             <span>Suggested Questions</span>
           </div>
@@ -328,10 +328,14 @@ export default function CopilotChat({ analysis }) {
                 disabled={loading}
                 onClick={() => handleSendMessage(q)}
                 className="
-                  rounded-lg border border-slate-200 bg-white
-                  px-2.5 py-1.5 text-left text-[11px] font-medium text-slate-700
+                  rounded-lg border border-slate-200 dark:border-slate-700
+                  bg-white dark:bg-slate-800
+                  px-2.5 py-1.5 text-left text-[11px] font-medium
+                  text-slate-700 dark:text-slate-300
                   transition-all duration-150
-                  hover:border-brand-300 hover:bg-brand-50/50 hover:text-brand-700
+                  hover:border-brand-300 dark:hover:border-brand-500/60
+                  hover:bg-brand-50/50 dark:hover:bg-brand-950/60
+                  hover:text-brand-700 dark:hover:text-brand-300
                   active:scale-[0.99]
                   disabled:opacity-50 disabled:cursor-not-allowed
                 "
@@ -346,7 +350,7 @@ export default function CopilotChat({ analysis }) {
       {/* =========================================================
           INPUT BAR
       ========================================================== */}
-      <div className="border-t border-slate-200 bg-white p-3 sm:p-4">
+      <div className="border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 sm:p-4">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -363,12 +367,12 @@ export default function CopilotChat({ analysis }) {
             placeholder="Ask about security findings, TLS configurations, remediation steps..."
             disabled={loading}
             className="
-              flex-1 rounded-xl border border-slate-200
-              bg-slate-50/60 px-4 py-2.5
-              text-xs sm:text-sm text-slate-800
-              placeholder-slate-400
+              flex-1 rounded-xl border border-slate-200 dark:border-slate-700
+              bg-slate-50/60 dark:bg-slate-800/80 px-4 py-2.5
+              text-xs sm:text-sm text-slate-800 dark:text-slate-100
+              placeholder-slate-400 dark:placeholder-slate-500
               transition-colors
-              focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/10
+              focus:border-brand-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500/10
               disabled:opacity-60
             "
           />
@@ -390,7 +394,7 @@ export default function CopilotChat({ analysis }) {
           </button>
         </form>
 
-        <div className="mt-2 flex items-center justify-between px-1 text-[10px] text-slate-400">
+        <div className="mt-2 flex items-center justify-between px-1 text-[10px] text-slate-400 dark:text-slate-500">
           <span>Press <strong>Enter</strong> to send</span>
           <span className="flex items-center gap-1">
             <ShieldCheck className="h-3 w-3 text-emerald-500" />

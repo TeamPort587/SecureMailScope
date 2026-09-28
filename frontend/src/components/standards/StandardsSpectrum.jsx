@@ -137,8 +137,8 @@ export default function StandardsSpectrum({ result }) {
                   {/* Observed Pointer Indicator (Above Node) */}
                   <div className="h-7 flex items-end justify-center mb-1">
                     {isObs && (
-                      <span className="animate-observed-badge inline-flex items-center gap-1 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-2.5 py-0.5 text-[9px] font-bold tracking-wider uppercase transition-all select-none">
-                        <ArrowDown className="h-2.5 w-2.5 text-sky-400 dark:text-sky-600 shrink-0" />
+                      <span className="animate-observed-badge transition-all">
+                        <ArrowDown className="h-2.5 w-2.5 shrink-0" />
                         <span>Observed</span>
                       </span>
                     )}
