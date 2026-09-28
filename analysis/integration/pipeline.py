@@ -41,6 +41,10 @@ from ml.risk.risk_aggregator import calculate_session_risk
 from recommendation.engine import generate_recommendations as rec_engine_generate
 from recommendation.priority import sort_recommendations
 from recommendation.risk_guard import calculate_final_risk
+from analysis.anomaly_detection.service import (
+    analyze_session_anomaly,
+    aggregate_anomaly_results,
+)
 from analysis.standards import evaluate_session_standards
 
 logger = logging.getLogger(__name__)
@@ -327,7 +331,48 @@ def analyze_pcap(
 
     recommendations = build_recommendations(all_findings)
 
-    # 5. Build final contract response
+    # 6. Isolation Forest Anomaly Detection (Failure-Isolated)
+    session_anomalies: List[Dict[str, Any]] = []
+    for s, profile in zip(email_sessions, profiles):
+        s_findings = [f for f in all_findings if f.session_id == profile.session_id]
+        try:
+            res = analyze_session_anomaly(s, profile, s_findings)
+            session_anomalies.append(res)
+        except Exception as exc:
+            logger.warning("Anomaly detection failed for session %s: %s", profile.session_id, exc)
+            session_anomalies.append({
+                "session_id": profile.session_id,
+                "anomaly": {
+                    "status": "ERROR",
+                    "classification": None,
+                    "is_anomalous": None,
+                    "raw_score": None,
+                    "decision_score": None,
+                    "threshold": None,
+                    "model_version": "if-v1",
+                    "feature_schema_version": "1.0.0",
+                    "warnings": [f"Anomaly detection failed: {str(exc)}"],
+                    "explanation": {
+                        "summary": "Anomaly analysis encountered an internal error.",
+                        "deviations": [],
+                        "related_findings": [],
+                        "limitations": ["Anomaly analysis failed unexpectedly."],
+                    },
+                },
+            })
+
+    anomaly_assessment = aggregate_anomaly_results(session_anomalies)
+
+    # Attach anomaly results to session objects
+    anomaly_map = {sa["session_id"]: sa.get("anomaly") for sa in session_anomalies}
+    enriched_sessions = []
+    for p in profiles:
+        sd = p.to_dict()
+        if p.session_id in anomaly_map:
+            sd["anomaly"] = anomaly_map[p.session_id]
+        enriched_sessions.append(sd)
+
+    # 7. Build final contract response
     response_payload: Dict[str, Any] = {
         "analysis_version": "1.0.0",
         "file": {
@@ -337,10 +382,11 @@ def analyze_pcap(
             "size_bytes": size_bytes,
         },
         "summary": summary,
-        "sessions": [p.to_dict() for p in profiles],
+        "sessions": enriched_sessions,
         "findings": [f.to_dict() for f in all_findings],
         "risk": risk,
         "recommendations": recommendations,
+        "anomaly_assessment": anomaly_assessment,
     }
 
     return response_payload

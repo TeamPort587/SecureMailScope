@@ -61,6 +61,39 @@ const securitySchema = z.object({
   capture_completeness: captureCompleteness,
 });
 
+// -- Anomaly schema (Isolation Forest) -----------------------------------------
+
+const anomalyExplanationSchema = z.object({
+  summary: z.string(),
+  deviations: z.array(z.record(z.unknown())).optional(),
+  related_findings: z.array(z.string()).optional(),
+  limitations: z.array(z.string()).optional(),
+});
+
+const anomalySchema = z.object({
+  status: z.string(),
+  classification: z.string().nullable().optional(),
+  is_anomalous: z.boolean().nullable().optional(),
+  raw_score: z.number().nullable().optional(),
+  decision_score: z.number().nullable().optional(),
+  threshold: z.number().nullable().optional(),
+  model_version: z.string().optional(),
+  feature_schema_version: z.string().optional(),
+  warnings: z.array(z.string()).optional(),
+  explanation: anomalyExplanationSchema.optional(),
+}).nullable().optional();
+
+const anomalyAssessmentSchema = z.object({
+  overall_status: z.string(),
+  total_sessions: z.number().int().min(0),
+  anomalous_count: z.number().int().min(0),
+  within_baseline_count: z.number().int().min(0),
+  insufficient_evidence_count: z.number().int().min(0).optional(),
+  unavailable_count: z.number().int().min(0).optional(),
+  error_count: z.number().int().min(0).optional(),
+  anomalous_session_ids: z.array(z.string()).optional(),
+}).nullable().optional();
+
 // -- Risk schema ---------------------------------------------------------------
 
 const sessionRiskSchema = z.object({
@@ -139,6 +172,7 @@ const sessionSchema = z.object({
   security: securitySchema,
   tls: tlsSchema,
   certificate: certificateSchema,
+  anomaly: anomalySchema,
   risk: sessionRiskSchema.nullable().optional(),
   wireshark_filter: z.string().nullable().optional(),
   packet_count: z.number().int().optional(),
@@ -211,6 +245,7 @@ const djangoAnalysisResponseSchema = z.object({
   findings: z.array(findingSchema),
   risk: riskSchema,
   recommendations: z.array(recommendationSchema),
+  anomaly_assessment: anomalyAssessmentSchema,
 });
 
 /**

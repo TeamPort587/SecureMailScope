@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "description": "Session-level behavioral anomaly detection result produced by Isolation Forest inference.",
+
+  "example": {
+    "session_id": "smtp-001",
+    "anomaly": {
+      "status": "COMPLETE",
+      "classification": "ANOMALOUS",
+      "is_anomalous": true,
+      "raw_score": -0.1542,
+      "decision_score": -0.0521,
+      "threshold": 0.0,
+      "anomaly_index": 76.5,
+      "model_version": "if-v1",
+      "feature_schema_version": "if-features-v1",
+      "explanation": {
+        "summary": "Session exhibits significant behavioral deviation from learned normal baseline across 2 observed features.",
+        "deviations": [
+          {
+            "feature": "if_packet_count",
+            "feature_name": "Packet count",
+            "observed": 320,
+            "baseline_median": 24.0,
+            "baseline_range": [10.0, 45.0],
+            "direction": "HIGH",
+            "description": "Observed value 320.0 is significantly higher than the baseline range [10.0, 45.0]."
+          },
+          {
+            "feature": "if_cipher_strength",
+            "feature_name": "Cipher strength",
+            "observed": 0.0,
+            "baseline_median": 2.0,
+            "baseline_range": [1.0, 2.0],
+            "direction": "LOW",
+            "description": "Observed value 0.0 is lower than the baseline range [1.0, 2.0]."
+          }
+        ],
+        "related_findings": ["finding-003"],
+        "limitations": [
+          "Isolation Forest detects statistical deviations from the normal training baseline, not confirmed malicious attacks or verified vulnerabilities."
+        ]
+      },
+      "warnings": []
+    }
+  },
+
+  "aggregate_example": {
+    "model_version": "if-v1",
+    "feature_schema_version": "if-features-v1",
+    "total_sessions": 4,
+    "eligible_sessions": 4,
+    "anomalous_sessions": 1,
+    "within_baseline_sessions": 3,
+    "insufficient_evidence_sessions": 0,
+    "unavailable_sessions": 0,
+    "anomalous_session_ids": ["smtp-001"],
+    "summary_status": "ANOMALIES_DETECTED",
+    "notes": "Isolation Forest anomaly assessment operates independently of Random Forest risk scoring."
+  },
+
+  "status_definitions": {
+    "COMPLETE": "Inference and explanation completed successfully",
+    "INSUFFICIENT_EVIDENCE": "Session lacked critical evidence or minimum packets for reliable anomaly scoring",
+    "MODEL_UNAVAILABLE": "Model or preprocessor artifact not loaded; analysis safely proceeded without anomaly scoring",
+    "ANALYSIS_ERROR": "Exception encountered during feature extraction or scoring; shielded to prevent pipeline disruption"
+  },
+
+  "classification_definitions": {
+    "ANOMALOUS": "Observation identified as outlier by Isolation Forest decision function (score < threshold)",
+    "WITHIN_BASELINE": "Observation aligns with learned normal baseline distribution (score >= threshold)",
+    "INSUFFICIENT_EVIDENCE": "No classification attempted due to incomplete capture or missing key fields",
+    "MODEL_UNAVAILABLE": "Model was not available at runtime",
+    "ANALYSIS_ERROR": "Error occurred during classification"
+  }
+}

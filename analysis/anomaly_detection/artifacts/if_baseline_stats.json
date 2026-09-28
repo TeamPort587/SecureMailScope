@@ -1,0 +1,212 @@
+{
+  "if_protocol_smtp": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_protocol_imap": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_protocol_pop3": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_encryption_plaintext": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_encryption_starttls": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_encryption_implicit": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_upgrade_advertised": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_upgrade_requested": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_upgrade_succeeded": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_auth_before_tls": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_tls_version_numeric": {
+    "median": 5.0,
+    "center": 5.0,
+    "iqr_scale": 1.0,
+    "q25": 4.5,
+    "q75": 5.5
+  },
+  "if_cipher_strength": {
+    "median": 2.0,
+    "center": 2.0,
+    "iqr_scale": 1.0,
+    "q25": 1.5,
+    "q75": 2.5
+  },
+  "if_pfs_present": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_tls_handshake_incomplete": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_cert_visible": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_cert_key_size": {
+    "median": 2048.0,
+    "center": 2048.0,
+    "iqr_scale": 2048.0,
+    "q25": 1024.0,
+    "q75": 3072.0
+  },
+  "if_cert_self_signed": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_cert_validity_days": {
+    "median": 197.0442482035656,
+    "center": 197.0442482035656,
+    "iqr_scale": 163.9606630165186,
+    "q25": 115.06391669530629,
+    "q75": 279.0245797118249
+  },
+  "if_cert_key_algo_rsa": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_cert_key_algo_ec": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_packet_count": {
+    "median": 64.0,
+    "center": 64.0,
+    "iqr_scale": 58.0,
+    "q25": 35.0,
+    "q75": 93.0
+  },
+  "if_session_duration": {
+    "median": 7.84385,
+    "center": 7.84385,
+    "iqr_scale": 7.4673750000000005,
+    "q25": 4.1101624999999995,
+    "q75": 11.5775375
+  },
+  "if_client_packet_count": {
+    "median": 25.0,
+    "center": 25.0,
+    "iqr_scale": 23.0,
+    "q25": 13.5,
+    "q75": 36.5
+  },
+  "if_server_packet_count": {
+    "median": 36.0,
+    "center": 36.0,
+    "iqr_scale": 33.0,
+    "q25": 19.5,
+    "q75": 52.5
+  },
+  "if_packet_ratio": {
+    "median": 0.40835,
+    "center": 0.40835,
+    "iqr_scale": 0.12104999999999999,
+    "q25": 0.347825,
+    "q75": 0.468875
+  },
+  "if_tcp_reset_count": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_session_complete": {
+    "median": 1.0,
+    "center": 1.0,
+    "iqr_scale": 1.0,
+    "q25": 0.5,
+    "q75": 1.5
+  },
+  "if_finding_count": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_high_sev_count": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  },
+  "if_medium_sev_count": {
+    "median": 0.0,
+    "center": 0.0,
+    "iqr_scale": 1.0,
+    "q25": -0.5,
+    "q75": 0.5
+  }
+}

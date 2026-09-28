@@ -1,0 +1,74 @@
+{
+  "model_version": "if-v1",
+  "schema_version": "if-features-v1",
+  "feature_count": 30,
+  "feature_names": [
+    "if_protocol_smtp",
+    "if_protocol_imap",
+    "if_protocol_pop3",
+    "if_encryption_plaintext",
+    "if_encryption_starttls",
+    "if_encryption_implicit",
+    "if_upgrade_advertised",
+    "if_upgrade_requested",
+    "if_upgrade_succeeded",
+    "if_auth_before_tls",
+    "if_tls_version_numeric",
+    "if_cipher_strength",
+    "if_pfs_present",
+    "if_tls_handshake_incomplete",
+    "if_cert_visible",
+    "if_cert_key_size",
+    "if_cert_self_signed",
+    "if_cert_validity_days",
+    "if_cert_key_algo_rsa",
+    "if_cert_key_algo_ec",
+    "if_packet_count",
+    "if_session_duration",
+    "if_client_packet_count",
+    "if_server_packet_count",
+    "if_packet_ratio",
+    "if_tcp_reset_count",
+    "if_session_complete",
+    "if_finding_count",
+    "if_high_sev_count",
+    "if_medium_sev_count"
+  ],
+  "training_timestamp": "2026-09-27T16:12:26.446643+00:00",
+  "training_samples": 2000,
+  "holdout_normal_samples": 300,
+  "anomaly_eval_samples": 500,
+  "n_estimators": 200,
+  "contamination": 0.05,
+  "random_state": 42,
+  "evaluation_metrics": {
+    "roc_auc": 0.7674,
+    "precision": 0.9149,
+    "recall": 0.258,
+    "f1_score": 0.4025,
+    "confusion_matrix": [
+      [
+        288,
+        12
+      ],
+      [
+        371,
+        129
+      ]
+    ],
+    "holdout_normal_count": 300,
+    "anomaly_count": 500,
+    "false_positive_rate": 0.04,
+    "detection_rate": 0.258,
+    "normal_flagged_as_anomalous": 12,
+    "anomaly_detected": 129,
+    "threshold": -0.619187171102073
+  },
+  "data_source": "synthetic_protocol_aware_baseline",
+  "limitations": [
+    "Model trained on synthetic normal-behavior baseline.",
+    "Evaluation metrics reflect controlled synthetic scenarios, not real-world attacks.",
+    "Normal but uncommon traffic may be flagged as anomalous.",
+    "Malicious behavior resembling the baseline will not be detected."
+  ]
+}

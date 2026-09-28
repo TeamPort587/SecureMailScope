@@ -169,3 +169,20 @@ Validation split comparison (`ml/artifacts/model_comparison.json`):
    - Run PCAPs through the Django analysis pipeline.
    - Establish multi-analyst consensus on session risk labels.
    - Benchmark models against real holdout captures without synthetic training assistance.
+
+---
+
+## 10. Isolation Forest Behavioral Baseline Dataset
+
+In addition to the supervised 19-feature risk dataset, SecureMailScope defines an unsupervised 30-feature baseline dataset (`if-features-v1`) for the **Isolation Forest** anomaly detector:
+
+- **Schema Definition**: `docs/contracts/isolation-forest-feature-vector.json` & `analysis/anomaly_detection/feature_schema.py`
+- **Training Baseline Sample Count**: 2,000 normal email sessions (SMTP 60%, IMAP 25%, POP3 15%)
+- **Feature Categories**:
+  1. *Protocol & Connection Context* (10 features): protocol types, encryption modes, upgrade negotiation status, auth-before-TLS.
+  2. *TLS Characteristics* (4 features): ordinal TLS version encoding, cipher strength tier, PFS status, handshake completeness.
+  3. *Certificate Attributes* (6 features): cert visibility, key size, self-signed flag, validity days, key algorithm (RSA/EC).
+  4. *TCP Flow Dynamics* (7 features): packet count, duration, client/server counts, packet ratio, TCP RST count, session completeness.
+  5. *Context Counts* (3 features): total finding count, high-severity count, medium-severity count.
+- **Independence Invariant**: The Isolation Forest feature schema explicitly excludes Random Forest outputs (predicted class, risk probability, risk score) to prevent circular dependency and label leakage.
+
