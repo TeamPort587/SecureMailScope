@@ -9,9 +9,17 @@ const env = require('../config/env');
  */
 const limiter = rateLimit({
   windowMs: env.RATE_LIMIT_WINDOW_MS,
-  max: env.RATE_LIMIT_MAX_REQUESTS,
+  max: env.NODE_ENV === 'development' ? 5000 : env.RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) => {
+    const p = req.path || '';
+    return (
+      p === '/api/health' ||
+      p.includes('/pcap') ||
+      p.includes('/export')
+    );
+  },
   handler: (_req, res) => {
     res.status(429).json({
       status: 'error',

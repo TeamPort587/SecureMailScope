@@ -48,7 +48,10 @@ export async function apiClient(endpoint, options = {}) {
     const contentType = response.headers.get('content-type') || '';
     if (options.asBlob || contentType.includes('application/octet-stream')) {
       if (!response.ok) {
-        throw new Error(`Export failed with HTTP status ${response.status}`);
+        if (response.status === 429) {
+          throw new Error('Rate limit reached (HTTP 429). Please wait a moment before downloading again.');
+        }
+        throw new Error(`Download failed with HTTP status ${response.status}`);
       }
       return await response.blob();
     }
