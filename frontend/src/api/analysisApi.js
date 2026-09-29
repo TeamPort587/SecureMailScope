@@ -407,6 +407,22 @@ export const analysisApi = {
 
   /*
   |--------------------------------------------------------------------------
+  | Export Analysis PDF
+  |--------------------------------------------------------------------------
+  */
+
+  async exportAnalysisPdf(analysisOrId) {
+    let data = analysisOrId;
+    if (typeof analysisOrId === 'string') {
+      data = await this.getAnalysis(analysisOrId);
+    }
+    const { generatePdfReport } = await import('../utils/pdfReportGenerator');
+    return await generatePdfReport(data, { download: true });
+  },
+
+
+  /*
+  |--------------------------------------------------------------------------
   | Download Session PCAP
   |--------------------------------------------------------------------------
   */

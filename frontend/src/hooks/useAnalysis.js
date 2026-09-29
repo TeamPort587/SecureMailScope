@@ -5,6 +5,7 @@ export function useAnalysis(initialAnalysisId = null, initialData = null) {
   const [analysis, setAnalysis] = useState(initialData);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchAnalysis = useCallback(async (id) => {
@@ -56,6 +57,25 @@ export function useAnalysis(initialAnalysisId = null, initialData = null) {
     }
   }, [analysis]);
 
+  const exportPdf = useCallback(async (customAnalysis = null) => {
+    const target = customAnalysis || analysis;
+    if (!target) return;
+    setGeneratingPdf(true);
+    try {
+      let fullAnalysis = target;
+      if (!fullAnalysis.sessions && target.analysis_id) {
+        fullAnalysis = await analysisApi.getAnalysis(target.analysis_id);
+      }
+      const { generatePdfReport } = await import('../utils/pdfReportGenerator');
+      await generatePdfReport(fullAnalysis, { download: true });
+    } catch (err) {
+      setError(err.message || 'Failed to generate PDF report.');
+    } finally {
+      setGeneratingPdf(false);
+    }
+  }, [analysis]);
+
+
   const loadPreset = useCallback((presetData) => {
     setAnalysis(presetData);
     setError(null);
@@ -73,12 +93,15 @@ export function useAnalysis(initialAnalysisId = null, initialData = null) {
     analysis,
     loading,
     uploading,
+    generatingPdf,
     error,
     fetchAnalysis,
     uploadPcap,
     exportJson,
+    exportPdf,
     loadPreset,
     setAnalysis,
     setError,
   };
 }
+

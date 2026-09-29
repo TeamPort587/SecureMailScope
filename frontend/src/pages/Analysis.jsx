@@ -33,6 +33,8 @@ import {
   FileWarning,
   Sparkles,
   Cpu,
+  FileText,
+  Loader2,
 } from 'lucide-react';
 
 import { useAnalysis } from '../hooks/useAnalysis';
@@ -61,6 +63,8 @@ export default function Analysis() {
     error,
     fetchAnalysis,
     exportJson,
+    exportPdf,
+    generatingPdf,
   } = useAnalysis(id, initialData);
 
   const [activeTab, setActiveTab] = useState(() => {
@@ -915,35 +919,68 @@ export default function Analysis() {
           </div>
 
 
-          <button
-            type="button"
-            onClick={() =>
-              exportJson(
-                analysis.analysis_id
-              )
-            }
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-lg
-              bg-brand-600
-              px-4 py-2.5
-              text-xs
-              font-semibold
-              text-white
-              shadow-sm
-              transition-all
-              hover:bg-brand-700
-              hover:shadow-md
-              active:scale-[0.98]
-              self-start
-              lg:self-auto
-            "
-          >
-            <Download className="h-3.5 w-3.5" />
-            Export Report
-          </button>
+          <div className="flex flex-wrap items-center gap-2.5 self-start lg:self-auto">
+            <button
+              type="button"
+              onClick={() => exportPdf()}
+              disabled={generatingPdf}
+              className="
+                inline-flex
+                items-center
+                gap-2
+                rounded-lg
+                bg-gradient-to-r from-brand-600 to-indigo-600
+                px-4 py-2.5
+                text-xs
+                font-semibold
+                text-white
+                shadow-sm
+                transition-all
+                hover:from-brand-500 hover:to-indigo-500
+                hover:shadow-md hover:shadow-brand-500/20
+                active:scale-[0.98]
+                disabled:opacity-60 disabled:cursor-not-allowed
+              "
+              title="Generate and download comprehensive executive & technical PDF report"
+            >
+              {generatingPdf ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : (
+                <FileText className="h-3.5 w-3.5 text-sky-200" />
+              )}
+              <span>{generatingPdf ? 'Generating PDF...' : 'Generate PDF Report'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() =>
+                exportJson(
+                  analysis.analysis_id
+                )
+              }
+              className="
+                inline-flex
+                items-center
+                gap-2
+                rounded-lg
+                border border-slate-300 dark:border-slate-700
+                bg-white dark:bg-slate-800
+                px-3.5 py-2.5
+                text-xs
+                font-semibold
+                text-slate-700 dark:text-slate-200
+                shadow-sm
+                transition-all
+                hover:bg-slate-50 dark:hover:bg-slate-700
+                hover:border-slate-400 dark:hover:border-slate-600
+                active:scale-[0.98]
+              "
+              title="Export raw PCAP analysis telemetry and findings as JSON"
+            >
+              <Download className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
+              <span>Export JSON</span>
+            </button>
+          </div>
 
         </div>
 
