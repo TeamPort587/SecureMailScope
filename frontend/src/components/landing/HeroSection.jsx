@@ -17,10 +17,6 @@ export default function HeroSection({ user, onScrollToUpload }) {
           <span className="text-xs font-semibold tracking-wide text-slate-800 dark:text-slate-200">
             Email Network Traffic Security Inspector
           </span>
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-          <span className="font-mono text-[10px] font-bold uppercase text-brand-600 dark:text-brand-400">
-            RFC 3207 · 8314
-          </span>
         </div>
 
         {/* High-impact Bold Headline */}
@@ -54,7 +50,7 @@ export default function HeroSection({ user, onScrollToUpload }) {
               to="/analysis"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-850 hover:border-slate-300 dark:hover:border-slate-700 font-semibold px-6 py-3.5 text-sm shadow-sm transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
             >
-              <span>Analysis Center</span>
+              <span>Security Workspace</span>
               <ArrowRight className="h-4 w-4 text-slate-400 dark:text-slate-500" />
             </Link>
           ) : (

@@ -170,16 +170,16 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
             <NavTooltip label="UPLOAD" />
           </div>
 
-          {/* 3. ANALYSIS CENTER */}
+          {/* 3. SECURITY WORKSPACE */}
           <div className="relative group">
             <NavLink
               to="/analysis"
               className={({ isActive }) => btnClass(isActive)}
-              aria-label="Analysis Center"
+              aria-label="Security Workspace"
             >
               <FileSearch className={iconClass} />
             </NavLink>
-            <NavTooltip label="ANALYSIS" />
+            <NavTooltip label="WORKSPACE" />
           </div>
 
           {/* 4. THEME TOGGLE (DARK / LIGHT MODE) */}

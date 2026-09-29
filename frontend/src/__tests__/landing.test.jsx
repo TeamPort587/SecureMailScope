@@ -32,14 +32,14 @@ describe('Landing Page Components', () => {
       expect(signInLink).toHaveAttribute('href', '/login');
     });
 
-    it('renders Analysis Center CTA when user is authenticated', () => {
+    it('renders Security Workspace CTA when user is authenticated', () => {
       render(
         <BrowserRouter>
           <HeroSection user={{ email: 'analyst@test.local' }} onScrollToUpload={vi.fn()} />
         </BrowserRouter>
       );
 
-      const analysisLink = screen.getByRole('link', { name: /analysis center/i });
+      const analysisLink = screen.getByRole('link', { name: /security workspace/i });
       expect(analysisLink).toBeInTheDocument();
       expect(analysisLink).toHaveAttribute('href', '/analysis');
     });
