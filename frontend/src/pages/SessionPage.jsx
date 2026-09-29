@@ -468,11 +468,11 @@ export default function SessionPage() {
         </div>
 
         {/* =========================================================
-            SECTION JUMP NAVIGATION BAR (STICKY)
+            SECTION JUMP NAVIGATION BAR
         ========================================================== */}
         <nav
           aria-label="Session sections navigation"
-          className="sticky top-3 z-30 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-sm dark:shadow-soft-dark backdrop-blur-md transition-all"
+          className="relative z-10 flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 p-1.5 shadow-sm dark:shadow-soft-dark backdrop-blur-md transition-all"
         >
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <button
