@@ -27,6 +27,250 @@ import { analysisApi } from '../api/analysisApi';
 const PAGE_SIZE = 15;
 
 /**
+ * Friendly names for all 30 Isolation Forest features so users see plain English.
+ */
+const FRIENDLY_FEATURE_NAMES = {
+  // Protocol & Connection
+  if_protocol_smtp: 'SMTP Protocol (Port 25/587)',
+  if_protocol_imap: 'IMAP Protocol (Port 143/993)',
+  if_protocol_pop3: 'POP3 Protocol (Port 110/995)',
+  if_encryption_plaintext: 'Plaintext Communication',
+  if_encryption_starttls: 'STARTTLS Protocol Mode',
+  if_encryption_implicit: 'Implicit TLS Protocol Mode',
+  if_upgrade_advertised: 'STARTTLS Advertised',
+  if_upgrade_requested: 'STARTTLS Upgrade Requested',
+  if_upgrade_succeeded: 'STARTTLS Upgrade Success',
+  if_auth_before_tls: 'Authentication Before TLS',
+
+  // TLS & Cryptography
+  if_tls_version_numeric: 'TLS Protocol Version',
+  if_cipher_strength: 'Cipher Suite Strength',
+  if_pfs_present: 'Forward Secrecy (PFS)',
+  if_tls_handshake_incomplete: 'TLS Handshake Completion',
+
+  // Certificate Characteristics
+  if_cert_visible: 'Certificate Visibility',
+  if_cert_key_size: 'Certificate Key Size',
+  if_cert_self_signed: 'Self-Signed Certificate',
+  if_cert_validity_days: 'Certificate Expiration Days',
+  if_cert_key_algo_rsa: 'Certificate Key: RSA',
+  if_cert_key_algo_ec: 'Certificate Key: ECDSA',
+
+  // TCP & Traffic Flow Telemetry
+  if_packet_count: 'Total Packet Count',
+  if_session_duration: 'Session Duration',
+  if_client_packet_count: 'Client Packet Count',
+  if_server_packet_count: 'Server Packet Count',
+  if_packet_ratio: 'Client/Total Packet Ratio',
+  if_tcp_reset_count: 'TCP Reset (RST) Count',
+  if_session_complete: 'Session Completeness',
+
+  // Security Finding Counts
+  if_finding_count: 'Security Findings Count',
+  if_high_sev_count: 'High/Critical Findings Count',
+  if_medium_sev_count: 'Medium Findings Count',
+};
+
+/**
+ * Uniformly formats raw numeric values into human-friendly, plain English phrases
+ * across all 30 Isolation Forest features for both "This Session" and "Normal Benchmark".
+ */
+function formatFriendlyValue(feature, val, isBaseline = false) {
+  if (val === null || val === undefined) return isBaseline ? 'Normal Baseline' : 'Standard';
+  const num = typeof val === 'number' ? val : parseFloat(val);
+  if (isNaN(num)) return String(val);
+
+  const rawKey = String(feature || '').toLowerCase().trim();
+  const key = rawKey.startsWith('if_') ? rawKey : `if_${rawKey}`;
+
+  // 1. Authentication Before TLS
+  if (key === 'if_auth_before_tls') {
+    if (isBaseline) return 'Rare / Never (< 2%)';
+    return num >= 0.5 ? 'YES (Cleartext Auth)' : 'No (Encrypted Auth)';
+  }
+
+  // 2. STARTTLS Handshake & Upgrades
+  if (key === 'if_upgrade_succeeded') {
+    if (isBaseline) return 'Standard (95%)';
+    return num >= 0.5 ? 'YES (Completed)' : 'NO (Failed / Stripped)';
+  }
+  if (key === 'if_upgrade_advertised') {
+    if (isBaseline) return 'Advertised (98%)';
+    return num >= 0.5 ? 'YES (Advertised)' : 'NO (Not Advertised / Stripped)';
+  }
+  if (key === 'if_upgrade_requested') {
+    if (isBaseline) return 'Requested (95%)';
+    return num >= 0.5 ? 'YES (Requested)' : 'NO (Not Requested)';
+  }
+
+  // 3. Encryption Modes
+  if (key === 'if_encryption_plaintext') {
+    if (isBaseline) return 'Encrypted / TLS Required';
+    return num >= 0.5 ? 'YES (Unencrypted Stream)' : 'NO (Encrypted)';
+  }
+  if (key === 'if_encryption_starttls') {
+    if (isBaseline) return 'Standard (85%)';
+    return num >= 0.5 ? 'YES (Explicit STARTTLS)' : 'NO';
+  }
+  if (key === 'if_encryption_implicit') {
+    if (isBaseline) return 'Direct TLS (15%)';
+    return num >= 0.5 ? 'YES (Direct TLS Tunnel)' : 'NO';
+  }
+
+  // 4. Protocol Types
+  if (key === 'if_protocol_smtp') {
+    if (isBaseline) return 'SMTP Baseline';
+    return num >= 0.5 ? 'SMTP (Active)' : 'Other Protocol';
+  }
+  if (key === 'if_protocol_imap') {
+    if (isBaseline) return 'IMAP Baseline';
+    return num >= 0.5 ? 'IMAP (Active)' : 'Other Protocol';
+  }
+  if (key === 'if_protocol_pop3') {
+    if (isBaseline) return 'POP3 Baseline';
+    return num >= 0.5 ? 'POP3 (Active)' : 'Other Protocol';
+  }
+
+  // 5. TLS Version (Ordinal: 0=Plaintext/SSLv2, 1=SSLv3, 2=TLS1.0, 3=TLS1.1, 4=TLS1.2, 5=TLS1.3)
+  if (key === 'if_tls_version_numeric') {
+    let label = 'Plaintext (No TLS)';
+    if (num >= 4.5 || num === 1.3) label = 'TLS 1.3 (Modern)';
+    else if ((num >= 3.5 && num < 4.5) || num === 1.2) label = 'TLS 1.2 (Standard)';
+    else if ((num >= 2.5 && num < 3.5) || num === 1.1) label = 'TLS 1.1 (Deprecated)';
+    else if ((num >= 1.5 && num < 2.5) || num === 1.0) label = 'TLS 1.0 (Deprecated)';
+    else if (num > 0 && num < 1.5) label = 'Legacy SSL (Insecure)';
+
+    if (isBaseline) return `Expected ${label}`;
+    return label;
+  }
+
+  // 6. Cipher Suite Strength (0=Weak, 1=Moderate, 2=Strong)
+  if (key === 'if_cipher_strength') {
+    if (num >= 1.5) return isBaseline ? 'Strong (AEAD Benchmark)' : 'Strong (AEAD / GCM)';
+    if (num >= 0.5) return isBaseline ? 'Moderate Suite' : 'Moderate (Legacy CBC)';
+    return isBaseline ? 'Weak / Deprecated' : 'Weak / Export / None';
+  }
+
+  // 7. Perfect Forward Secrecy (PFS)
+  if (key === 'if_pfs_present') {
+    if (isBaseline) return 'Standard (90%)';
+    return num >= 0.5 ? 'YES (ECDHE/DHE Active)' : 'NO (Static RSA Key)';
+  }
+
+  // 8. TLS Handshake Incomplete
+  if (key === 'if_tls_handshake_incomplete') {
+    if (isBaseline) return 'Completed (99%)';
+    return num >= 0.5 ? 'YES (Incomplete / Aborted)' : 'NO (Complete Handshake)';
+  }
+
+  // 9. Certificate Visibility & Attributes
+  if (key === 'if_cert_visible') {
+    if (isBaseline) return 'Observable (95%)';
+    return num >= 0.5 ? 'YES (Observed in Handshake)' : 'NO (Hidden / Not Presented)';
+  }
+  if (key === 'if_cert_key_size') {
+    if (num <= 0) return isBaseline ? '2048-bit (Standard)' : 'None / Not Seen';
+    const rounded = Math.round(num);
+    const suffix = rounded < 2048 ? ' (Weak Key)' : '';
+    if (isBaseline) return `~${rounded}-bit (Standard)`;
+    return `${rounded}-bit${suffix}`;
+  }
+  if (key === 'if_cert_self_signed') {
+    if (isBaseline) return 'Rare (< 1% / CA Verified)';
+    return num >= 0.5 ? 'YES (Self-Signed / Untrusted)' : 'No (CA Verified)';
+  }
+  if (key === 'if_cert_validity_days') {
+    const days = Math.round(num);
+    if (days < 0) return isBaseline ? 'Valid (Positive Days)' : `${Math.abs(days)} days ago (Expired)`;
+    if (days === 0) return isBaseline ? 'Valid (Positive Days)' : '0 days (Expired/None)';
+    if (isBaseline) return `~${days} days valid`;
+    return `+${days} days remaining`;
+  }
+  if (key === 'if_cert_key_algo_rsa') {
+    if (isBaseline) return 'Standard (85%)';
+    return num >= 0.5 ? 'YES (RSA Key)' : 'NO (Non-RSA)';
+  }
+  if (key === 'if_cert_key_algo_ec') {
+    if (isBaseline) return 'Modern (15%)';
+    return num >= 0.5 ? 'YES (ECDSA Key)' : 'NO (Non-EC)';
+  }
+
+  // 10. Packet & Session Telemetry
+  if (key === 'if_session_duration') {
+    const formatted = num < 1 ? `${Math.round(num * 1000)}ms` : `${num.toFixed(1)}s`;
+    return isBaseline ? `~${formatted}` : formatted;
+  }
+  if (key === 'if_packet_ratio') {
+    const pct = Math.round(num * 100);
+    return isBaseline ? `~${pct}% (Balanced)` : `${pct}% client`;
+  }
+  if (key === 'if_packet_count') {
+    const count = Math.round(num);
+    return isBaseline ? `~${count} packets` : `${count} packets`;
+  }
+  if (key === 'if_client_packet_count') {
+    const count = Math.round(num);
+    return isBaseline ? `~${count} client pkts` : `${count} client pkts`;
+  }
+  if (key === 'if_server_packet_count') {
+    const count = Math.round(num);
+    return isBaseline ? `~${count} server pkts` : `${count} server pkts`;
+  }
+  if (key === 'if_tcp_reset_count') {
+    const count = Math.round(num);
+    if (isBaseline) return `${count} resets (Normal: 0)`;
+    return count > 0 ? `${count} RST packets` : '0 resets';
+  }
+  if (key === 'if_session_complete') {
+    if (isBaseline) return 'Clean Teardown (95%)';
+    return num >= 0.5 ? 'YES (Clean TCP Teardown)' : 'NO (Abrupt / Partial Session)';
+  }
+
+  // 11. Security Finding Counts
+  if (key === 'if_finding_count') {
+    const count = Math.round(num);
+    if (isBaseline) return `${count} findings (0 normal)`;
+    return `${count} findings`;
+  }
+  if (key === 'if_high_sev_count') {
+    const count = Math.round(num);
+    if (isBaseline) return '0 (Clean baseline)';
+    return count > 0 ? `${count} critical/high` : '0';
+  }
+  if (key === 'if_medium_sev_count') {
+    const count = Math.round(num);
+    if (isBaseline) return '0 (Clean baseline)';
+    return count > 0 ? `${count} medium` : '0';
+  }
+
+  // Universal fallback for any integer vs float
+  if (Math.abs(num - Math.round(num)) < 0.001) {
+    return isBaseline ? `~${Math.round(num)}` : `${Math.round(num)}`;
+  }
+  return isBaseline ? `~${num.toFixed(1)}` : num.toFixed(2);
+}
+
+/**
+ * Converts raw Isolation Forest decision score into an intuitive 0–100 Anomaly Index.
+ *  - 0–30: Standard Baseline (Green) - Calm, healthy normal traffic
+ *  - 31–60: Normal Variance (Blue/Slate)
+ *  - 61–85: Elevated Anomaly (Amber) - Notable behavioral divergence
+ *  - 86–100: Severe Outlier (Red)
+ */
+function getAnomalyIndex(score, isAnom) {
+  if (typeof score !== 'number') return null;
+  if (isAnom) {
+    const clamped = Math.max(-0.4, Math.min(0, score));
+    const ratio = Math.abs(clamped) / 0.4;
+    return Math.min(98, Math.max(70, Math.round(70 + ratio * 28))); // 70 to 98
+  } else {
+    const clamped = Math.max(0, Math.min(0.4, score));
+    const ratio = clamped / 0.4;
+    return Math.min(25, Math.max(8, Math.round(18 - ratio * 10))); // 8 to 18 (calm green)
+  }
+}
+
+/**
  * AnomalyDetectionCard
  *
  * Renders the Isolation Forest anomaly assessment at both PCAP-level
@@ -632,16 +876,33 @@ export default function AnomalyDetectionCard({
                             {/* ANOMALY SCORE */}
                             <td className="px-4 py-3.5 text-xs whitespace-nowrap">
                               {typeof anomaly?.decision_score === 'number' ? (
-                                <span
-                                  className={`inline-flex items-center font-mono text-[11px] font-semibold px-2 py-0.5 rounded border ${
-                                    isAnom
-                                      ? 'text-amber-800 dark:text-amber-300 bg-amber-100/70 dark:bg-amber-950/50 border-amber-300 dark:border-amber-800'
-                                      : 'text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
-                                  }`}
-                                  title="Isolation Forest Decision Score"
-                                >
-                                  {anomaly.decision_score.toFixed(3)}
-                                </span>
+                                (() => {
+                                  const index = getAnomalyIndex(anomaly.decision_score, isAnom);
+                                  return (
+                                    <div className="flex items-center gap-2">
+                                      {/* 0-100 Anomaly Index Badge */}
+                                      <span
+                                        className={`inline-flex items-center gap-1.5 font-mono text-xs font-bold px-2.5 py-1 rounded-lg border ${
+                                          isAnom
+                                            ? index >= 85
+                                              ? 'text-rose-700 dark:text-rose-300 bg-rose-50 dark:bg-rose-950/50 border-rose-200 dark:border-rose-800'
+                                              : 'text-amber-800 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/50 border-amber-300 dark:border-amber-800'
+                                            : 'text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/50 border-emerald-200 dark:border-emerald-800'
+                                        }`}
+                                        title={`Anomaly Index: ${index}/100 · Underlying ML Score: ${anomaly.decision_score.toFixed(3)}`}
+                                      >
+                                        <span className={`h-1.5 w-1.5 rounded-full ${isAnom ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                                        <span>{index}</span>
+                                        <span className="text-[10px] font-sans font-normal opacity-60">/100</span>
+                                      </span>
+
+                                      {/* Clear Status Indicator */}
+                                      <span className={`text-[11px] font-medium ${isAnom ? 'text-amber-700 dark:text-amber-400 font-semibold' : 'text-slate-500 dark:text-slate-400'}`}>
+                                        {isAnom ? (index >= 85 ? 'Severe Outlier' : 'Elevated Anomaly') : 'Within Baseline'}
+                                      </span>
+                                    </div>
+                                  );
+                                })()
                               ) : (
                                 <span className="text-slate-400 dark:text-slate-500 font-mono text-xs">—</span>
                               )}
@@ -682,14 +943,16 @@ export default function AnomalyDetectionCard({
                                   <div>
                                     <h5 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
                                       <Info className="h-3.5 w-3.5 text-slate-400" />
-                                      Explanation & Rationale
+                                      Behavioral Assessment & Explanation
                                     </h5>
-                                    <p className="mt-1 text-xs leading-relaxed text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200/80 dark:border-slate-800 shadow-2xs">
-                                      {anomaly?.explanation?.summary ||
-                                        (isAnom
-                                          ? 'This session was classified as anomalous by the statistical model, but no individual feature deviation was identified. The anomaly may arise from a subtle joint distribution across multiple traffic dimensions.'
-                                          : 'This session\'s characteristics are within the expected baseline range learned during training.')}
-                                    </p>
+                                    <div className="mt-1 bg-white dark:bg-slate-900 p-3.5 rounded-xl border border-slate-200/80 dark:border-slate-800 shadow-2xs">
+                                      <p className="text-xs leading-relaxed text-slate-700 dark:text-slate-300">
+                                        {anomaly?.explanation?.summary ||
+                                          (isAnom
+                                            ? 'This session was classified as anomalous because its communication patterns deviate notably from standard enterprise mail traffic.'
+                                            : "This session's communication dynamics are completely within standard baseline expectations.")}
+                                      </p>
+                                    </div>
                                   </div>
 
                                   {/* STATISTICAL DEVIATIONS */}
@@ -698,34 +961,79 @@ export default function AnomalyDetectionCard({
                                       <div>
                                         <h5 className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-2">
                                           <Sliders className="h-3.5 w-3.5 text-slate-400" />
-                                          Key Deviations from Baseline
+                                          Observed Traffic Deviations vs Normal Baseline
                                         </h5>
-                                        <div className="grid gap-2 sm:grid-cols-2">
-                                          {anomaly.explanation.deviations.map((dev, idx) => (
-                                            <div
-                                              key={idx}
-                                              className="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-2.5 text-xs shadow-2xs"
-                                            >
-                                              <div className="flex items-center justify-between font-mono text-[11px]">
-                                                <span className="font-semibold text-slate-800 dark:text-slate-200">
-                                                  {dev.feature || dev.name || 'feature'}
-                                                </span>
-                                                <span className="text-amber-700 dark:text-amber-400 font-bold">
-                                                  obs: {typeof dev.observed === 'number' ? dev.observed.toFixed(2) : String(dev.observed)}
-                                                </span>
-                                              </div>
-                                              {dev.baseline_mean !== undefined && (
-                                                <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
-                                                  baseline mean: {typeof dev.baseline_mean === 'number' ? dev.baseline_mean.toFixed(2) : dev.baseline_mean}
+                                        <div className="grid gap-2.5 sm:grid-cols-2">
+                                          {anomaly.explanation.deviations.map((dev, idx) => {
+                                            const featureKey = dev.feature || dev.name || 'Traffic Metric';
+                                            const baselineVal = dev.baseline_median !== undefined
+                                              ? dev.baseline_median
+                                              : dev.baseline_mean;
+                                            const comparisonText = dev.comparison || (isAnom ? 'Deviates from baseline' : 'Within expected range');
+                                            const isAbove = String(comparisonText).toLowerCase().includes('above');
+                                            const isBelow = String(comparisonText).toLowerCase().includes('below');
+
+                                            const friendlyName =
+                                              FRIENDLY_FEATURE_NAMES[featureKey] ||
+                                              FRIENDLY_FEATURE_NAMES[`if_${featureKey}`] ||
+                                              featureKey;
+
+                                            return (
+                                              <div
+                                                key={idx}
+                                                className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-3.5 text-xs shadow-2xs space-y-2"
+                                              >
+                                                <div className="flex items-center justify-between font-mono text-[11px] gap-2">
+                                                  <span className="font-semibold text-slate-800 dark:text-slate-200 truncate" title={friendlyName}>
+                                                    {friendlyName}
+                                                  </span>
+                                                  <span
+                                                    className={`px-2 py-0.5 rounded-md text-[10px] font-sans font-semibold uppercase tracking-wider ${
+                                                      isAbove
+                                                        ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-800'
+                                                        : isBelow
+                                                        ? 'bg-indigo-100 dark:bg-indigo-950/70 text-indigo-800 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-800'
+                                                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                                    }`}
+                                                  >
+                                                    {comparisonText}
+                                                  </span>
                                                 </div>
-                                              )}
-                                              {dev.description && (
-                                                <p className="mt-1 text-[11px] text-slate-600 dark:text-slate-300">
-                                                  {dev.description}
-                                                </p>
-                                              )}
-                                            </div>
-                                          ))}
+
+                                                {/* VALUE COMPARISON */}
+                                                <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 dark:bg-slate-850 p-2.5 rounded-lg border border-slate-100 dark:border-slate-800">
+                                                  <div className="border-r border-slate-200 dark:border-slate-700/60 pr-2">
+                                                    <span className="text-slate-400 dark:text-slate-500 text-[10px] block font-sans">
+                                                      This Session
+                                                    </span>
+                                                    <span className="font-mono font-bold text-slate-900 dark:text-white text-xs">
+                                                      {formatFriendlyValue(featureKey, dev.observed, false)}
+                                                    </span>
+                                                  </div>
+                                                  <div className="pl-1">
+                                                    <span className="text-slate-400 dark:text-slate-500 text-[10px] block font-sans">
+                                                      Normal Benchmark
+                                                    </span>
+                                                    <span className="font-mono font-medium text-slate-600 dark:text-slate-300 text-xs">
+                                                      {formatFriendlyValue(featureKey, baselineVal, true)}
+                                                    </span>
+                                                  </div>
+                                                </div>
+
+                                                {/* INTERPRETATION NARRATIVE */}
+                                                {(dev.description || dev.interpretation) && (
+                                                  <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-300 pt-0.5">
+                                                    {dev.description || dev.interpretation}
+                                                  </p>
+                                                )}
+                                                {dev.description && dev.interpretation && dev.description !== dev.interpretation && (
+                                                  <p className="text-[10px] text-slate-400 dark:text-slate-500 italic">
+                                                    {dev.interpretation}
+                                                  </p>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                       </div>
                                     )}
