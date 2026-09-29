@@ -1004,3 +1004,37 @@ html.dark .animate-observed-badge svg {
     animation: none;
   }
 }
+
+/* ================================================================
+   NAVBAR DYNAMIC PILL TRANSITION (SMOOTH 800MS FLUID ANIMATION)
+================================================================ */
+
+.navbar-pill-container {
+  will-change: width, max-width, height, border-radius, background-color, border-color, box-shadow, padding;
+  transition: 
+    width 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    max-width 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-radius 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    padding 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 600ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-pill-button {
+  transition:
+    width 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 300ms ease,
+    border-color 300ms ease,
+    color 300ms ease,
+    box-shadow 300ms ease,
+    transform 200ms ease;
+}
+
+.navbar-pill-icon {
+  transition:
+    width 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
