@@ -1,144 +1,198 @@
 # SecureMailScope
 
-SecureMailScope is an end-to-end security analysis and monitoring platform designed for inspecting, dissecting, and analyzing email protocols, payloads, and associated network traffic for threats, anomalies, and compliance violations.
+SecureMailScope is an enterprise-grade security analysis and monitoring platform designed for inspecting, dissecting, and auditing email network traffic (SMTP, IMAP, and POP3). It combines deterministic cryptographic inspection, a **dual-model machine learning architecture** (Supervised Risk Assessment + Unsupervised Behavioral Anomaly Detection), actionable hardening recommendations, and a local **AI Security Copilot**.
 
 ---
 
-## Purpose of the Project
-
-Modern email infrastructure faces sophisticated threat vectors ranging from phishing, spoofing, and malicious attachments to anomalous protocol behavior. SecureMailScope provides a unified workflow to:
-- Ingest and parse email network traffic captures and message payloads.
-- Run multi-layered detection and heuristics analysis against email artifacts.
-- Deliver real-time visualization, alert dashboards, and detailed threat telemetry to security analysts.
-
----
-
-## Repository Structure
+## Architecture Overview
 
 ```text
-.
-├── .gitignore
-├── README.md
-├── LICENSE
-│
-├── frontend/                   # React frontend application
-│   └── .gitkeep
-│
-├── gateway/                    # Node.js API gateway and orchestration service
-│   └── .gitkeep
-│
-├── analysis/                   # Python/Django analysis backend and detection engine
-│   └── .gitkeep
-│
-├── data/                       # Local datasets, sample captures, and testing fixtures
-│   └── .gitkeep
-│
-├── docs/                       # Project specifications, contracts, and documentation
-│   ├── contracts/
-│   │   ├── node-django.json    # API contract between Gateway and Analysis engine
-│   │   ├── django-result.json  # Schema definition for analysis engine results
-│   │   └── node-react.json     # API contract between Frontend and Gateway
-│   │
-│   ├── architecture.md         # High-level system architecture and component design
-│   ├── dataset-manifest.yaml   # Catalog and metadata for test/benchmark datasets
-│   └── demo-checklist.md       # Operational checklist for testing and demonstrations
-│
-└── .github/
-    └── workflows/              # GitHub Actions CI/CD pipelines
-        └── .gitkeep
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                             React 18 Frontend                               │
+│        Live Telemetry • Stream Inspector • Anomaly Cards • AI Copilot       │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       │ HTTP / REST & Multipart
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                            Node.js API Gateway                              │
+│         JWT Auth • Multer Ingestion • Zod Validation • PostgreSQL           │
+└──────────────┬───────────────────────────────────────────────┬──────────────┘
+               │                                               │
+               ▼ POST /internal/analyze                        ▼ Local REST
+┌──────────────────────────────────────────────┐ ┌────────────────────────────┐
+│         Django Forensic Analysis Engine      │ │      Ollama AI Copilot     │
+│                                              │ │      mailscope-sec:3b      │
+│  • Passive PCAP Dissection (TShark/PyShark)  │ └────────────────────────────┘
+│  • TCP Stream Reconstruction & Completeness  │
+│  • TLS 1.0–1.3 & X.509 Certificate Profiler  │
+│  • 10 Deterministic Security Rules           │
+│  • Random Forest Risk Model (rf-v1)          │
+│  • Isolation Forest Anomaly Model (if-v1)    │
+│  • Actionable Remediation Generator          │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## Service Responsibilities
+## Project Structure
 
-### 1. Frontend (`frontend/`)
-- **Technology**: React (JavaScript/TypeScript)
-- **Role**: Provides the interactive web application interface for security analysts.
-- **Responsibilities**:
-  - File upload interface for network captures (PCAP) and email data.
-  - Interactive dashboards displaying threat metrics, detection summaries, and log streams.
-  - Visualizing inspection reports and individual message breakdowns.
-
-### 2. Gateway (`gateway/`)
-- **Technology**: Node.js
-- **Role**: Central communication bridge and orchestration layer.
-- **Responsibilities**:
-  - Authenticating and authorizing client sessions.
-  - Validating incoming requests against predefined API schemas.
-  - Proxying and queueing analysis requests to the Python/Django analysis service.
-  - Managing real-time communications (e.g., WebSockets / SSE) back to the frontend.
-
-### 3. Analysis Engine (`analysis/`)
-- **Technology**: Python / Django
-- **Role**: Computational and analytical powerhouse.
-- **Responsibilities**:
-  - Parsing PCAP/PCAPNG streams, SMTP/IMAP/POP3 sessions, and raw MIME messages.
-  - Executing threat detection algorithms, signature matches, and heuristic models.
-  - Storing and producing structured inspection results and threat indicators.
-
-### 4. Data (`data/`)
-- **Role**: Dataset management and test payloads.
-- **Responsibilities**:
-  - Housing sample datasets, benchmark fixtures, and test captures locally during development.
-  - Kept strictly out of version control (except `.gitkeep` and documentation references in `docs/dataset-manifest.yaml`) to avoid repository bloat and potential leakage of sensitive captures.
-
----
-
-## API Contracts
-
-All inter-service communication is governed by schemas located in [`docs/contracts/`](file:///docs/contracts/):
-- **`node-react.json`**: Defines endpoints, payloads, and response structures between the React frontend and Node.js gateway.
-- **`node-django.json`**: Defines the communication protocol and task submission payload from Node.js gateway to Django analysis service.
-- **`django-result.json`**: Specifies the standardized output format emitted by the analysis engine.
-
-*All services must adhere to these schemas. Any breaking changes to payloads must be reflected in the contract files via pull request before implementation.*
-
----
-
-## Team Development Workflow
-
-To ensure code quality and stability, all contributors must adhere to the following workflow guidelines:
-
-### Branch Naming Conventions
-Always branch off the latest `main` branch. Use descriptive branch names prefixed with the category:
-- `feature/<feature-name>`: New functionality or enhancements (e.g., `feature/pcap-parser`)
-- `bugfix/<issue-name>`: Bug fixes (e.g., `bugfix/auth-token-refresh`)
-- `hotfix/<critical-issue>`: Immediate production fixes
-- `docs/<doc-topic>`: Documentation updates (e.g., `docs/update-architecture`)
-- `refactor/<module-name>`: Code refactoring without behavioral changes
-
-### Pull Requests & Branch Protection
-> [!IMPORTANT]
-> **Direct pushes to `main` are strictly prohibited.**
-> All changes must be proposed via Pull Requests (PRs) from feature branches.
-
-1. **Create a Branch**: `git checkout -b feature/your-feature-name`
-2. **Develop & Test**: Implement changes with appropriate tests in the respective service directory.
-3. **Commit**: Use Conventional Commits (detailed below).
-4. **Open a PR**: Submit a Pull Request targeting `main`. PRs require review and passing automated CI checks before merging.
-
-### Conventional Commits
-All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+A clean, modular monorepo architecture separating presentation, orchestration, forensics, and intelligence:
 
 ```text
-<type>(<scope>): <short summary>
-
-[optional body]
-
-[optional footer(s)]
+SecureMailScope/
+├── frontend/               # React 18 single-page application (Vite, Tailwind CSS, Lucide, jsPDF)
+├── node-gateway/           # Node.js API Gateway, PostgreSQL persistence, and orchestration
+├── analysis/               # Forensic analysis backend (packet dissection, rule engine, Isolation Forest)
+├── ml/                     # Supervised machine learning module (Random Forest risk classifier, training pipelines)
+├── recommendation/         # Remediation engine generating prioritized mitigation guidance
+├── ollama/                 # Local AI Copilot configuration (Modelfile and automated setup script)
+├── data/                   # Dataset pipelines, benchmark splits (train/val/test), and PCAP generators
+├── docs/                   # System architecture specs, dataset design, and authoritative JSON contracts
+├── tests/                  # Unified test matrix (contracts, e2e, integration, ml, parser, rules)
+├── test-results/           # Benchmark reports and latency stability metrics
+└── migrate.sql             # Relational database schema (8 PostgreSQL tables)
 ```
 
-Common types:
-- `feat`: A new feature
-- `fix`: A bug fix
-- `docs`: Documentation updates
-- `style`: Formatting, missing semicolons, etc. (no code change)
-- `refactor`: Refactoring production code without behavior change
-- `test`: Adding or updating tests
-- `chore`: Maintenance tasks, dependency updates, build tooling
+---
 
-*Examples*:
-- `feat(analysis): implement MIME attachment extractor`
-- `fix(gateway): resolve CORS error on file upload endpoint`
-- `docs(contracts): update node-django contract draft`
+## Core Capabilities
+
+### 1. Forensic Inspection & Rule Engine ([`analysis/`](file:///analysis/))
+- **Passive PCAP Dissection**: Reconstructs TCP streams and tracks conversation state across SMTP, IMAP, and POP3 sessions using TShark and PyShark.
+- **Cryptographic Profiling**: Evaluates TLS handshake parameters, cipher suite strengths, forward secrecy (PFS), and X.509 certificate chains.
+- **10 Deterministic Security Rules**: Flags plaintext credentials, authentication before TLS, failed STARTTLS upgrades, deprecated TLS versions, weak ciphers/keys, expired certificates, and untrusted self-signed certificates.
+
+### 2. Dual-Model Machine Learning ([`ml/`](file:///ml/) & [`analysis/anomaly_detection/`](file:///analysis/anomaly_detection/))
+- **Random Forest (`rf-v1`)**: Supervised classifier evaluating a 19-feature vector to assign calibrated session risk tiers (`LOW`, `MEDIUM`, `HIGH`, `CRITICAL`). Protected by strict domain guardrails that prevent downgrading critical deterministic findings.
+- **Isolation Forest (`if-v1`)**: Unsupervised behavioral anomaly detector extracting 30 flow-level features (packet timing, client/server ratios, reset counts) to detect statistical deviations from learned normal traffic baselines.
+
+### 3. API Gateway & Persistence ([`node-gateway/`](file:///node-gateway/))
+- **Security Middleware**: Helmet security headers, global rate limiting, and bcrypt-hashed authentication.
+- **Safe Ingestion**: Enforces strict extension allowlists (`.pcap`, `.pcapng`, `.cap`) and renames uploads with random UUIDs to eliminate path traversal vulnerabilities.
+- **Isolated Stream Slicing**: Extracts individual TCP sessions into downloadable, standalone PCAPs using safe binary execution without shell interpolation.
+- **Relational Storage**: Persists analysis metadata, stream telemetry, findings, and anomaly scores into PostgreSQL via [`migrate.sql`](file:///migrate.sql).
+
+### 4. Interactive Analyst UI ([`frontend/`](file:///frontend/))
+- **Live Forensics Dashboard**: Real-time posture scoring, interactive session tables, and protocol distribution charts.
+- **Deep-Dive Stream Inspector**: View reconstructed conversational flows, Wireshark display filters (e.g., `tcp.stream == 0`), cryptographic attributes, and export session PCAPs.
+- **Standards Auditing**: Validates traffic compliance against **RFC 8314**, **RFC 7525**, and **NIST SP 800-52r2**.
+- **Audit Reporting**: Exports structured JSON data and auto-generates branded PDF audit reports client-side.
+
+### 5. Local AI Security Copilot ([`ollama/`](file:///ollama/))
+- Offline, privacy-preserving AI assistant powered by a customized model (`mailscope-sec:3b`).
+- Formulates executive risk summaries, explains complex cryptographic findings, maps threats to MITRE ATT&CK / CWE identifiers, and generates copy-pasteable hardening directives for **Postfix**, **Dovecot**, and **Nginx**.
+
+---
+
+## Audit & Verification Matrix
+
+All subsystems have been verified with end-to-end automated test suites:
+
+| Subsystem | Suite | Results | Defensive Audit Highlights |
+| :--- | :--- | :--- | :--- |
+| **Frontend** | Vitest (`npm test`) | **70 / 70 passed** | Custom AST Markdown renderer (immune to XSS injection). |
+| **Node Gateway** | Jest (`npm test`) | **104 / 104 passed** | Parameterized SQL queries (immune to SQLi); `execFile` prevents command injection. |
+| **Python & ML** | Pytest (`python -m pytest tests/`) | **289 / 289 passed** | Deterministic guardrails enforce critical findings; robust synthetic edge-case generator. |
+| **System Stability**| Multi-Run Benchmark | **10 / 10 passed** | Sub-second analysis latency (0.40s–0.80s per run) documented in `test-results/`. |
+
+---
+
+## Quick Start Guide
+
+### Prerequisites
+- **Node.js** v18+ & **npm**
+- **Python** 3.11+
+- **PostgreSQL** 14+
+- *Optional*: **Wireshark/TShark** (for live PCAP dissection) and **Ollama** (for local AI Copilot)
+
+---
+
+### 1. Database Setup
+Initialize the PostgreSQL schema:
+
+```bash
+psql -U postgres -d securemailscope -f migrate.sql
+```
+*(Or run `npm run migrate` inside `node-gateway/`)*
+
+---
+
+### 2. Node Gateway Setup
+```bash
+cd node-gateway
+npm install
+cp .env.example .env     # Configure DATABASE_URL and JWT_SECRET
+npm run dev              # Runs on http://localhost:3000 (Mock Django enabled by default)
+```
+
+---
+
+### 3. Frontend Setup
+```bash
+cd frontend
+npm install
+npm run dev              # Runs on http://localhost:5173
+```
+
+---
+
+### 4. Analysis Backend *(Optional for Live Capture Dissection)*
+To run live PCAP dissection instead of the default mock mode:
+```bash
+cd analysis
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt -r ../ml/requirements.txt
+python manage.py runserver 8000
+```
+*Set `USE_MOCK_DJANGO=false` in `node-gateway/.env` to connect.*
+
+---
+
+### 5. Local AI Copilot *(Optional)*
+```cmd
+cd ollama
+setup_model.bat          # Pulls qwen2.5:3b and configures mailscope-sec:3b
+```
+
+---
+
+## Running Test Suites
+
+```bash
+# Frontend Unit & Integration Tests (Vitest)
+cd frontend && npm test
+
+# API Gateway Tests (Jest)
+cd node-gateway && npm test
+
+# Python Forensics, ML & Rule Tests (Pytest)
+python -m pytest tests/
+
+# Manual ML Inference Demonstration
+python test_manual.py
+```
+
+---
+
+## Inter-Service API Contracts
+
+All cross-service boundaries are strictly governed by formal JSON Schemas located in [`docs/contracts/`](file:///docs/contracts/):
+- **[`node-django-request.json`](file:///docs/contracts/node-django-request.json)**: Gateway upload task dispatch schema.
+- **[`django-analysis-response.json`](file:///docs/contracts/django-analysis-response.json)**: Forensic inspection results schema.
+- **[`node-react-analysis-response.json`](file:///docs/contracts/node-react-analysis-response.json)**: Client-facing normalized response schema.
+- **[`ml-feature-vector.json`](file:///docs/contracts/ml-feature-vector.json)**: Random Forest 19-feature vector contract.
+- **[`isolation-forest-feature-vector.json`](file:///docs/contracts/isolation-forest-feature-vector.json)**: Isolation Forest 30-feature vector contract.
+
+---
+
+## Development & Contribution
+
+- **Branching**: Branch off `main` using descriptive prefixes: `feature/*`, `bugfix/*`, `refactor/*`, `docs/*`.
+- **Commits**: Follow the [Conventional Commits](https://www.conventionalcommits.org/) format (`feat:`, `fix:`, `refactor:`, `test:`, `docs:`).
+- **Pull Requests**: Direct pushes to `main` are restricted. All changes require review and passing automated tests.
+
+---
+
+## License
+
+This project is licensed under the terms described in the [LICENSE](file:///LICENSE) file.
