@@ -33,7 +33,7 @@ export default function Footer() {
               className="inline-flex items-center gap-2.5 group"
             >
               <img
-                src="/SMS.png"
+                src="/new_sms_logo.png"
                 alt="SecureMailScope"
                 className="h-9 w-9 object-contain drop-shadow-sm transition-transform group-hover:scale-105"
               />

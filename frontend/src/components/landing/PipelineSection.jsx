@@ -90,9 +90,9 @@ const PIPELINE_STAGES = [
     details: [
       'Exact configuration snippets for Postfix, Dovecot, Exim, and Sendmail mail transfer agents',
       'Wireshark display filters ready for one-click copy and deeper packet inspection',
-      'Local Ollama AI Security Copilot providing interactive query assistance and threat triage',
+      'AI Security Copilot providing interactive query assistance and threat triage',
     ],
-    technicalSpec: 'RFC-Aligned Fix Directives · Wireshark Filter Generator · Local Ollama LLM',
+    technicalSpec: 'RFC-Aligned Fix Directives · Wireshark Filter Generator · LLM Copilot Engine',
   },
 ];
 

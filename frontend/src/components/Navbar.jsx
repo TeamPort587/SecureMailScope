@@ -118,7 +118,7 @@ export default function Navbar({ onLoadPreset, onResetAnalysis, onLogout, user }
           className="group flex items-center gap-2.5 sm:gap-3 transition-opacity hover:opacity-95"
         >
           <img
-            src="/SMS.png"
+            src="/new_sms_logo.png"
             alt="SecureMailScope"
             className={`shrink-0 object-contain drop-shadow-sm transform-gpu transition-all duration-250 ease-out group-hover:scale-105 ${
               isScrolled ? 'h-8 w-8 sm:h-8.5 sm:w-8.5' : 'h-9.5 w-9.5 sm:h-10 sm:w-10'

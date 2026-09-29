@@ -36,7 +36,7 @@ const FAQS = [
     id: 'faq-6',
     question: 'How does the AI Security Copilot assist in triage and remediation?',
     answer:
-      'The AI Security Copilot integrates with a local Ollama LLM instance (or secure fallback heuristics) with zero external data leakage. Security analysts can ask natural language questions about specific findings, request exact configuration hardening templates for mail servers (Postfix, Dovecot, Exim, Sendmail), or generate specialized Wireshark display filters to isolate culprit packets.',
+      'The AI Security Copilot integrates an intelligent LLM engine (or secure fallback heuristics) with zero external data leakage. Security analysts can ask natural language questions about specific findings, request exact configuration hardening templates for mail servers (Postfix, Dovecot, Exim, Sendmail), or generate specialized Wireshark display filters to isolate culprit packets.',
   },
   {
     id: 'faq-7',

@@ -76,7 +76,7 @@ export default function Login() {
           className="group inline-flex items-center gap-2.5 transition-transform hover:scale-105"
         >
           <img
-            src="/SMS.png"
+            src="/new_sms_logo.png"
             alt="SecureMailScope"
             className="h-10 w-10 object-contain drop-shadow-sm"
           />
