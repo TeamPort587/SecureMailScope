@@ -378,16 +378,18 @@ export default function Analysis() {
   ============================================================ */
 
   const unsecuredSessions = useMemo(() => {
+    if (analysis?.summary?.vulnerable_sessions != null) {
+      return analysis.summary.vulnerable_sessions;
+    }
 
     return sessions.filter((session) => {
-
-      const encryption = String(
+      const mode = String(
+        session?.security?.encryption_mode ||
+        session?.encryption_mode ||
         session?.encryption ||
         session?.encryption_method ||
-        session?.security ||
         ''
       ).toLowerCase();
-
 
       const posture = String(
         session?.security_posture ||
@@ -395,37 +397,38 @@ export default function Analysis() {
         ''
       ).toLowerCase();
 
-
       return (
-
-        encryption.includes('plain') ||
-        encryption.includes('none') ||
-        encryption.includes('unsecure') ||
-        posture.includes('vulnerable')
-
+        mode.includes('plain') ||
+        mode === 'none' ||
+        mode === 'unknown' ||
+        mode.includes('unsecure') ||
+        posture.includes('vulnerable') ||
+        session?.security?.authentication_before_tls === 'YES'
       );
-
     }).length;
-
-  }, [sessions]);
+  }, [analysis?.summary, sessions]);
 
 
   const plaintextSessions = useMemo(() => {
+    if (analysis?.summary?.plaintext_sessions != null) {
+      return analysis.summary.plaintext_sessions;
+    }
+    if (analysis?.summary?.encryption_mode_counts?.PLAINTEXT != null) {
+      return analysis.summary.encryption_mode_counts.PLAINTEXT;
+    }
 
     return sessions.filter((session) => {
-
-      const encryption = String(
+      const mode = String(
+        session?.security?.encryption_mode ||
+        session?.encryption_mode ||
         session?.encryption ||
         session?.encryption_method ||
         ''
       ).toLowerCase();
 
-
-      return encryption.includes('plain');
-
+      return mode.includes('plain');
     }).length;
-
-  }, [sessions]);
+  }, [analysis?.summary, sessions]);
 
 
   /* ============================================================
@@ -433,41 +436,31 @@ export default function Analysis() {
   ============================================================ */
 
   const protocolCounts = useMemo(() => {
+    if (analysis?.summary?.protocol_counts) {
+      return {
+        SMTP: analysis.summary.protocol_counts.SMTP ?? 0,
+        IMAP: analysis.summary.protocol_counts.IMAP ?? 0,
+        POP3: analysis.summary.protocol_counts.POP3 ?? 0,
+      };
+    }
 
     const counts = {
-      SMTP: 0,
-      IMAP: 0,
-      POP3: 0,
+      SMTP: analysis?.summary?.smtp_sessions ?? 0,
+      IMAP: analysis?.summary?.imap_sessions ?? 0,
+      POP3: analysis?.summary?.pop3_sessions ?? 0,
     };
 
-
-    sessions.forEach((session) => {
-
-      const protocol = String(
-        session?.protocol || ''
-      ).toUpperCase();
-
-
-      if (protocol.includes('SMTP')) {
-        counts.SMTP += 1;
-      }
-
-
-      if (protocol.includes('IMAP')) {
-        counts.IMAP += 1;
-      }
-
-
-      if (protocol.includes('POP3')) {
-        counts.POP3 += 1;
-      }
-
-    });
-
+    if (counts.SMTP === 0 && counts.IMAP === 0 && counts.POP3 === 0 && sessions.length > 0) {
+      sessions.forEach((session) => {
+        const protocol = String(session?.protocol || '').toUpperCase();
+        if (protocol.includes('SMTP')) counts.SMTP += 1;
+        if (protocol.includes('IMAP')) counts.IMAP += 1;
+        if (protocol.includes('POP3')) counts.POP3 += 1;
+      });
+    }
 
     return counts;
-
-  }, [sessions]);
+  }, [analysis?.summary, sessions]);
 
 
   /* ============================================================
@@ -475,56 +468,48 @@ export default function Analysis() {
   ============================================================ */
 
   const encryptionCounts = useMemo(() => {
+    if (analysis?.summary?.encryption_mode_counts) {
+      return {
+        starttls: analysis.summary.encryption_mode_counts.STARTTLS ?? 0,
+        implicitTls: analysis.summary.encryption_mode_counts.IMPLICIT_TLS ?? 0,
+        plaintext: analysis.summary.encryption_mode_counts.PLAINTEXT ?? 0,
+      };
+    }
 
     const counts = {
-      starttls: 0,
-      implicitTls: 0,
-      plaintext: 0,
+      starttls: analysis?.summary?.starttls_sessions ?? 0,
+      implicitTls: analysis?.summary?.implicit_tls_sessions ?? 0,
+      plaintext: analysis?.summary?.plaintext_sessions ?? 0,
     };
 
+    if (counts.starttls === 0 && counts.implicitTls === 0 && counts.plaintext === 0 && sessions.length > 0) {
+      sessions.forEach((session) => {
+        const encryption = String(
+          session?.security?.encryption_mode ||
+          session?.encryption_mode ||
+          session?.encryption ||
+          session?.encryption_method ||
+          ''
+        ).toLowerCase();
 
-    sessions.forEach((session) => {
-
-      const encryption = String(
-        session?.encryption ||
-        session?.encryption_method ||
-        session?.security ||
-        ''
-      ).toLowerCase();
-
-
-      if (
-        encryption.includes('starttls')
-      ) {
-
-        counts.starttls += 1;
-
-      } else if (
-
-        encryption.includes('implicit') ||
-        encryption.includes('tls')
-
-      ) {
-
-        counts.implicitTls += 1;
-
-      } else if (
-
-        encryption.includes('plain') ||
-        encryption.includes('none')
-
-      ) {
-
-        counts.plaintext += 1;
-
-      }
-
-    });
-
+        if (encryption.includes('starttls')) {
+          counts.starttls += 1;
+        } else if (
+          encryption.includes('implicit') ||
+          encryption.includes('tls')
+        ) {
+          counts.implicitTls += 1;
+        } else if (
+          encryption.includes('plain') ||
+          encryption.includes('none')
+        ) {
+          counts.plaintext += 1;
+        }
+      });
+    }
 
     return counts;
-
-  }, [sessions]);
+  }, [analysis?.summary, sessions]);
 
   /* ============================================================
      LOADING

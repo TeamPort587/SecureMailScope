@@ -33,13 +33,13 @@ export default function RiskSummary({
 
   const totalSessions = summary?.total_sessions ?? 0;
 
-  const smtp = summary?.smtp_sessions ?? 0;
-  const imap = summary?.imap_sessions ?? 0;
-  const pop3 = summary?.pop3_sessions ?? 0;
+  const smtp = summary?.smtp_sessions ?? summary?.protocol_counts?.SMTP ?? 0;
+  const imap = summary?.imap_sessions ?? summary?.protocol_counts?.IMAP ?? 0;
+  const pop3 = summary?.pop3_sessions ?? summary?.protocol_counts?.POP3 ?? 0;
 
-  const starttls = summary?.starttls_sessions ?? 0;
-  const implicitTls = summary?.implicit_tls_sessions ?? 0;
-  const plaintext = summary?.plaintext_sessions ?? 0;
+  const starttls = summary?.starttls_sessions ?? summary?.encryption_mode_counts?.STARTTLS ?? 0;
+  const implicitTls = summary?.implicit_tls_sessions ?? summary?.encryption_mode_counts?.IMPLICIT_TLS ?? 0;
+  const plaintext = summary?.plaintext_sessions ?? summary?.encryption_mode_counts?.PLAINTEXT ?? 0;
 
   const riskContent = {
     CRITICAL: {
