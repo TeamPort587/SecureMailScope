@@ -194,3 +194,99 @@ def test_aggregate_anomaly_results():
     assert agg["insufficient_evidence_count"] == 1
     assert agg["overall_status"] == "ANOMALIES_DETECTED"
     assert agg["anomalous_session_ids"] == ["s2"]
+
+
+def test_explain_anomaly_plaintext_produces_rich_deviations():
+    from analysis.anomaly_detection.explanation import explain_anomaly
+
+    # Mock feature vector with plaintext IMAP
+    fv = {feat: 0.0 for feat in ALL_IF_FEATURES}
+    fv["if_protocol_imap"] = 1.0
+    fv["if_encryption_plaintext"] = 1.0
+    fv["if_upgrade_succeeded"] = 0.0
+    fv["if_cert_visible"] = 0.0
+    fv["if_high_sev_count"] = 1.0
+    fv["if_finding_count"] = 1.0
+
+    prediction = {
+        "status": "COMPLETE",
+        "classification": "ANOMALOUS",
+        "is_anomalous": True,
+        "raw_score": -0.62,
+        "decision_score": -0.05,
+        "threshold": 0.0,
+    }
+
+    baseline_stats = {
+        "if_encryption_plaintext": {"median": 0.0, "iqr_scale": 1.0, "q25": -0.5, "q75": 0.5},
+        "if_upgrade_succeeded": {"median": 1.0, "iqr_scale": 1.0, "q25": 0.5, "q75": 1.5},
+        "if_cert_visible": {"median": 1.0, "iqr_scale": 1.0, "q25": 0.5, "q75": 1.5},
+        "if_high_sev_count": {"median": 0.0, "iqr_scale": 1.0, "q25": -0.5, "q75": 0.5},
+        "if_finding_count": {"median": 0.0, "iqr_scale": 1.0, "q25": -0.5, "q75": 0.5},
+    }
+
+    session_findings = [
+        {
+            "finding_id": "finding-002",
+            "session_id": "imap-002",
+            "finding_type": "PLAINTEXT",
+            "severity": "CRITICAL",
+        }
+    ]
+
+    exp = explain_anomaly(fv, prediction, baseline_stats, session_findings)
+
+    assert "plaintext IMAP" in exp["summary"]
+    assert len(exp["deviations"]) >= 3
+
+    dev_features = [d["feature"] for d in exp["deviations"]]
+    assert "if_encryption_plaintext" in dev_features
+    assert "if_upgrade_succeeded" in dev_features
+
+    # Check deviation structure
+    pt_dev = next(d for d in exp["deviations"] if d["feature"] == "if_encryption_plaintext")
+    assert pt_dev["observed"] == 1.0
+    assert pt_dev["baseline_median"] == 0.0
+    assert pt_dev["comparison"] == "above expected range"
+    assert "diverges sharply" in pt_dev["interpretation"]
+
+    # Check related findings
+    assert "finding-002" in exp["related_findings"]
+
+
+def test_explain_anomaly_auth_before_tls():
+    from analysis.anomaly_detection.explanation import explain_anomaly
+
+    fv = {feat: 0.0 for feat in ALL_IF_FEATURES}
+    fv["if_protocol_smtp"] = 1.0
+    fv["if_auth_before_tls"] = 1.0
+    fv["if_upgrade_succeeded"] = 0.0
+
+    prediction = {
+        "status": "COMPLETE",
+        "classification": "ANOMALOUS",
+        "is_anomalous": True,
+        "raw_score": -0.7,
+        "decision_score": -0.1,
+        "threshold": 0.0,
+    }
+
+    baseline_stats = {
+        "if_auth_before_tls": {"median": 0.0, "iqr_scale": 1.0, "q25": -0.5, "q75": 0.5},
+        "if_upgrade_succeeded": {"median": 1.0, "iqr_scale": 1.0, "q25": 0.5, "q75": 1.5},
+    }
+
+    session_findings = [
+        {
+            "finding_id": "f-auth",
+            "session_id": "smtp-001",
+            "finding_type": "AUTH_BEFORE_TLS",
+            "severity": "HIGH",
+        }
+    ]
+
+    exp = explain_anomaly(fv, prediction, baseline_stats, session_findings)
+
+    assert "plaintext credentials" in exp["summary"]
+    assert "f-auth" in exp["related_findings"]
+
